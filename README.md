@@ -4,9 +4,13 @@
 
 ## 🌐 웹페이지 보기
 
-👉 [최신 리포트 보기](https://[username].github.io/stock-recommendations/)
+### 🚀 메인 (Netlify - 빠름)
+👉 **[https://redcho-stocks.netlify.app](https://redcho-stocks.netlify.app)**
 
-*(username을 본인 GitHub 사용자명으로 변경)*
+### 🔄 백업 (GitHub Pages)
+👉 **[https://redchoeng.github.io/stock-recommendations/](https://redchoeng.github.io/stock-recommendations/)**
+
+*매 2시간마다 자동 업데이트됩니다!*
 
 ## 📈 특징
 
