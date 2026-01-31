@@ -2,8 +2,8 @@ name: Daily Stock Report Update
 
 on:
   schedule:
-    # 매 2시간마다 실행 (안정적이고 무료 할당량 안전)
-    - cron: '0 */2 * * *'
+    # 평일 + 미국 시장 시간대만 실행 (월-금, UTC 14-22시, 가장 효율적)
+    - cron: '0 14-22/2 * * 1-5'
   workflow_dispatch:  # 수동 실행 가능
 
 jobs:
