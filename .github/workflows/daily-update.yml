@@ -1,0 +1,56 @@
+name: Daily Stock Report Update
+
+on:
+  schedule:
+    # 매일 한국시간 오전 9시 (UTC 0시)
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 수동 실행 가능
+
+jobs:
+  update-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas numpy
+
+      - name: Generate daily report
+        run: |
+          python generate_daily_report_v2.py
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add daily_stock_report_*.html index.html
+          git diff --quiet && git diff --staged --quiet || git commit -m "Daily report update - $(date +'%Y-%m-%d')"
+          git push
+
+      - name: Update index.html redirect
+        run: |
+          LATEST_REPORT=$(ls -t daily_stock_report_*.html | head -1)
+          cat > index.html << EOF
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset="UTF-8">
+              <meta http-equiv="refresh" content="0; url=./$LATEST_REPORT">
+              <title>Redirecting to Latest Report...</title>
+          </head>
+          <body>
+              <p>최신 리포트로 이동 중... <a href="./$LATEST_REPORT">여기를 클릭하세요</a></p>
+          </body>
+          </html>
+          EOF
+          git add index.html
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update index redirect"
+          git push || true
