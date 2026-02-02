@@ -217,20 +217,43 @@
         }
 
         .current-price {
-            display: flex;
-            align-items: baseline;
-            gap: 12px;
             margin-bottom: 20px;
         }
 
+        .price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .price-row.premarket {
+            opacity: 0.9;
+            border-left: 3px solid #4299e1;
+            padding-left: 8px;
+        }
+
+        .price-row.regular {
+            opacity: 1;
+            border-left: 3px solid #48bb78;
+            padding-left: 8px;
+            font-weight: 600;
+        }
+
+        .price-label {
+            font-size: 0.9em;
+            color: #718096;
+            min-width: 90px;
+        }
+
         .current-price .price {
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #1a202c;
         }
 
         .current-price .change {
-            font-size: 1.1em;
+            font-size: 1.0em;
             font-weight: 600;
             padding: 4px 12px;
             border-radius: 15px;
@@ -420,7 +443,7 @@
         <div class="header">
             <h1>📊 Daily Stock Recommendations</h1>
             <div class="subtitle">검증된 퀀트 전략 기반 매수/매도 가격 추천</div>
-            <div class="date">2026년 02월 02일 21:10:38 업데이트</div>
+            <div class="date">2026년 02월 02일 21:23:24 업데이트</div>
         </div>
 
         <div class="summary">
@@ -471,8 +494,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$236.73</span>
-            <span class="change negative">-6.13%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$236.73</span>
+                <span class="change negative">-6.13%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$233.46</span>
+                <span class="change negative">-1.38%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$236.73</span>
+                <span class="change negative">-6.13%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -574,8 +614,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$414.88</span>
-            <span class="change negative">-4.80%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$414.88</span>
+                <span class="change negative">-4.80%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$417.20</span>
+                <span class="change positive">+0.56%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$414.88</span>
+                <span class="change negative">-4.80%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -677,8 +734,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$200.93</span>
-            <span class="change positive">+0.53%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$200.93</span>
+                <span class="change positive">+0.53%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$201.05</span>
+                <span class="change positive">+0.06%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$200.93</span>
+                <span class="change positive">+0.53%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -780,8 +854,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$191.13</span>
-            <span class="change negative">-0.72%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$191.13</span>
+                <span class="change negative">-0.72%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$188.95</span>
+                <span class="change negative">-1.14%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$191.13</span>
+                <span class="change negative">-0.72%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -883,8 +974,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$935.41</span>
-            <span class="change negative">-0.50%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$935.41</span>
+                <span class="change negative">-0.50%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$937.00</span>
+                <span class="change positive">+0.17%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$935.41</span>
+                <span class="change negative">-0.50%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -993,8 +1101,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$331.30</span>
-            <span class="change positive">+0.17%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$331.30</span>
+                <span class="change positive">+0.17%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$328.00</span>
+                <span class="change negative">-1.00%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$331.30</span>
+                <span class="change positive">+0.17%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -1096,8 +1221,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$141.40</span>
-            <span class="change positive">+0.63%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$141.40</span>
+                <span class="change positive">+0.63%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$139.66</span>
+                <span class="change negative">-1.38%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$141.40</span>
+                <span class="change positive">+0.63%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -1199,8 +1341,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$634.22</span>
-            <span class="change positive">+1.88%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$634.22</span>
+                <span class="change positive">+1.88%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$631.00</span>
+                <span class="change negative">-0.55%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$634.22</span>
+                <span class="change positive">+1.88%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -1302,8 +1461,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$692.26</span>
-            <span class="change negative">-0.44%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$692.26</span>
+                <span class="change negative">-0.44%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$685.04</span>
+                <span class="change negative">-1.04%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$692.26</span>
+                <span class="change negative">-0.44%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -1405,8 +1581,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$351.09</span>
-            <span class="change positive">+0.33%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$351.09</span>
+                <span class="change positive">+0.33%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$350.82</span>
+                <span class="change negative">-0.08%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$351.09</span>
+                <span class="change positive">+0.33%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -1508,8 +1701,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$338.00</span>
-            <span class="change negative">-0.07%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$338.00</span>
+                <span class="change negative">-0.07%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$335.10</span>
+                <span class="change negative">-0.93%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$338.23</span>
+                <span class="change positive">+0.06%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -1540,11 +1750,11 @@
                 <h3>💰 매수 가격</h3>
                 <div class="price-item">
                     <span class="label">추천가</span>
-                    <span class="value">$327.86</span>
+                    <span class="value">$328.09</span>
                 </div>
                 <div class="price-item">
                     <span class="label">공격적</span>
-                    <span class="value">$338.00</span>
+                    <span class="value">$338.23</span>
                 </div>
                 <div class="price-item">
                     <span class="label">보수적</span>
@@ -1556,15 +1766,15 @@
                 <h3>🎯 매도 목표가</h3>
                 <div class="price-item">
                     <span class="label">1차 목표</span>
-                    <span class="value">$339.68 (+3.6%)</span>
+                    <span class="value">$339.68 (+3.5%)</span>
                 </div>
                 <div class="price-item">
                     <span class="label">2차 목표</span>
-                    <span class="value">$344.41 (+5.0%)</span>
+                    <span class="value">$344.64 (+5.0%)</span>
                 </div>
                 <div class="price-item">
                     <span class="label">3차 목표</span>
-                    <span class="value">$343.81 (+4.9%)</span>
+                    <span class="value">$343.81 (+4.8%)</span>
                 </div>
             </div>
 
@@ -1572,15 +1782,15 @@
                 <h3>⚠️ 손절 가격</h3>
                 <div class="price-item">
                     <span class="label">추천가</span>
-                    <span class="value">$315.45 (3.8%)</span>
+                    <span class="value">$315.68 (3.8%)</span>
                 </div>
                 <div class="price-item">
                     <span class="label">타이트</span>
-                    <span class="value">$319.58</span>
+                    <span class="value">$319.81</span>
                 </div>
                 <div class="price-item">
                     <span class="label">여유</span>
-                    <span class="value">$311.31</span>
+                    <span class="value">$311.54</span>
                 </div>
             </div>
         </div>
@@ -1611,8 +1821,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$259.48</span>
-            <span class="change positive">+0.46%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$259.48</span>
+                <span class="change positive">+0.46%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$258.36</span>
+                <span class="change negative">-0.43%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$259.48</span>
+                <span class="change positive">+0.46%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -1714,8 +1941,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$176.90</span>
-            <span class="change positive">+3.34%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$176.90</span>
+                <span class="change positive">+3.34%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$174.13</span>
+                <span class="change negative">-1.62%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$176.90</span>
+                <span class="change positive">+3.34%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -1817,8 +2061,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$305.89</span>
-            <span class="change negative">-0.17%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$305.89</span>
+                <span class="change negative">-0.17%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$305.63</span>
+                <span class="change negative">-0.12%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$305.89</span>
+                <span class="change negative">-0.17%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -1920,8 +2181,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$151.59</span>
-            <span class="change negative">-0.41%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$151.59</span>
+                <span class="change negative">-0.41%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$150.68</span>
+                <span class="change negative">-0.60%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$151.59</span>
+                <span class="change negative">-0.41%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2023,8 +2301,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$239.30</span>
-            <span class="change negative">-1.01%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$239.30</span>
+                <span class="change negative">-1.01%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$237.92</span>
+                <span class="change negative">-0.58%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$239.30</span>
+                <span class="change negative">-1.01%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2126,8 +2421,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$53.20</span>
-            <span class="change positive">+0.23%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$53.20</span>
+                <span class="change positive">+0.23%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$53.27</span>
+                <span class="change positive">+0.08%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$53.20</span>
+                <span class="change positive">+0.23%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2229,8 +2541,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$90.49</span>
-            <span class="change negative">-0.17%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$90.49</span>
+                <span class="change negative">-0.17%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$90.48</span>
+                <span class="change negative">-0.06%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$90.49</span>
+                <span class="change negative">-0.17%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2332,8 +2661,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$430.29</span>
-            <span class="change negative">-0.74%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$430.29</span>
+                <span class="change negative">-0.74%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$427.38</span>
+                <span class="change negative">-0.68%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$430.29</span>
+                <span class="change negative">-0.74%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2435,8 +2781,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$104.23</span>
-            <span class="change positive">+1.39%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$104.23</span>
+                <span class="change positive">+1.39%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$102.33</span>
+                <span class="change negative">-1.82%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$104.23</span>
+                <span class="change positive">+1.39%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2538,8 +2901,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$716.50</span>
-            <span class="change negative">-2.95%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$716.50</span>
+                <span class="change negative">-2.95%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$709.52</span>
+                <span class="change negative">-0.97%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$716.50</span>
+                <span class="change negative">-2.95%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2646,8 +3026,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$338.00</span>
-            <span class="change negative">-0.07%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$338.00</span>
+                <span class="change negative">-0.07%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$335.10</span>
+                <span class="change negative">-0.93%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$338.23</span>
+                <span class="change positive">+0.06%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2678,11 +3075,11 @@
                 <h3>💰 매수 가격</h3>
                 <div class="price-item">
                     <span class="label">추천가</span>
-                    <span class="value">$327.86</span>
+                    <span class="value">$328.09</span>
                 </div>
                 <div class="price-item">
                     <span class="label">공격적</span>
-                    <span class="value">$338.00</span>
+                    <span class="value">$338.23</span>
                 </div>
                 <div class="price-item">
                     <span class="label">보수적</span>
@@ -2694,15 +3091,15 @@
                 <h3>🎯 매도 목표가</h3>
                 <div class="price-item">
                     <span class="label">1차 목표</span>
-                    <span class="value">$339.68 (+3.6%)</span>
+                    <span class="value">$339.68 (+3.5%)</span>
                 </div>
                 <div class="price-item">
                     <span class="label">2차 목표</span>
-                    <span class="value">$344.41 (+5.0%)</span>
+                    <span class="value">$344.64 (+5.0%)</span>
                 </div>
                 <div class="price-item">
                     <span class="label">3차 목표</span>
-                    <span class="value">$343.81 (+4.9%)</span>
+                    <span class="value">$343.81 (+4.8%)</span>
                 </div>
             </div>
 
@@ -2710,15 +3107,15 @@
                 <h3>⚠️ 손절 가격</h3>
                 <div class="price-item">
                     <span class="label">추천가</span>
-                    <span class="value">$315.45 (3.8%)</span>
+                    <span class="value">$315.68 (3.8%)</span>
                 </div>
                 <div class="price-item">
                     <span class="label">타이트</span>
-                    <span class="value">$319.58</span>
+                    <span class="value">$319.81</span>
                 </div>
                 <div class="price-item">
                     <span class="label">여유</span>
-                    <span class="value">$311.31</span>
+                    <span class="value">$311.54</span>
                 </div>
             </div>
         </div>
@@ -2749,8 +3146,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$716.50</span>
-            <span class="change negative">-2.95%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$716.50</span>
+                <span class="change negative">-2.95%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$709.52</span>
+                <span class="change negative">-0.97%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$716.50</span>
+                <span class="change negative">-2.95%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2855,8 +3269,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$239.30</span>
-            <span class="change negative">-1.01%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$239.30</span>
+                <span class="change negative">-1.01%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$237.92</span>
+                <span class="change negative">-0.58%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$239.30</span>
+                <span class="change negative">-1.01%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -2961,8 +3392,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$141.40</span>
-            <span class="change positive">+0.63%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$141.40</span>
+                <span class="change positive">+0.63%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$139.66</span>
+                <span class="change negative">-1.38%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$141.40</span>
+                <span class="change positive">+0.63%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3064,8 +3512,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$176.90</span>
-            <span class="change positive">+3.34%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$176.90</span>
+                <span class="change positive">+3.34%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$174.13</span>
+                <span class="change negative">-1.62%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$176.90</span>
+                <span class="change positive">+3.34%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3167,8 +3632,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$104.23</span>
-            <span class="change positive">+1.39%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$104.23</span>
+                <span class="change positive">+1.39%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$102.33</span>
+                <span class="change negative">-1.82%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$104.23</span>
+                <span class="change positive">+1.39%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3273,8 +3755,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$935.41</span>
-            <span class="change negative">-0.50%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$935.41</span>
+                <span class="change negative">-0.50%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$937.00</span>
+                <span class="change positive">+0.17%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$935.41</span>
+                <span class="change negative">-0.50%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3376,8 +3875,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$305.89</span>
-            <span class="change negative">-0.17%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$305.89</span>
+                <span class="change negative">-0.17%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$305.63</span>
+                <span class="change negative">-0.12%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$305.89</span>
+                <span class="change negative">-0.17%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3479,8 +3995,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$53.20</span>
-            <span class="change positive">+0.23%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$53.20</span>
+                <span class="change positive">+0.23%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$53.27</span>
+                <span class="change positive">+0.08%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$53.20</span>
+                <span class="change positive">+0.23%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3582,8 +4115,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$90.49</span>
-            <span class="change negative">-0.17%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$90.49</span>
+                <span class="change negative">-0.17%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$90.48</span>
+                <span class="change negative">-0.06%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$90.49</span>
+                <span class="change negative">-0.17%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3688,8 +4238,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$200.93</span>
-            <span class="change positive">+0.53%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$200.93</span>
+                <span class="change positive">+0.53%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$201.05</span>
+                <span class="change positive">+0.06%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$200.93</span>
+                <span class="change positive">+0.53%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3791,8 +4358,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$634.22</span>
-            <span class="change positive">+1.88%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$634.22</span>
+                <span class="change positive">+1.88%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$631.00</span>
+                <span class="change negative">-0.55%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$634.22</span>
+                <span class="change positive">+1.88%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3894,8 +4478,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$692.26</span>
-            <span class="change negative">-0.44%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$692.26</span>
+                <span class="change negative">-0.44%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$685.04</span>
+                <span class="change negative">-1.04%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$692.26</span>
+                <span class="change negative">-0.44%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -3997,8 +4598,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$351.09</span>
-            <span class="change positive">+0.33%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$351.09</span>
+                <span class="change positive">+0.33%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$350.82</span>
+                <span class="change negative">-0.08%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$351.09</span>
+                <span class="change positive">+0.33%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -4103,8 +4721,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$236.73</span>
-            <span class="change negative">-6.13%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$236.73</span>
+                <span class="change negative">-6.13%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$233.46</span>
+                <span class="change negative">-1.38%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$236.73</span>
+                <span class="change negative">-6.13%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -4206,8 +4841,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$414.88</span>
-            <span class="change negative">-4.80%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$414.88</span>
+                <span class="change negative">-4.80%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$417.20</span>
+                <span class="change positive">+0.56%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$414.88</span>
+                <span class="change negative">-4.80%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -4309,8 +4961,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$191.13</span>
-            <span class="change negative">-0.72%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$191.13</span>
+                <span class="change negative">-0.72%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$188.95</span>
+                <span class="change negative">-1.14%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$191.13</span>
+                <span class="change negative">-0.72%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -4412,8 +5081,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$331.30</span>
-            <span class="change positive">+0.17%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$331.30</span>
+                <span class="change positive">+0.17%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$328.00</span>
+                <span class="change negative">-1.00%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$331.30</span>
+                <span class="change positive">+0.17%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -4515,8 +5201,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$259.48</span>
-            <span class="change positive">+0.46%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$259.48</span>
+                <span class="change positive">+0.46%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$258.36</span>
+                <span class="change negative">-0.43%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$259.48</span>
+                <span class="change positive">+0.46%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -4618,8 +5321,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$151.59</span>
-            <span class="change negative">-0.41%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$151.59</span>
+                <span class="change negative">-0.41%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$150.68</span>
+                <span class="change negative">-0.60%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$151.59</span>
+                <span class="change negative">-0.41%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
@@ -4721,8 +5441,25 @@
         </div>
 
         <div class="current-price">
-            <span class="price">$430.29</span>
-            <span class="change negative">-0.74%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">$430.29</span>
+                <span class="change negative">-0.74%</span>
+            </div>
+            
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">$427.38</span>
+                <span class="change negative">-0.68%</span>
+            </div>
+            
+            
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">$430.29</span>
+                <span class="change negative">-0.74%</span>
+            </div>
+            
         </div>
 
         <div class="metrics">
