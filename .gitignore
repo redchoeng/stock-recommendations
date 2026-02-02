@@ -56,6 +56,14 @@ Thumbs.db
 test_*.py
 temp_*.py
 
+# API Keys & Sensitive Config
+config.py
+
+# Backtest Results (regenerated)
+backtest_*_*.csv
+*.png
+backtest_report.html
+
 # Netlify
 .netlify/
 

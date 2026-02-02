@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 내 주식 추천 시스템 - 빠른 접속</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .main-link {
+            display: block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .main-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .link-url {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 5px 0;
+            color: #555;
+        }
+
+        .info-box li:before {
+            content: "✅ ";
+            color: #667eea;
+        }
+
+        .shortlink-section {
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .shortlink-section h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .shortlink-section p {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #ffc107;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #ffca2c;
+        }
+
+        .schedule {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .schedule h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #d0e7ff;
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .time {
+            font-weight: bold;
+            color: #0066cc;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .main-link {
+                font-size: 1em;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 주식 추천 시스템</h1>
+        <p class="subtitle">검증된 퀀트 전략 기반 · 자동 업데이트</p>
+
+        <a href="https://redchoeng.github.io/stock-recommendations/" class="main-link" target="_blank">
+            🚀 지금 바로 접속하기
+            <div class="link-url">https://redchoeng.github.io/stock-recommendations/</div>
+        </a>
+
+        <div class="info-box">
+            <h3>🎯 주요 기능</h3>
+            <ul>
+                <li>학술적으로 검증된 4가지 퀀트 전략</li>
+                <li>Momentum · Mean Reversion · Trend Following</li>
+                <li>매수/매도/손절 가격 추천</li>
+                <li>섹터별 분석 및 리스크 관리</li>
+            </ul>
+        </div>
+
+        <div class="schedule">
+            <h3>🔄 자동 업데이트 스케줄</h3>
+            <div class="schedule-item">
+                <span>평일 (월-금)</span>
+                <span class="time">하루 5회</span>
+            </div>
+            <div class="schedule-item">
+                <span>한국 시간</span>
+                <span class="time">23시, 01시, 03시, 05시, 07시</span>
+            </div>
+            <div class="schedule-item">
+                <span>주말 (토-일)</span>
+                <span>업데이트 안함</span>
+            </div>
+        </div>
+
+        <div class="shortlink-section">
+            <h3>💡 짧은 링크 만들기</h3>
+            <p>더 짧고 기억하기 쉬운 링크를 만들어보세요!</p>
+            <a href="https://tinyurl.com/" class="btn" target="_blank">TinyURL 생성</a>
+            <a href="https://bitly.com/" class="btn" target="_blank">Bitly 생성</a>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                위 사이트에서 현재 URL을 입력하면<br>
+                <strong>https://bit.ly/redcho</strong> 같은 짧은 링크 생성!
+            </p>
+        </div>
+
+        <div class="info-box" style="margin-top: 20px;">
+            <h3>📱 모바일 앱처럼 사용하기</h3>
+            <ul>
+                <li><strong>iPhone:</strong> Safari 공유버튼 → "홈 화면에 추가"</li>
+                <li><strong>Android:</strong> Chrome 메뉴(⋮) → "홈 화면에 추가"</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>🚀 Powered by 검증된 퀀트 전략</p>
+            <p>매 2시간마다 자동 업데이트 · PC 꺼져있어도 작동</p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/redchoeng/stock-recommendations"
+                   style="color: #667eea; text-decoration: none;">
+                    📂 GitHub 저장소
+                </a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
