@@ -18,13 +18,12 @@ from .indicators import calculate_all_indicators
 class TechnicalAnalyzerV3:
     """
     검증된 퀀트 전략 기반 기술적 분석 클래스
-    총 75점 만점
+    총 65점 만점
 
     전략 구성:
     1. Momentum (30점) - 6개월/12개월 모멘텀
     2. Mean Reversion (20점) - RSI/볼린저 밴드 역추세
     3. Trend Following (15점) - 이동평균 기반 추세
-    4. Volatility Signal (10점) - 변동성 기반 신호
     """
 
     def __init__(self, df: pd.DataFrame):
@@ -273,11 +272,10 @@ class TechnicalAnalyzerV3:
 
         Returns:
             dict: {
-                'total_score': 총점 (75점 만점),
+                'total_score': 총점 (65점 만점),
                 'momentum_score': 모멘텀 점수,
                 'mean_reversion_score': 평균회귀 점수,
                 'trend_score': 추세 점수,
-                'volatility_score': 변동성 점수,
                 'signals': 발생한 시그널 문자열
             }
         """
@@ -285,10 +283,9 @@ class TechnicalAnalyzerV3:
         momentum_score, momentum_signal = self.calculate_momentum_score()
         mean_rev_score, mean_rev_signal = self.calculate_mean_reversion_score()
         trend_score, trend_signal = self.calculate_trend_following_score()
-        volatility_score, volatility_signal = self.calculate_volatility_score()
 
-        # 총점
-        total = momentum_score + mean_rev_score + trend_score + volatility_score
+        # 총점 (변동성 제외)
+        total = momentum_score + mean_rev_score + trend_score
 
         # 시그널 결합
         signals = []
@@ -298,8 +295,6 @@ class TechnicalAnalyzerV3:
             signals.append(mean_rev_signal)
         if trend_signal and trend_signal != "추세 없음":
             signals.append(trend_signal)
-        if volatility_signal and volatility_signal != "변동성 데이터 없음":
-            signals.append(volatility_signal)
 
         combined_signal = " + ".join(signals) if signals else "시그널 없음"
 
@@ -308,14 +303,14 @@ class TechnicalAnalyzerV3:
             'momentum_score': momentum_score,
             'mean_reversion_score': mean_rev_score,
             'trend_score': trend_score,
-            'volatility_score': volatility_score,
+            'volatility_score': 0,  # 하위 호환성을 위해 0으로 유지
             'signals': combined_signal,
 
             # 세부 시그널
             'momentum_signal': momentum_signal,
             'mean_reversion_signal': mean_rev_signal,
             'trend_signal': trend_signal,
-            'volatility_signal': volatility_signal,
+            'volatility_signal': '',  # 하위 호환성을 위해 빈 문자열
         }
 
 

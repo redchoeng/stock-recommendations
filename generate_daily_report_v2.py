@@ -348,6 +348,120 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             font-weight: bold;
         }}
 
+        .portfolio-calculator {{
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }}
+
+        .portfolio-calculator h2 {{
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }}
+
+        .calculator-input {{
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }}
+
+        .calculator-input label {{
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }}
+
+        .calculator-input input {{
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2d3748;
+        }}
+
+        .calculator-input input:focus {{
+            outline: none;
+            border-color: #667eea;
+        }}
+
+        .calculate-btn {{
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }}
+
+        .calculate-btn:hover {{
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+        }}
+
+        .portfolio-result {{
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            color: #2d3748;
+            display: none;
+        }}
+
+        .portfolio-result.show {{
+            display: block;
+        }}
+
+        .portfolio-result h3 {{
+            margin-bottom: 20px;
+            color: #667eea;
+            font-size: 1.5em;
+        }}
+
+        .portfolio-table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }}
+
+        .portfolio-table th {{
+            background: #f7fafc;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 600;
+            color: #4a5568;
+        }}
+
+        .portfolio-table td {{
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }}
+
+        .portfolio-table tr:hover {{
+            background: #f7fafc;
+        }}
+
+        .portfolio-table .ticker {{
+            font-weight: bold;
+            color: #667eea;
+        }}
+
+        .portfolio-table .amount {{
+            font-weight: bold;
+            color: #48bb78;
+        }}
+
         .section-title {{
             font-size: 1.6em;
             color: #1a202c;
@@ -699,6 +813,24 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             </div>
         </div>
 
+        <!-- 포트폴리오 계산기 -->
+        <div class="portfolio-calculator">
+            <h2>💰 포트폴리오 계산기</h2>
+            <p style="margin-bottom: 20px; opacity: 0.95;">시드머니를 입력하면 TOP 10 종목의 점수 기반 포트폴리오 구성을 확인할 수 있습니다</p>
+
+            <div class="calculator-input">
+                <label for="seedMoney">💵 투자 금액 (USD)</label>
+                <input type="number" id="seedMoney" placeholder="예: 10000" min="100" step="100">
+            </div>
+
+            <button class="calculate-btn" onclick="calculatePortfolio()">📊 포트폴리오 계산하기</button>
+
+            <div id="portfolioResult" class="portfolio-result">
+                <h3>📈 추천 포트폴리오 구성</h3>
+                <div id="portfolioContent"></div>
+            </div>
+        </div>
+
         <div class="tabs">
             <div class="tab active" onclick="showTab('all')">전체</div>
 """
@@ -796,6 +928,82 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
                 otherStocks.classList.add('show');
                 showMoreText.textContent = '▲ 접기';
             }
+        }
+
+        // 포트폴리오 계산 함수
+        const stocksData = """ + str([{
+            'ticker': s['ticker'],
+            'name': s['name'],
+            'total_score': s['total_score'],
+            'current_price': s.get('regular_market_price') or s['current_price'],
+        } for s in stocks_data[:10]]).replace("'", '"') + """;
+
+        function calculatePortfolio() {
+            const seedMoney = parseFloat(document.getElementById('seedMoney').value);
+
+            if (!seedMoney || seedMoney < 100) {
+                alert('투자 금액을 100 USD 이상 입력해주세요.');
+                return;
+            }
+
+            // TOP 10 종목만 사용
+            const topStocks = stocksData.slice(0, 10);
+
+            // 점수 기반 가중치 계산
+            const totalScore = topStocks.reduce((sum, stock) => sum + stock.total_score, 0);
+
+            let portfolioHTML = '<table class="portfolio-table">';
+            portfolioHTML += '<thead><tr>';
+            portfolioHTML += '<th>순위</th>';
+            portfolioHTML += '<th>티커</th>';
+            portfolioHTML += '<th>종목명</th>';
+            portfolioHTML += '<th>점수</th>';
+            portfolioHTML += '<th>배분 비율</th>';
+            portfolioHTML += '<th>투자 금액</th>';
+            portfolioHTML += '<th>현재가</th>';
+            portfolioHTML += '<th>매수 수량</th>';
+            portfolioHTML += '</tr></thead><tbody>';
+
+            let totalAllocated = 0;
+
+            topStocks.forEach((stock, index) => {
+                const weight = (stock.total_score / totalScore) * 100;
+                const allocation = seedMoney * (stock.total_score / totalScore);
+                const shares = Math.floor(allocation / stock.current_price);
+                const actualInvestment = shares * stock.current_price;
+
+                totalAllocated += actualInvestment;
+
+                portfolioHTML += '<tr>';
+                portfolioHTML += `<td>${index + 1}</td>`;
+                portfolioHTML += `<td class="ticker">${stock.ticker}</td>`;
+                portfolioHTML += `<td>${stock.name}</td>`;
+                portfolioHTML += `<td>${stock.total_score.toFixed(1)}</td>`;
+                portfolioHTML += `<td>${weight.toFixed(1)}%</td>`;
+                portfolioHTML += `<td class="amount">$${actualInvestment.toFixed(2)}</td>`;
+                portfolioHTML += `<td>$${stock.current_price.toFixed(2)}</td>`;
+                portfolioHTML += `<td><strong>${shares}</strong>주</td>`;
+                portfolioHTML += '</tr>';
+            });
+
+            portfolioHTML += '</tbody></table>';
+
+            const remaining = seedMoney - totalAllocated;
+
+            portfolioHTML += `<div style="margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 8px;">`;
+            portfolioHTML += `<div style="font-size: 1.2em; margin-bottom: 10px;"><strong>📊 투자 요약</strong></div>`;
+            portfolioHTML += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">`;
+            portfolioHTML += `<div><span style="color: #718096;">총 투자 금액:</span> <strong style="color: #2d3748;">$${seedMoney.toFixed(2)}</strong></div>`;
+            portfolioHTML += `<div><span style="color: #718096;">실제 투자액:</span> <strong style="color: #48bb78;">$${totalAllocated.toFixed(2)}</strong></div>`;
+            portfolioHTML += `<div><span style="color: #718096;">잔액:</span> <strong style="color: #ed8936;">$${remaining.toFixed(2)}</strong></div>`;
+            portfolioHTML += `<div><span style="color: #718096;">포트폴리오 구성:</span> <strong style="color: #667eea;">${topStocks.length}개 종목</strong></div>`;
+            portfolioHTML += `</div></div>`;
+
+            document.getElementById('portfolioContent').innerHTML = portfolioHTML;
+            document.getElementById('portfolioResult').classList.add('show');
+
+            // 결과로 스크롤
+            document.getElementById('portfolioResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     </script>
 </body>
