@@ -36,11 +36,20 @@ def analyze_stock_for_report(ticker):
         name = info.get('longName', ticker)
         sector = info.get('sector', 'N/A')
         current_price = df['Close'].iloc[-1]
-        change_pct = ((current_price - df['Close'].iloc[-2]) / df['Close'].iloc[-2]) * 100
+        previous_close = df['Close'].iloc[-2]
+        change_pct = ((current_price - previous_close) / previous_close) * 100
+
+        # 프리마켓/정규장 실시간 가격
+        premarket_price = info.get('preMarketPrice')
+        premarket_change = info.get('preMarketChangePercent')
+        regular_market_price = info.get('regularMarketPrice')
+        regular_market_change = info.get('regularMarketChangePercent')
 
         total_score = result_v3['total_score'] + theme_result['total_score']
 
-        price_rec = PriceRecommender(df, current_price)
+        # 가격 추천은 최신 가격 기준
+        latest_price = regular_market_price or current_price
+        price_rec = PriceRecommender(df, latest_price)
         price_recommendation = price_rec.get_recommendation(strategy='moderate')
 
         return {
@@ -48,7 +57,12 @@ def analyze_stock_for_report(ticker):
             'name': name,
             'sector': sector,
             'current_price': current_price,
+            'previous_close': previous_close,
             'change_pct': change_pct,
+            'premarket_price': premarket_price,
+            'premarket_change': premarket_change,
+            'regular_market_price': regular_market_price,
+            'regular_market_change': regular_market_change,
             'total_score': total_score,
             'v3_score': result_v3['total_score'],
             'theme_score': theme_result['total_score'],
@@ -91,8 +105,25 @@ def generate_stock_card_html(stock, idx, is_top5=False):
         </div>
 
         <div class="current-price">
-            <span class="price">${stock['current_price']:.2f}</span>
-            <span class="change {change_class}">{change_sign}{stock['change_pct']:.2f}%</span>
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">${stock['current_price']:.2f}</span>
+                <span class="change {change_class}">{change_sign}{stock['change_pct']:.2f}%</span>
+            </div>
+            {f'''
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">${stock['premarket_price']:.2f}</span>
+                <span class="change {'positive' if stock['premarket_change'] >= 0 else 'negative'}">{'+' if stock['premarket_change'] >= 0 else ''}{stock['premarket_change']:.2f}%</span>
+            </div>
+            ''' if stock.get('premarket_price') else ''}
+            {f'''
+            <div class="price-row regular">
+                <span class="price-label">현재가:</span>
+                <span class="price">${stock['regular_market_price']:.2f}</span>
+                <span class="change {'positive' if stock['regular_market_change'] >= 0 else 'negative'}">{'+' if stock['regular_market_change'] >= 0 else ''}{stock['regular_market_change']:.2f}%</span>
+            </div>
+            ''' if stock.get('regular_market_price') else ''}
         </div>
 
         <div class="metrics">
@@ -420,20 +451,43 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         }}
 
         .current-price {{
-            display: flex;
-            align-items: baseline;
-            gap: 12px;
             margin-bottom: 20px;
         }}
 
+        .price-row {{
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }}
+
+        .price-row.premarket {{
+            opacity: 0.9;
+            border-left: 3px solid #4299e1;
+            padding-left: 8px;
+        }}
+
+        .price-row.regular {{
+            opacity: 1;
+            border-left: 3px solid #48bb78;
+            padding-left: 8px;
+            font-weight: 600;
+        }}
+
+        .price-label {{
+            font-size: 0.9em;
+            color: #718096;
+            min-width: 90px;
+        }}
+
         .current-price .price {{
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #1a202c;
         }}
 
         .current-price .change {{
-            font-size: 1.1em;
+            font-size: 1.0em;
             font-weight: 600;
             padding: 4px 12px;
             border-radius: 15px;
