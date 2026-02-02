@@ -8,9 +8,12 @@
 
 import yfinance as yf
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import sys
 sys.path.insert(0, '.')
+
+# 한국 시간대 (UTC+9)
+KST = timezone(timedelta(hours=9))
 
 from quant_trading.technical_analyzer_v3 import TechnicalAnalyzerV3
 from quant_trading.theme_analyzer import ThemeAnalyzer
@@ -215,8 +218,9 @@ def generate_stock_card_html(stock, idx, is_top5=False):
 def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
     """HTML 리포트 생성"""
 
-    current_date = datetime.now().strftime('%Y년 %m월 %d일')
-    current_time = datetime.now().strftime('%H:%M:%S')
+    kst_now = datetime.now(KST)
+    current_date = kst_now.strftime('%Y년 %m월 %d일')
+    current_time = kst_now.strftime('%H:%M:%S')
 
     stocks_data = sorted(stocks_data, key=lambda x: x['total_score'], reverse=True)
 
@@ -1042,7 +1046,7 @@ def main():
 
         html_content = generate_html_report(stocks_data)
 
-        filename = f"daily_stock_report_{datetime.now().strftime('%Y%m%d')}.html"
+        filename = f"daily_stock_report_{datetime.now(KST).strftime('%Y%m%d')}.html"
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(html_content)
 
