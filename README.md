@@ -4,13 +4,9 @@
 
 ## 🌐 웹페이지 보기
 
-### 🚀 메인 (Netlify - 빠름)
-👉 **[https://redcho-stocks.netlify.app](https://redcho-stocks.netlify.app)**
-
-### 🔄 백업 (GitHub Pages)
 👉 **[https://redchoeng.github.io/stock-recommendations/](https://redchoeng.github.io/stock-recommendations/)**
 
-*매 2시간마다 자동 업데이트됩니다!*
+*프리마켓 + 정규장 시간 매시간 자동 업데이트! (한국 시간 18:00 - 익일 06:00)*
 
 ## 🎯 핵심 기능
 
