@@ -41,17 +41,41 @@ jobs:
           FMP_API_KEY = "$FMP_API_KEY"
           EOF
 
-      - name: Run daily update with Telegram
+      - name: Generate daily report
+        run: |
+          python generate_daily_report_v2.py
+
+      - name: Update index.html redirect
+        run: |
+          LATEST_REPORT=$(ls -t daily_stock_report_*.html | head -1)
+          cat > index.html << EOF
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset="UTF-8">
+              <meta http-equiv="refresh" content="0; url=./$LATEST_REPORT">
+              <title>Redirecting to Latest Report...</title>
+          </head>
+          <body>
+              <p>최신 리포트로 이동 중... <a href="./$LATEST_REPORT">여기를 클릭하세요</a></p>
+          </body>
+          </html>
+          EOF
+
+      - name: Run market monitor with Telegram
         run: |
           python daily_update_with_telegram.py
 
-      - name: Commit last rebalance date
+      - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
+          git add daily_stock_report_*.html index.html
+          git diff --quiet && git diff --staged --quiet || git commit -m "Daily report update - $(date +'%Y-%m-%d %H:%M')"
+
           if [ -f "last_rebalance.txt" ]; then
             git add last_rebalance.txt
-            git diff --quiet && git diff --staged --quiet || git commit -m "Update last rebalance date - $(date +'%Y-%m-%d')"
-            git push || true
           fi
+
+          git push || true
