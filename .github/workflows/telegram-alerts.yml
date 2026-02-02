@@ -1,0 +1,55 @@
+name: Telegram Alerts & Daily Update
+
+on:
+  schedule:
+    # 평일 미국 시장 시간 (UTC 14-22시, 2시간마다)
+    # 한국 시간: 23시-다음날 7시
+    - cron: '0 14-22/2 * * 1-5'
+
+  workflow_dispatch:  # 수동 실행 가능
+
+jobs:
+  market-monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas numpy requests textblob
+          python -m textblob.download_corpora
+
+      - name: Create config.py
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: |
+          cat > config.py << EOF
+          # Auto-generated config for GitHub Actions
+          TELEGRAM_BOT_TOKEN = "$TELEGRAM_BOT_TOKEN"
+          TELEGRAM_CHAT_ID = "$TELEGRAM_CHAT_ID"
+          FMP_API_KEY = "$FMP_API_KEY"
+          EOF
+
+      - name: Run daily update with Telegram
+        run: |
+          python daily_update_with_telegram.py
+
+      - name: Commit last rebalance date
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          if [ -f "last_rebalance.txt" ]; then
+            git add last_rebalance.txt
+            git diff --quiet && git diff --staged --quiet || git commit -m "Update last rebalance date - $(date +'%Y-%m-%d')"
+            git push || true
+          fi
