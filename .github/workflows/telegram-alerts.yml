@@ -13,10 +13,15 @@ on:
 jobs:
   market-monitor:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 명시적 권한 부여
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v4
