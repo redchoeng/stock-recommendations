@@ -131,7 +131,7 @@ class PriceRecommender:
 
     def calculate_exit_price(self, entry_price: float, risk_reward_ratio: float = 2.0) -> Dict[str, float]:
         """
-        매도 청산가 계산
+        매도 청산가 계산 (매수가 기준 순차 증가)
 
         Args:
             entry_price: 진입가격
@@ -139,27 +139,52 @@ class PriceRecommender:
 
         Returns:
             dict: {
-                'target_1': 1차 목표가 (저항선),
-                'target_2': 2차 목표가 (리스크/리워드 기준),
-                'target_3': 3차 목표가 (볼린저 상단)
+                'target_1': 1차 목표가 (보수적),
+                'target_2': 2차 목표가 (중도적),
+                'target_3': 3차 목표가 (공격적)
             }
         """
         _, resistance = self.calculate_support_resistance()
         recent = self.df.iloc[-1]
         atr = recent.get('ATR', self.current_price * 0.02)
 
-        # 1차 목표: 저항선
-        target_1 = resistance
+        # 후보 가격들 계산
+        candidate_1 = resistance  # 저항선
+        candidate_2 = entry_price + (atr * risk_reward_ratio)  # ATR 기반
 
-        # 2차 목표: ATR 기반 리스크/리워드 (2:1 또는 3:1)
-        # 손실 = 1 ATR, 이익 = 2 ATR or 3 ATR
-        target_2 = entry_price + (atr * risk_reward_ratio)
-
-        # 3차 목표: 볼린저 밴드 상단
+        # 볼린저 밴드 상단
         if pd.notna(recent.get('BB_Upper')):
-            target_3 = recent['BB_Upper']
+            candidate_3 = recent['BB_Upper']
         else:
-            target_3 = entry_price * 1.10  # 10% 상승
+            candidate_3 = entry_price * 1.10  # 10% 상승
+
+        # 모든 후보를 리스트로 모아서 정렬
+        candidates = [candidate_1, candidate_2, candidate_3]
+
+        # 매수가보다 높은 것만 필터링하고 정렬
+        valid_targets = sorted([p for p in candidates if p > entry_price])
+
+        # 최소 3개 목표가 필요 - 부족하면 매수가 기준으로 생성
+        if len(valid_targets) < 3:
+            # 매수가 기준으로 3%, 6%, 10% 상승 목표 생성
+            valid_targets = [
+                entry_price * 1.03,
+                entry_price * 1.06,
+                entry_price * 1.10
+            ]
+
+        # 순차적으로 할당
+        target_1 = valid_targets[0]
+        target_2 = valid_targets[min(1, len(valid_targets)-1)]
+        target_3 = valid_targets[min(2, len(valid_targets)-1)]
+
+        # 2차와 3차가 너무 가까우면 간격 조정
+        if target_3 - target_2 < entry_price * 0.02:  # 2% 미만 차이
+            target_3 = target_2 * 1.03  # 3% 추가 상승
+
+        if target_2 - target_1 < entry_price * 0.02:  # 2% 미만 차이
+            target_2 = target_1 * 1.03  # 3% 추가 상승
+            target_3 = target_2 * 1.03  # 3% 추가 상승
 
         return {
             'target_1': round(target_1, 2),
