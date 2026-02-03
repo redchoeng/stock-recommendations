@@ -2,53 +2,372 @@ name: Daily Stock Report Update
 
 on:
   schedule:
-    # 18:00 KST ~ 06:00 KST (09:00 ~ 21:00 UTC) 매시 정각 실행
-    - cron: '0 9-21 * * *'
-
+    - cron: '0 9-21 * * *'  # KST 18:00~06:00
   push:
-    branches:
-      - main
-
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   update-report:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install dependencies
         run: pip install yfinance pandas numpy
 
       - name: Generate NASDAQ 100 Report
-        run: python generate_daily_report_v2.py
+        run: |
+          python << 'SCRIPT'
+          import yfinance as yf
+          import pandas as pd
+          from datetime import datetime, timezone, timedelta
+          import concurrent.futures
+
+          KST = timezone(timedelta(hours=9))
+
+          NASDAQ100 = [
+              'AAPL','MSFT','NVDA','GOOGL','AMZN','META','TSLA','AVGO','COST','NFLX',
+              'AMD','QCOM','ADBE','PEP','CSCO','TMUS','INTC','INTU','CMCSA','TXN',
+              'AMGN','HON','AMAT','ISRG','BKNG','LRCX','VRTX','ADP','SBUX','GILD',
+              'MU','ADI','MDLZ','PANW','REGN','KLAC','SNPS','CDNS','PYPL','MELI',
+              'ASML','CRWD','MAR','ORLY','MNST','ABNB','CTAS','FTNT','MRVL','CSX',
+              'NXPI','PCAR','WDAY','CPRT','ROST','ODFL','AEP','DXCM','KDP','MRNA',
+              'AZN','CHTR','KHC','PAYX','EXC','FAST','CTSH','VRSK','EA','XEL',
+              'BIIB','IDXX','GEHC','FANG','BKR','ON','ANSS','CSGP','DDOG','GFS',
+              'ILMN','WBD','DLTR','WBA','LCID','RIVN','SIRI','CEG','TTD','ZS',
+              'TEAM','SPLK','MDB','DASH','ARM','SMCI','LLY','LULU','PDD','JD'
+          ]
+
+          def analyze(ticker):
+              try:
+                  stock = yf.Ticker(ticker)
+                  hist = stock.history(period='6mo')
+                  if hist.empty or len(hist) < 20:
+                      return None
+                  info = stock.info
+                  close = hist['Close']
+                  current = close.iloc[-1]
+                  prev = close.iloc[-2]
+                  change = ((current - prev) / prev) * 100
+
+                  # 간단한 점수 계산
+                  score = 50
+                  sma20 = close.rolling(20).mean().iloc[-1]
+                  sma50 = close.rolling(50).mean().iloc[-1] if len(close) >= 50 else sma20
+
+                  if current > sma20: score += 10
+                  if current > sma50: score += 10
+                  if sma20 > sma50: score += 10
+
+                  # RSI
+                  delta = close.diff()
+                  gain = delta.where(delta > 0, 0).rolling(14).mean()
+                  loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
+                  rs = gain / loss
+                  rsi = 100 - (100 / (1 + rs)).iloc[-1]
+
+                  if 30 < rsi < 70: score += 10
+                  if rsi < 30: score += 15  # 과매도
+
+                  pe = info.get('trailingPE', 0) or 0
+                  if 0 < pe < 25: score += 10
+
+                  return {
+                      'ticker': ticker,
+                      'name': info.get('shortName', ticker),
+                      'sector': info.get('sector', 'N/A'),
+                      'price': current,
+                      'change': change,
+                      'score': min(score, 100),
+                      'rsi': rsi,
+                      'sma20': sma20,
+                      'sma50': sma50
+                  }
+              except:
+                  return None
+
+          stocks = []
+          with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
+              futures = {ex.submit(analyze, t): t for t in NASDAQ100}
+              for f in concurrent.futures.as_completed(futures):
+                  r = f.result()
+                  if r: stocks.append(r)
+
+          stocks.sort(key=lambda x: x['score'], reverse=True)
+          now = datetime.now(KST)
+
+          html = f'''<!DOCTYPE html>
+          <html><head><meta charset="UTF-8"><title>NASDAQ 100 Report</title>
+          <style>
+          body{{font-family:sans-serif;background:#1a1a2e;color:#eee;padding:20px}}
+          .container{{max-width:1200px;margin:0 auto}}
+          h1{{color:#00d4ff;text-align:center}}
+          .date{{text-align:center;color:#888;margin-bottom:30px}}
+          .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px}}
+          .card{{background:#16213e;border-radius:12px;padding:20px;border:1px solid #0f3460}}
+          .card.top5{{border:2px solid #00d4ff;background:#1a1a3e}}
+          .ticker{{font-size:1.4em;font-weight:bold;color:#00d4ff}}
+          .name{{color:#888;font-size:0.9em}}
+          .price{{font-size:1.3em;margin:10px 0}}
+          .change{{padding:3px 8px;border-radius:5px;font-size:0.9em}}
+          .up{{background:#0a3622;color:#4ade80}}
+          .down{{background:#3b1c1c;color:#f87171}}
+          .score{{background:#00d4ff;color:#000;padding:5px 12px;border-radius:15px;font-weight:bold}}
+          .metrics{{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:0.85em;color:#aaa}}
+          </style></head><body>
+          <div class="container">
+          <h1>NASDAQ 100 Daily Report</h1>
+          <div class="date">{now.strftime('%Y-%m-%d %H:%M')} KST</div>
+          <div class="grid">'''
+
+          for i, s in enumerate(stocks[:50]):
+              cls = 'card top5' if i < 5 else 'card'
+              chg_cls = 'up' if s['change'] >= 0 else 'down'
+              sign = '+' if s['change'] >= 0 else ''
+              html += f'''<div class="{cls}">
+              <div class="ticker">{s['ticker']} <span class="score">{s['score']:.0f}</span></div>
+              <div class="name">{s['name']}</div>
+              <div class="price">${s['price']:.2f} <span class="change {chg_cls}">{sign}{s['change']:.2f}%</span></div>
+              <div class="metrics">
+              <div>RSI: {s['rsi']:.1f}</div>
+              <div>SMA20: ${s['sma20']:.2f}</div>
+              </div></div>'''
+
+          html += '</div></div></body></html>'
+
+          with open('nasdaq100_report.html', 'w', encoding='utf-8') as f:
+              f.write(html)
+          print(f'NASDAQ report: {len(stocks)} stocks')
+          SCRIPT
 
       - name: Generate Value Stocks Report
-        run: python generate_value_report.py
-
-      - name: Update index.html links
         run: |
-          NASDAQ_REPORT=$(ls -t nasdaq100_report_*.html 2>/dev/null | head -1 || echo "")
-          if [ -n "$NASDAQ_REPORT" ] && [ -f "index.html" ]; then
-            sed -i "s|href=\"nasdaq100_report[^\"]*\.html\"|href=\"$NASDAQ_REPORT\"|g" index.html
-          fi
+          python << 'SCRIPT'
+          import yfinance as yf
+          import pandas as pd
+          from datetime import datetime, timezone, timedelta
+          import concurrent.futures
 
-      - name: Commit and push changes
+          KST = timezone(timedelta(hours=9))
+
+          # 가치주/배당주 (기술주 제외)
+          VALUE_TICKERS = [
+              # 금융
+              'JPM','BAC','WFC','GS','MS','BLK','BRK-B','PGR','CB','MMC','V','MA','AXP',
+              # 헬스케어
+              'JNJ','UNH','PFE','ABBV','MRK','LLY','CVS','CI','ABT','MDT','TMO','DHR',
+              # 필수소비재
+              'PG','KO','PEP','WMT','COST','PM','MO','CL','KMB','GIS','K','MDLZ',
+              # 산업재
+              'HON','UNP','CAT','DE','LMT','RTX','GE','MMM','UPS','FDX','WM','EMR',
+              # 에너지
+              'XOM','CVX','COP','SLB','EOG','MPC','PSX','VLO','OXY','WMB','KMI',
+              # 유틸리티
+              'NEE','DUK','SO','D','AEP','EXC','XEL','WEC','ES','ED','DTE','AES',
+              # 리츠
+              'PLD','AMT','CCI','EQIX','PSA','SPG','O','WELL','AVB','EQR','DLR',
+              # 소재
+              'LIN','APD','SHW','ECL','DD','NUE','FCX','NEM','VMC','MLM'
+          ]
+
+          # 정책 수혜 종목
+          POLICY_STOCKS = {
+              'LMT': ('방산', 15), 'RTX': ('방산', 15), 'NOC': ('방산', 15), 'GD': ('방산', 12),
+              'CAT': ('인프라', 12), 'DE': ('인프라', 10), 'VMC': ('인프라', 10), 'MLM': ('인프라', 10),
+              'NEE': ('IRA', 12), 'AES': ('IRA', 10), 'SO': ('IRA', 8),
+              'XOM': ('에너지', 8), 'CVX': ('에너지', 8)
+          }
+
+          def analyze(ticker):
+              try:
+                  stock = yf.Ticker(ticker)
+                  hist = stock.history(period='1y')
+                  if hist.empty or len(hist) < 60:
+                      return None
+                  info = stock.info
+                  close = hist['Close']
+                  current = close.iloc[-1]
+                  prev = close.iloc[-2]
+                  change = ((current - prev) / prev) * 100
+
+                  # 밥값 점수 (45점)
+                  val_score = 0
+                  roe = info.get('returnOnEquity', 0) or 0
+                  if roe > 0.2: val_score += 15
+                  elif roe > 0.15: val_score += 12
+                  elif roe > 0.1: val_score += 9
+                  elif roe > 0.05: val_score += 6
+                  elif roe > 0: val_score += 3
+
+                  margin = info.get('operatingMargins', 0) or 0
+                  if margin > 0.2: val_score += 10
+                  elif margin > 0.15: val_score += 8
+                  elif margin > 0.1: val_score += 6
+                  elif margin > 0.05: val_score += 4
+                  elif margin > 0: val_score += 2
+
+                  div_yield = info.get('dividendYield', 0) or 0
+                  if div_yield > 1: div_yield = div_yield / 100
+                  if div_yield >= 0.04: val_score += 10
+                  elif div_yield >= 0.03: val_score += 8
+                  elif div_yield >= 0.02: val_score += 6
+                  elif div_yield >= 0.01: val_score += 4
+                  elif div_yield > 0: val_score += 2
+
+                  pe = info.get('trailingPE', 0) or 0
+                  if 0 < pe < 15: val_score += 10
+                  elif 0 < pe < 20: val_score += 7
+                  elif 0 < pe < 25: val_score += 4
+
+                  # 기술적 점수 (25점)
+                  tech_score = 0
+                  sma20 = close.rolling(20).mean().iloc[-1]
+                  sma50 = close.rolling(50).mean().iloc[-1]
+
+                  if current > sma20: tech_score += 5
+                  if current > sma50: tech_score += 5
+                  if sma20 > sma50: tech_score += 5
+
+                  delta = close.diff()
+                  gain = delta.where(delta > 0, 0).rolling(14).mean()
+                  loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
+                  rs = gain / loss
+                  rsi = 100 - (100 / (1 + rs)).iloc[-1]
+                  if 30 < rsi < 70: tech_score += 5
+                  if rsi < 35: tech_score += 5
+
+                  # 안정성 점수 (15점)
+                  stab_score = 0
+                  vol = close.pct_change().std() * (252 ** 0.5) * 100
+                  if vol <= 15: stab_score += 7
+                  elif vol <= 20: stab_score += 6
+                  elif vol <= 25: stab_score += 5
+                  elif vol <= 30: stab_score += 3
+                  elif vol <= 40: stab_score += 1
+
+                  beta = info.get('beta', 1) or 1
+                  if beta <= 0.5: stab_score += 8
+                  elif beta <= 0.8: stab_score += 7
+                  elif beta <= 1.0: stab_score += 5
+                  elif beta <= 1.2: stab_score += 3
+                  else: stab_score += 1
+
+                  # 정책 점수 (15점)
+                  policy_info = POLICY_STOCKS.get(ticker)
+                  policy_score = policy_info[1] if policy_info else 0
+                  policy_name = policy_info[0] if policy_info else ''
+
+                  total = val_score + tech_score + stab_score + policy_score
+
+                  return {
+                      'ticker': ticker,
+                      'name': info.get('shortName', ticker),
+                      'sector': info.get('sector', 'N/A'),
+                      'price': current,
+                      'change': change,
+                      'total': total,
+                      'val_score': val_score,
+                      'tech_score': tech_score,
+                      'stab_score': stab_score,
+                      'policy_score': policy_score,
+                      'policy_name': policy_name,
+                      'roe': roe * 100,
+                      'div_yield': div_yield * 100,
+                      'beta': beta,
+                      'vol': vol
+                  }
+              except:
+                  return None
+
+          stocks = []
+          with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
+              futures = {ex.submit(analyze, t): t for t in VALUE_TICKERS}
+              for f in concurrent.futures.as_completed(futures):
+                  r = f.result()
+                  if r and r['total'] >= 40: stocks.append(r)
+
+          stocks.sort(key=lambda x: x['total'], reverse=True)
+          now = datetime.now(KST)
+
+          html = f'''<!DOCTYPE html>
+          <html><head><meta charset="UTF-8"><title>Value Stocks Report</title>
+          <style>
+          body{{font-family:sans-serif;background:linear-gradient(180deg,#87CEEB 0%,#98D8C8 30%,#F7DC6F 70%,#FADBD8 100%);background-attachment:fixed;padding:20px;color:#5D4E37}}
+          .container{{max-width:1200px;margin:0 auto}}
+          h1{{text-align:center;color:#5D4E37;text-shadow:2px 2px 0 #FFF5BA}}
+          .date{{text-align:center;color:#7B6B4F;margin-bottom:30px}}
+          .summary{{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:30px}}
+          .summary-card{{background:#FFF8DC;border-radius:15px;padding:15px;text-align:center;border:3px solid #5D4E37}}
+          .summary-card .label{{color:#7B6B4F;font-size:0.9em}}
+          .summary-card .value{{color:#FF6B35;font-size:1.5em;font-weight:bold}}
+          .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}}
+          .card{{background:#fff;border-radius:20px;padding:20px;border:3px solid #5D4E37;box-shadow:0 5px 0 #E8A838}}
+          .card.top5{{background:#FFFACD;border:4px solid #F5B041}}
+          .top-badge{{background:#F5B041;color:#fff;padding:4px 12px;border-radius:10px;font-size:0.8em;margin-right:8px}}
+          .ticker{{font-size:1.3em;font-weight:bold;color:#5D4E37}}
+          .name{{color:#7B6B4F;font-size:0.85em}}
+          .price{{font-size:1.2em;margin:10px 0}}
+          .change{{padding:3px 8px;border-radius:8px;font-size:0.85em}}
+          .up{{background:#E8F5E9;color:#2E7D32}}
+          .down{{background:#FFEBEE;color:#C62828}}
+          .score-badge{{background:#E8A838;color:#fff;padding:8px 15px;border-radius:15px;font-weight:bold;border:2px solid #5D4E37}}
+          .metrics{{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}}
+          .metric{{background:#FFF8DC;padding:8px;border-radius:10px;text-align:center;border:2px solid #C4A35A}}
+          .metric .label{{font-size:0.7em;color:#7B6B4F}}
+          .metric .value{{font-size:0.95em;font-weight:bold;color:#5D4E37}}
+          .details{{font-size:0.8em;color:#7B6B4F;margin-top:10px;padding-top:10px;border-top:2px dashed #C4A35A}}
+          .policy{{display:inline-block;background:#9B59B6;color:#fff;padding:2px 8px;border-radius:8px;font-size:0.75em;margin-left:5px}}
+          .dividend{{display:inline-block;background:#4CAF50;color:#fff;padding:2px 8px;border-radius:8px;font-size:0.75em;margin-left:5px}}
+          </style></head><body>
+          <div class="container">
+          <h1>Value Stocks Daily Report</h1>
+          <div class="date">{now.strftime('%Y-%m-%d %H:%M')} KST | 김기현방법</div>
+          <div class="summary">
+          <div class="summary-card"><div class="label">분석 종목</div><div class="value">{len(stocks)}</div></div>
+          <div class="summary-card"><div class="label">평균 점수</div><div class="value">{sum(s["total"] for s in stocks)/len(stocks) if stocks else 0:.1f}</div></div>
+          <div class="summary-card"><div class="label">고배당 (3%+)</div><div class="value">{len([s for s in stocks if s["div_yield"]>=3])}</div></div>
+          <div class="summary-card"><div class="label">최고 점수</div><div class="value">{max(s["total"] for s in stocks) if stocks else 0:.0f}</div></div>
+          </div>
+          <div class="grid">'''
+
+          for i, s in enumerate(stocks[:30]):
+              cls = 'card top5' if i < 5 else 'card'
+              badge = f'<span class="top-badge">TOP {i+1}</span>' if i < 5 else ''
+              chg_cls = 'up' if s['change'] >= 0 else 'down'
+              sign = '+' if s['change'] >= 0 else ''
+              div_badge = f'<span class="dividend">{s["div_yield"]:.1f}%</span>' if s['div_yield'] >= 2 else ''
+              pol_badge = f'<span class="policy">{s["policy_name"]}</span>' if s['policy_name'] else ''
+
+              html += f'''<div class="{cls}">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>{badge}<span class="ticker">{s['ticker']}</span>{div_badge}{pol_badge}<div class="name">{s['name']} | {s['sector']}</div></div>
+              <span class="score-badge">{s['total']:.0f}점</span>
+              </div>
+              <div class="price">${s['price']:.2f} <span class="change {chg_cls}">{sign}{s['change']:.2f}%</span></div>
+              <div class="metrics">
+              <div class="metric"><div class="label">밥값+배당</div><div class="value">{s['val_score']}/45</div></div>
+              <div class="metric"><div class="label">기술적</div><div class="value">{s['tech_score']}/25</div></div>
+              <div class="metric"><div class="label">안정성</div><div class="value">{s['stab_score']}/15</div></div>
+              <div class="metric"><div class="label">정책</div><div class="value">{s['policy_score']}/15</div></div>
+              </div>
+              <div class="details">ROE {s['roe']:.1f}% | 배당 {s['div_yield']:.2f}% | 베타 {s['beta']:.2f} | 변동성 {s['vol']:.1f}%</div>
+              </div>'''
+
+          html += '</div></div></body></html>'
+
+          with open('value_report.html', 'w', encoding='utf-8') as f:
+              f.write(html)
+          print(f'Value report: {len(stocks)} stocks')
+          SCRIPT
+
+      - name: Commit and push
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add -A
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Auto update reports - $(date -u '+%Y-%m-%d %H:%M') UTC"
-            git push
-          fi
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add nasdaq100_report.html value_report.html
+          git diff --staged --quiet || git commit -m "Update reports $(date -u '+%Y-%m-%d %H:%M') UTC" && git push
