@@ -1,9 +1,15 @@
 """
-일일 주식 추천 웹페이지 생성기 V2
-- 눈에 편한 색상
-- TOP 5 강조
-- 더보기 버튼
-- 섹터별 탭
+일일 주식 추천 웹페이지 생성기 V3
+- 김기현 파트장 투자 철학 반영
+- 밥값 점수 (Valuation) 추가
+- 자동화/AI 수혜 점수 추가
+- 기술적 지표 비중 축소
+
+점수 체계 (90점 만점):
+- 밥값 점수: 35점 (ROE, 마진, 성장)
+- 자동화/AI 수혜: 25점 (AI인프라, 자동화, 리쇼어링)
+- 기술적 분석: 20점 (모멘텀, 추세)
+- 테마/뉴스: 10점
 """
 
 import yfinance as yf
@@ -18,10 +24,20 @@ KST = timezone(timedelta(hours=9))
 from quant_trading.technical_analyzer_v3 import TechnicalAnalyzerV3
 from quant_trading.theme_analyzer import ThemeAnalyzer
 from quant_trading.price_recommender import PriceRecommender
+from quant_trading.valuation_analyzer import ValuationAnalyzer
+from quant_trading.automation_analyzer import AutomationAnalyzer
 
 
 def analyze_stock_for_report(ticker):
-    """리포트용 종목 분석"""
+    """
+    리포트용 종목 분석 - 김기현 투자 철학 반영
+
+    점수 체계 (90점 만점):
+    - 밥값 점수: 35점 (ROE, 마진, 성장)
+    - 자동화/AI 수혜: 25점 (AI인프라, 자동화, 리쇼어링)
+    - 기술적 분석: 20점 (65점 -> 20점으로 스케일)
+    - 테마/뉴스: 10점 (25점 -> 10점으로 스케일)
+    """
     try:
         stock = yf.Ticker(ticker)
         df = stock.history(period='2y')
@@ -29,11 +45,28 @@ def analyze_stock_for_report(ticker):
         if df.empty or len(df) < 180:
             return None
 
+        # 1. 기술적 분석 (20점 만점으로 스케일)
         tech_v3 = TechnicalAnalyzerV3(df)
         result_v3 = tech_v3.calculate_total_score()
+        tech_score_scaled = (result_v3['total_score'] / 65) * 20  # 65점 -> 20점
 
+        # 2. 밥값 점수 (35점 만점)
+        valuation = ValuationAnalyzer(ticker)
+        valuation_result = valuation.calculate_total_score()
+        valuation_score = valuation_result['total_score']
+
+        # 3. 자동화/AI 수혜 점수 (25점 만점)
+        automation = AutomationAnalyzer(ticker)
+        automation_result = automation.calculate_total_score()
+        automation_score = automation_result['total_score']
+
+        # 4. 테마/뉴스 (10점 만점으로 스케일)
         theme_analyzer = ThemeAnalyzer(ticker)
         theme_result = theme_analyzer.calculate_total_score()
+        theme_score_scaled = (theme_result['total_score'] / 25) * 10  # 25점 -> 10점
+
+        # 총점 계산 (90점 만점)
+        total_score = valuation_score + automation_score + tech_score_scaled + theme_score_scaled
 
         info = stock.info
         name = info.get('longName', ticker)
@@ -49,8 +82,6 @@ def analyze_stock_for_report(ticker):
         regular_market_change = info.get('regularMarketChangePercent')
         postmarket_price = info.get('postMarketPrice')
         postmarket_change = info.get('postMarketChangePercent')
-
-        total_score = result_v3['total_score'] + theme_result['total_score']
 
         # 가격 추천은 최신 가격 기준
         latest_price = regular_market_price or current_price
@@ -71,8 +102,21 @@ def analyze_stock_for_report(ticker):
             'postmarket_price': postmarket_price,
             'postmarket_change': postmarket_change,
             'total_score': total_score,
-            'v3_score': result_v3['total_score'],
-            'theme_score': theme_result['total_score'],
+            # 새 점수 체계
+            'valuation_score': valuation_score,  # 35점 만점
+            'automation_score': automation_score,  # 25점 만점
+            'tech_score': tech_score_scaled,  # 20점 만점
+            'theme_score': theme_score_scaled,  # 10점 만점
+            # 밥값 상세
+            'roe': valuation_result['roe'],
+            'operating_margin': valuation_result['operating_margin'],
+            'is_profitable': valuation_result['is_profitable'],
+            'valuation_verdict': valuation_result['verdict'],
+            # 자동화 상세
+            'ai_reason': automation_result['ai_reason'],
+            'automation_reason': automation_result['automation_reason'],
+            'automation_verdict': automation_result['verdict'],
+            # 기술적 분석 (기존 호환)
             'momentum': result_v3['momentum_score'],
             'mean_reversion': result_v3['mean_reversion_score'],
             'trend': result_v3['trend_score'],
@@ -190,25 +234,34 @@ def generate_stock_card_html(stock, idx, is_top5=False, market_session='regular'
         </div>
 
         <div class="metrics">
-            <div class="metric">
-                <div class="label">Momentum</div>
-                <div class="value">{stock['momentum']}/30</div>
+            <div class="metric {'highlight' if stock.get('valuation_score', 0) >= 25 else ''}">
+                <div class="label">밥값</div>
+                <div class="value">{stock.get('valuation_score', 0):.0f}/35</div>
+            </div>
+            <div class="metric {'highlight' if stock.get('automation_score', 0) >= 15 else ''}">
+                <div class="label">자동화</div>
+                <div class="value">{stock.get('automation_score', 0):.0f}/25</div>
             </div>
             <div class="metric">
-                <div class="label">Mean Rev</div>
-                <div class="value">{stock['mean_reversion']}/20</div>
+                <div class="label">기술적</div>
+                <div class="value">{stock.get('tech_score', 0):.0f}/20</div>
             </div>
             <div class="metric">
-                <div class="label">Trend</div>
-                <div class="value">{stock['trend']}/15</div>
+                <div class="label">테마</div>
+                <div class="value">{stock.get('theme_score', 0):.0f}/10</div>
             </div>
-            <div class="metric">
-                <div class="label">Volatility</div>
-                <div class="value">{stock['volatility']}/10</div>
+        </div>
+
+        <!-- 밥값/자동화 상세 -->
+        <div class="verdict-section">
+            <div class="verdict-item {'profitable' if stock.get('is_profitable') else 'unprofitable'}">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">{stock.get('roe', 0):.1f}%</span>
+                <span class="verdict-desc">| {stock.get('valuation_verdict', '')}</span>
             </div>
-            <div class="metric">
-                <div class="label">Theme</div>
-                <div class="value">{stock['theme_score']}/25</div>
+            <div class="verdict-item">
+                <span class="verdict-label">AI/자동화:</span>
+                <span class="verdict-value">{stock.get('ai_reason', '')}</span>
             </div>
         </div>
 
@@ -723,6 +776,61 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             color: #2d3748;
             font-size: 1.2em;
             font-weight: bold;
+        }}
+
+        .metric.highlight {{
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }}
+
+        .metric.highlight .label,
+        .metric.highlight .value {{
+            color: white;
+        }}
+
+        /* 밥값/자동화 상세 섹션 */
+        .verdict-section {{
+            background: #f0f4f8;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }}
+
+        .verdict-item {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }}
+
+        .verdict-item:last-child {{
+            margin-bottom: 0;
+        }}
+
+        .verdict-label {{
+            font-weight: 600;
+            color: #4a5568;
+            min-width: 80px;
+        }}
+
+        .verdict-value {{
+            color: #2d3748;
+            font-weight: 500;
+        }}
+
+        .verdict-desc {{
+            color: #718096;
+            font-size: 0.9em;
+        }}
+
+        .verdict-item.profitable .verdict-value {{
+            color: #38a169;
+        }}
+
+        .verdict-item.unprofitable .verdict-value {{
+            color: #e53e3e;
         }}
 
         .price-section {{
@@ -1317,11 +1425,18 @@ def main():
     print("일일 주식 추천 리포트 생성 중...\n")
 
     tickers = [
+        # AI 반도체
         'NVDA', 'AMD', 'AVGO', 'QCOM', 'MU',
+        # 빅테크
         'MSFT', 'GOOGL', 'META', 'AAPL', 'AMZN',
-        'XOM', 'CVX', 'COP',
+        # 자동화/로봇 - 김기현 TOP PICK
+        'TER', 'ROK', 'HON', 'AMAT', 'LRCX',
+        # 에너지
+        'XOM', 'CVX',
+        # 방산 (리쇼어링 수혜)
         'LMT', 'RTX', 'NOC', 'GD',
-        'JPM', 'BAC', 'GS', 'WFC',
+        # 금융
+        'JPM', 'GS',
     ]
 
     print(f"분석 중: {len(tickers)}개 종목\n")
