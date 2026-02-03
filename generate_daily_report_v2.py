@@ -35,6 +35,18 @@ def get_sp500_tickers():
         print(f"[WARNING] S&P 500 목록 로드 실패: {e}")
         return None
 
+
+def get_nasdaq100_tickers():
+    """NASDAQ 100 종목 목록 가져오기"""
+    try:
+        from nasdaq100_tickers import get_nasdaq100_list
+        tickers = get_nasdaq100_list()
+        print(f"NASDAQ 100 종목 {len(tickers)}개 로드 완료")
+        return tickers
+    except Exception as e:
+        print(f"[WARNING] NASDAQ 100 목록 로드 실패: {e}")
+        return None
+
 from quant_trading.technical_analyzer_v3 import TechnicalAnalyzerV3
 from quant_trading.price_recommender import PriceRecommender
 from quant_trading.valuation_analyzer import ValuationAnalyzer
@@ -380,6 +392,7 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title} - {current_date}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {{
             margin: 0;
@@ -388,39 +401,92 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         }}
 
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #f5f7fa;
+            font-family: 'Noto Sans KR', -apple-system, sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 30%, #F7DC6F 70%, #FADBD8 100%);
+            background-attachment: fixed;
             padding: 20px;
             min-height: 100vh;
-            color: #2d3748;
+            color: #5D4E37;
+            position: relative;
+            overflow-x: hidden;
+        }}
+
+        /* 구름 애니메이션 */
+        .cloud {{
+            position: fixed;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.8;
+            animation: float 25s infinite linear;
+            z-index: 0;
+        }}
+        .cloud::before, .cloud::after {{
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }}
+        .cloud-1 {{ width: 100px; height: 40px; top: 10%; left: -100px; animation-delay: 0s; }}
+        .cloud-1::before {{ width: 50px; height: 50px; top: -25px; left: 15px; }}
+        .cloud-1::after {{ width: 35px; height: 35px; top: -15px; left: 55px; }}
+        .cloud-2 {{ width: 120px; height: 45px; top: 25%; left: -120px; animation-delay: -8s; }}
+        .cloud-2::before {{ width: 55px; height: 55px; top: -30px; left: 20px; }}
+        .cloud-2::after {{ width: 40px; height: 40px; top: -18px; left: 65px; }}
+        .cloud-3 {{ width: 80px; height: 35px; top: 40%; left: -80px; animation-delay: -16s; }}
+        .cloud-3::before {{ width: 40px; height: 40px; top: -20px; left: 10px; }}
+        .cloud-3::after {{ width: 30px; height: 30px; top: -12px; left: 40px; }}
+
+        @keyframes float {{
+            0% {{ transform: translateX(0); }}
+            100% {{ transform: translateX(calc(100vw + 200px)); }}
+        }}
+
+        /* 반짝이 효과 */
+        .sparkle {{
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: sparkle 2s infinite;
+            z-index: 1;
+        }}
+        @keyframes sparkle {{
+            0%, 100% {{ opacity: 0; transform: scale(0); }}
+            50% {{ opacity: 1; transform: scale(1); }}
         }}
 
         .container {{
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }}
 
         .header {{
             background: white;
-            border-radius: 15px;
+            border-radius: 30px;
             padding: 35px;
             margin-bottom: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 0 #5BA3E0, 0 12px 20px rgba(0,0,0,0.15);
+            border: 4px solid #5D4E37;
+            text-align: center;
         }}
 
         .header h1 {{
-            color: #1a202c;
+            color: #5D4E37;
             font-size: 2.2em;
             margin-bottom: 8px;
+            text-shadow: 2px 2px 0 #B8E4FF;
         }}
 
         .header .subtitle {{
-            color: #4a5568;
+            color: #7B6B4F;
             font-size: 1em;
         }}
 
         .header .date {{
-            color: #4299e1;
+            color: #5BA3E0;
             font-weight: 600;
             margin-top: 10px;
             font-size: 1.1em;
@@ -431,28 +497,31 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             gap: 10px;
             margin-bottom: 25px;
             flex-wrap: wrap;
+            justify-content: center;
         }}
 
         .tab {{
             background: white;
-            border: 2px solid #e2e8f0;
+            border: 3px solid #5D4E37;
             padding: 12px 25px;
-            border-radius: 8px;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.2s;
             font-weight: 500;
-            color: #4a5568;
+            color: #5D4E37;
+            box-shadow: 0 4px 0 #C4A35A;
         }}
 
         .tab:hover {{
-            border-color: #4299e1;
-            color: #4299e1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #C4A35A;
         }}
 
         .tab.active {{
-            background: #4299e1;
-            border-color: #4299e1;
+            background: #5BA3E0;
+            border-color: #5D4E37;
             color: white;
+            box-shadow: 0 4px 0 #3B83BD;
         }}
 
         .tab-content {{
@@ -465,189 +534,82 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
 
         .summary {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 25px;
         }}
 
         .summary-card {{
-            background: white;
-            border-radius: 12px;
+            background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 100%);
+            border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 3px solid #5D4E37;
+            box-shadow: 0 4px 0 #C4A35A;
+            text-align: center;
         }}
 
         .summary-card .label {{
-            color: #718096;
+            color: #7B6B4F;
             font-size: 0.85em;
             margin-bottom: 8px;
         }}
 
         .summary-card .value {{
-            color: #2d3748;
+            color: #FF6B35;
             font-size: 1.8em;
             font-weight: bold;
-        }}
-
-        .portfolio-calculator {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 25px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-        }}
-
-        .portfolio-calculator h2 {{
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }}
-
-        .calculator-input {{
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-        }}
-
-        .calculator-input label {{
-            display: block;
-            color: #2d3748;
-            font-weight: 600;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }}
-
-        .calculator-input input {{
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #2d3748;
-        }}
-
-        .calculator-input input:focus {{
-            outline: none;
-            border-color: #667eea;
-        }}
-
-        .calculate-btn {{
-            background: #48bb78;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }}
-
-        .calculate-btn:hover {{
-            background: #38a169;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
-        }}
-
-        .portfolio-result {{
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            padding: 25px;
-            color: #2d3748;
-            display: none;
-        }}
-
-        .portfolio-result.show {{
-            display: block;
-        }}
-
-        .portfolio-result h3 {{
-            margin-bottom: 20px;
-            color: #667eea;
-            font-size: 1.5em;
-        }}
-
-        .portfolio-table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }}
-
-        .portfolio-table th {{
-            background: #f7fafc;
-            padding: 12px;
-            text-align: left;
-            border-bottom: 2px solid #e2e8f0;
-            font-weight: 600;
-            color: #4a5568;
-        }}
-
-        .portfolio-table td {{
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
-        }}
-
-        .portfolio-table tr:hover {{
-            background: #f7fafc;
-        }}
-
-        .portfolio-table .ticker {{
-            font-weight: bold;
-            color: #667eea;
-        }}
-
-        .portfolio-table .amount {{
-            font-weight: bold;
-            color: #48bb78;
+            text-shadow: 1px 1px 0 #5D4E37;
         }}
 
         .section-title {{
             font-size: 1.6em;
-            color: #1a202c;
+            color: #5D4E37;
             margin: 30px 0 20px 0;
             display: flex;
             align-items: center;
             gap: 10px;
-        }}
-
-        .section-title::before {{
-            content: '';
-            width: 4px;
-            height: 28px;
-            background: #4299e1;
-            border-radius: 2px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            border: 3px solid #5D4E37;
+            box-shadow: 0 4px 0 #C4A35A;
         }}
 
         .stock-card {{
-            background: white;
-            border-radius: 15px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F5F5DC 100%);
+            border-radius: 20px;
             padding: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 3px solid #5D4E37;
+            box-shadow: 0 5px 0 #5BA3E0, 0 8px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
         }}
 
         .stock-card:hover {{
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 0 #5BA3E0, 0 15px 25px rgba(0,0,0,0.15);
         }}
 
         .top5-card {{
-            border: 3px solid #f6ad55;
-            background: linear-gradient(to right, #fff, #fffaf0);
+            border: 4px solid #F5B041;
+            background: linear-gradient(180deg, #FFFACD 0%, #FFF8DC 100%);
+            box-shadow: 0 6px 0 #E8A838, 0 10px 20px rgba(0,0,0,0.15);
+        }}
+
+        .top5-card:hover {{
+            box-shadow: 0 12px 0 #E8A838, 0 18px 30px rgba(0,0,0,0.15);
         }}
 
         .top5-label {{
             display: inline-block;
-            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+            background: linear-gradient(135deg, #F5B041 0%, #E8A838 100%);
             color: white;
             padding: 6px 15px;
-            border-radius: 20px;
+            border-radius: 15px;
             font-weight: bold;
             font-size: 0.9em;
             margin-right: 10px;
+            border: 2px solid #5D4E37;
         }}
 
         .stock-header {{
@@ -656,7 +618,7 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 3px dashed #C4A35A;
         }}
 
         .stock-title {{
@@ -664,45 +626,49 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         }}
 
         .stock-title h2 {{
-            color: #1a202c;
+            color: #5D4E37;
             font-size: 1.5em;
             margin-bottom: 5px;
         }}
 
         .stock-title .ticker {{
-            color: #4299e1;
+            color: #5BA3E0;
             font-size: 1em;
             font-weight: 600;
         }}
 
         .stock-title .sector {{
-            color: #718096;
+            color: #7B6B4F;
             font-size: 0.85em;
             margin-top: 5px;
         }}
 
         .score-badge {{
-            background: #4299e1;
+            background: #5BA3E0;
             color: white;
             padding: 12px 25px;
-            border-radius: 40px;
+            border-radius: 25px;
             font-size: 1.3em;
             font-weight: bold;
             text-align: center;
             min-width: 90px;
+            border: 3px solid #5D4E37;
+            box-shadow: 0 3px 0 #3B83BD;
         }}
 
         .score-badge.top5 {{
-            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+            background: linear-gradient(135deg, #F5B041 0%, #E8A838 100%);
             font-size: 1.5em;
+            box-shadow: 0 4px 0 #C4842F;
         }}
 
         .score-badge.high {{
-            background: #48bb78;
+            background: #4CAF50;
+            box-shadow: 0 3px 0 #388E3C;
         }}
 
         .score-badge.medium {{
-            background: #4299e1;
+            background: #5BA3E0;
         }}
 
         .current-price {{
@@ -718,50 +684,53 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
 
         .price-row.premarket {{
             opacity: 0.9;
-            border-left: 3px solid #4299e1;
+            border-left: 3px solid #5BA3E0;
             padding-left: 8px;
         }}
 
         .price-row.regular {{
             opacity: 1;
-            border-left: 3px solid #48bb78;
+            border-left: 3px solid #4CAF50;
             padding-left: 8px;
             font-weight: 600;
         }}
 
         .price-row.afterhours {{
             opacity: 0.9;
-            border-left: 3px solid #ed8936;
+            border-left: 3px solid #F5B041;
             padding-left: 8px;
         }}
 
         .price-label {{
             font-size: 0.9em;
-            color: #718096;
+            color: #7B6B4F;
             min-width: 90px;
         }}
 
         .current-price .price {{
             font-size: 1.5em;
             font-weight: bold;
-            color: #1a202c;
+            color: #5D4E37;
         }}
 
         .current-price .change {{
             font-size: 1.0em;
             font-weight: 600;
             padding: 4px 12px;
-            border-radius: 15px;
+            border-radius: 12px;
+            border: 2px solid;
         }}
 
         .current-price .change.positive {{
-            background: #c6f6d5;
-            color: #22543d;
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-color: #4CAF50;
         }}
 
         .current-price .change.negative {{
-            background: #fed7d7;
-            color: #742a2a;
+            background: #FFEBEE;
+            color: #C62828;
+            border-color: #E53935;
         }}
 
         .metrics {{
@@ -772,27 +741,29 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         }}
 
         .metric {{
-            background: #f7fafc;
+            background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 100%);
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 15px;
             text-align: center;
+            border: 2px solid #C4A35A;
         }}
 
         .metric .label {{
-            color: #718096;
+            color: #7B6B4F;
             font-size: 0.75em;
             margin-bottom: 6px;
         }}
 
         .metric .value {{
-            color: #2d3748;
+            color: #5D4E37;
             font-size: 1.2em;
             font-weight: bold;
         }}
 
         .metric.highlight {{
-            background: linear-gradient(135deg, #48bb78, #38a169);
+            background: linear-gradient(135deg, #4CAF50, #45A049);
             color: white;
+            border-color: #388E3C;
         }}
 
         .metric.highlight .label,
@@ -802,11 +773,11 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
 
         /* 밥값/자동화 상세 섹션 */
         .verdict-section {{
-            background: #f0f4f8;
-            border-radius: 8px;
+            background: linear-gradient(180deg, #E8F4FD 0%, #D6EAF8 100%);
+            border-radius: 15px;
             padding: 12px 15px;
             margin-bottom: 15px;
-            border-left: 4px solid #667eea;
+            border: 2px solid #5BA3E0;
         }}
 
         .verdict-item {{
@@ -823,26 +794,26 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
 
         .verdict-label {{
             font-weight: 600;
-            color: #4a5568;
+            color: #5D4E37;
             min-width: 80px;
         }}
 
         .verdict-value {{
-            color: #2d3748;
+            color: #5D4E37;
             font-weight: 500;
         }}
 
         .verdict-desc {{
-            color: #718096;
+            color: #7B6B4F;
             font-size: 0.9em;
         }}
 
         .verdict-item.profitable .verdict-value {{
-            color: #38a169;
+            color: #4CAF50;
         }}
 
         .verdict-item.unprofitable .verdict-value {{
-            color: #e53e3e;
+            color: #E53935;
         }}
 
         .price-section {{
@@ -853,29 +824,29 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         }}
 
         .price-box {{
-            background: #f7fafc;
-            border-radius: 12px;
+            background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 100%);
+            border-radius: 15px;
             padding: 18px;
-            border: 2px solid #e2e8f0;
+            border: 3px solid #5D4E37;
         }}
 
         .price-box.buy {{
-            border-color: #4299e1;
-            background: #ebf8ff;
+            border-color: #5BA3E0;
+            background: linear-gradient(180deg, #E8F4FD 0%, #D6EAF8 100%);
         }}
 
         .price-box.sell {{
-            border-color: #9f7aea;
-            background: #faf5ff;
+            border-color: #9B59B6;
+            background: linear-gradient(180deg, #F5EEF8 0%, #E8DAEF 100%);
         }}
 
         .price-box.stop {{
-            border-color: #fc8181;
-            background: #fff5f5;
+            border-color: #E53935;
+            background: linear-gradient(180deg, #FFEBEE 0%, #FFCDD2 100%);
         }}
 
         .price-box h3 {{
-            color: #2d3748;
+            color: #5D4E37;
             margin-bottom: 12px;
             font-size: 1em;
         }}
@@ -884,7 +855,7 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 2px dashed rgba(93, 78, 55, 0.2);
         }}
 
         .price-item:last-child {{
@@ -892,40 +863,40 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         }}
 
         .price-item .label {{
-            color: #4a5568;
+            color: #7B6B4F;
             font-weight: 500;
             font-size: 0.9em;
         }}
 
         .price-item .value {{
-            color: #1a202c;
+            color: #5D4E37;
             font-weight: bold;
         }}
 
         .signal {{
-            background: #edf2f7;
+            background: linear-gradient(180deg, #E8F4FD 0%, #D6EAF8 100%);
             padding: 12px;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-top: 15px;
-            border-left: 3px solid #4299e1;
+            border: 2px solid #5BA3E0;
         }}
 
         .signal .label {{
-            color: #718096;
+            color: #7B6B4F;
             font-size: 0.85em;
             margin-bottom: 6px;
         }}
 
         .signal .value {{
-            color: #2d3748;
+            color: #5D4E37;
             font-weight: 500;
             line-height: 1.5;
         }}
 
         .risk-reward {{
-            background: #fff5f5;
-            border: 2px solid #fc8181;
-            border-radius: 8px;
+            background: linear-gradient(180deg, #FFEBEE 0%, #FFCDD2 100%);
+            border: 3px solid #E53935;
+            border-radius: 15px;
             padding: 12px;
             margin-top: 15px;
             text-align: center;
@@ -934,7 +905,7 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         .risk-reward .ratio {{
             font-size: 1.3em;
             font-weight: bold;
-            color: #c53030;
+            color: #C62828;
         }}
 
         .show-more-btn {{
@@ -944,18 +915,20 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             margin: 30px auto;
             padding: 15px 30px;
             background: white;
-            border: 2px solid #4299e1;
-            color: #4299e1;
+            border: 3px solid #5D4E37;
+            color: #5D4E37;
             font-size: 1.1em;
             font-weight: 600;
-            border-radius: 10px;
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            font-family: 'Noto Sans KR', sans-serif;
+            box-shadow: 0 4px 0 #C4A35A;
         }}
 
         .show-more-btn:hover {{
-            background: #4299e1;
-            color: white;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #C4A35A;
         }}
 
         #other-stocks {{
@@ -967,24 +940,26 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         }}
 
         .footer {{
-            background: white;
-            border-radius: 12px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
             padding: 20px;
             text-align: center;
-            color: #718096;
+            color: #7B6B4F;
             margin-top: 30px;
             font-size: 0.9em;
+            border: 3px solid #C4A35A;
         }}
 
         .rank-badge {{
             display: inline-block;
-            background: #edf2f7;
-            color: #4a5568;
+            background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 100%);
+            color: #5D4E37;
             padding: 4px 12px;
-            border-radius: 15px;
+            border-radius: 12px;
             font-weight: 600;
             margin-right: 8px;
             font-size: 0.9em;
+            border: 2px solid #C4A35A;
         }}
 
         /* 점수 항목 클릭 기능 */
@@ -996,7 +971,7 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
 
         .metric.clickable:hover {{
             transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(91, 163, 224, 0.3);
         }}
 
         .metric.clickable:active {{
@@ -1010,13 +985,16 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 15px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFF8DC 100%);
+            border-radius: 25px;
             padding: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 0 #C4A35A, 0 15px 40px rgba(0,0,0,0.3);
             z-index: 10000;
-            max-width: 400px;
+            max-width: 420px;
             width: 90%;
+            border: 4px solid #5D4E37;
+            max-height: 80vh;
+            overflow-y: auto;
         }}
 
         .score-tooltip.show {{
@@ -1030,7 +1008,7 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             z-index: 9999;
         }}
 
@@ -1039,10 +1017,10 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         }}
 
         .score-tooltip h3 {{
-            color: #2d3748;
+            color: #5D4E37;
             margin-bottom: 15px;
             font-size: 1.3em;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 3px solid #5BA3E0;
             padding-bottom: 10px;
         }}
 
@@ -1054,9 +1032,9 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
 
         .score-tooltip .criteria-list li {{
             padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 2px dashed #C4A35A;
             font-size: 0.95em;
-            color: #4a5568;
+            color: #5D4E37;
         }}
 
         .score-tooltip .criteria-list li:last-child {{
@@ -1065,22 +1043,28 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
 
         .score-tooltip .criteria-list .score-value {{
             font-weight: 700;
-            color: #667eea;
+            color: #5BA3E0;
         }}
 
         .score-tooltip .close-btn {{
             position: absolute;
             top: 15px;
             right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5em;
+            background: #E53935;
+            border: 2px solid #5D4E37;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2em;
             cursor: pointer;
-            color: #a0aec0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
 
         .score-tooltip .close-btn:hover {{
-            color: #2d3748;
+            background: #C62828;
         }}
 
         /* 뉴스 섹션 스타일 */
@@ -1126,9 +1110,21 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
     </style>
 </head>
 <body>
+    <!-- 구름들 -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+
+    <!-- 반짝이들 -->
+    <div class="sparkle" style="top: 15%; left: 10%;"></div>
+    <div class="sparkle" style="top: 25%; right: 15%; animation-delay: 0.5s;"></div>
+    <div class="sparkle" style="top: 45%; left: 8%; animation-delay: 1s;"></div>
+    <div class="sparkle" style="top: 65%; right: 12%; animation-delay: 1.5s;"></div>
+
     <div class="container">
         <div class="header">
-            <h1>📊 Daily Stock Recommendations</h1>
+            <div style="font-size: 3em; margin-bottom: 10px;">🚀</div>
+            <h1>NASDAQ 100 Recommendations</h1>
             <div class="subtitle">검증된 퀀트 전략 기반 매수/매도 가격 추천</div>
             <div class="date">{current_date} {current_time} 업데이트</div>
         </div>
@@ -1149,24 +1145,6 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             <div class="summary-card">
                 <div class="label">최고 점수</div>
                 <div class="value">{max(s['total_score'] for s in stocks_data):.0f}점</div>
-            </div>
-        </div>
-
-        <!-- 포트폴리오 계산기 -->
-        <div class="portfolio-calculator">
-            <h2>💰 포트폴리오 계산기</h2>
-            <p style="margin-bottom: 20px; opacity: 0.95;">시드머니를 입력하면 TOP 10 종목의 점수 기반 포트폴리오 구성을 확인할 수 있습니다</p>
-
-            <div class="calculator-input">
-                <label for="seedMoney">💵 투자 금액 (USD)</label>
-                <input type="number" id="seedMoney" placeholder="예: 10000" min="100" step="100">
-            </div>
-
-            <button class="calculate-btn" onclick="calculatePortfolio()">📊 포트폴리오 계산하기</button>
-
-            <div id="portfolioResult" class="portfolio-result">
-                <h3>📈 추천 포트폴리오 구성</h3>
-                <div id="portfolioContent"></div>
             </div>
         </div>
 
@@ -1415,81 +1393,6 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             }
         }
 
-        // 포트폴리오 계산 함수
-        const stocksData = """ + str([{
-            'ticker': s['ticker'],
-            'name': s['name'],
-            'total_score': s['total_score'],
-            'current_price': s.get('regular_market_price') or s['current_price'],
-        } for s in stocks_data[:10]]).replace("'", '"') + """;
-
-        function calculatePortfolio() {
-            const seedMoney = parseFloat(document.getElementById('seedMoney').value);
-
-            if (!seedMoney || seedMoney < 100) {
-                alert('투자 금액을 100 USD 이상 입력해주세요.');
-                return;
-            }
-
-            // TOP 10 종목만 사용
-            const topStocks = stocksData.slice(0, 10);
-
-            // 점수 기반 가중치 계산
-            const totalScore = topStocks.reduce((sum, stock) => sum + stock.total_score, 0);
-
-            let portfolioHTML = '<table class="portfolio-table">';
-            portfolioHTML += '<thead><tr>';
-            portfolioHTML += '<th>순위</th>';
-            portfolioHTML += '<th>티커</th>';
-            portfolioHTML += '<th>종목명</th>';
-            portfolioHTML += '<th>점수</th>';
-            portfolioHTML += '<th>배분 비율</th>';
-            portfolioHTML += '<th>투자 금액</th>';
-            portfolioHTML += '<th>현재가</th>';
-            portfolioHTML += '<th>매수 수량</th>';
-            portfolioHTML += '</tr></thead><tbody>';
-
-            let totalAllocated = 0;
-
-            topStocks.forEach((stock, index) => {
-                const weight = (stock.total_score / totalScore) * 100;
-                const allocation = seedMoney * (stock.total_score / totalScore);
-                const shares = Math.floor(allocation / stock.current_price);
-                const actualInvestment = shares * stock.current_price;
-
-                totalAllocated += actualInvestment;
-
-                portfolioHTML += '<tr>';
-                portfolioHTML += `<td>${index + 1}</td>`;
-                portfolioHTML += `<td class="ticker">${stock.ticker}</td>`;
-                portfolioHTML += `<td>${stock.name}</td>`;
-                portfolioHTML += `<td>${stock.total_score.toFixed(1)}</td>`;
-                portfolioHTML += `<td>${weight.toFixed(1)}%</td>`;
-                portfolioHTML += `<td class="amount">$${actualInvestment.toFixed(2)}</td>`;
-                portfolioHTML += `<td>$${stock.current_price.toFixed(2)}</td>`;
-                portfolioHTML += `<td><strong>${shares}</strong>주</td>`;
-                portfolioHTML += '</tr>';
-            });
-
-            portfolioHTML += '</tbody></table>';
-
-            const remaining = seedMoney - totalAllocated;
-
-            portfolioHTML += `<div style="margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 8px;">`;
-            portfolioHTML += `<div style="font-size: 1.2em; margin-bottom: 10px;"><strong>📊 투자 요약</strong></div>`;
-            portfolioHTML += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">`;
-            portfolioHTML += `<div><span style="color: #718096;">총 투자 금액:</span> <strong style="color: #2d3748;">$${seedMoney.toFixed(2)}</strong></div>`;
-            portfolioHTML += `<div><span style="color: #718096;">실제 투자액:</span> <strong style="color: #48bb78;">$${totalAllocated.toFixed(2)}</strong></div>`;
-            portfolioHTML += `<div><span style="color: #718096;">잔액:</span> <strong style="color: #ed8936;">$${remaining.toFixed(2)}</strong></div>`;
-            portfolioHTML += `<div><span style="color: #718096;">포트폴리오 구성:</span> <strong style="color: #667eea;">${topStocks.length}개 종목</strong></div>`;
-            portfolioHTML += `</div></div>`;
-
-            document.getElementById('portfolioContent').innerHTML = portfolioHTML;
-            document.getElementById('portfolioResult').classList.add('show');
-
-            // 결과로 스크롤
-            document.getElementById('portfolioResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
     </script>
 </body>
 </html>
@@ -1498,12 +1401,32 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
     return html
 
 
-def main():
-    """메인 함수"""
+def main(index_type='nasdaq100'):
+    """
+    메인 함수
+
+    Args:
+        index_type: 'sp500' 또는 'nasdaq100' (기본값: nasdaq100)
+    """
     print("일일 주식 추천 리포트 생성 중...\n")
 
-    # S&P 500 전체 종목 가져오기
-    tickers = get_sp500_tickers()
+    # 명령행 인자 확인
+    if len(sys.argv) > 1:
+        arg = sys.argv[1].lower()
+        if arg in ['sp500', 's&p500', 'snp']:
+            index_type = 'sp500'
+        elif arg in ['nasdaq100', 'nasdaq', 'ndx']:
+            index_type = 'nasdaq100'
+
+    # 지수 타입에 따라 종목 가져오기
+    if index_type == 'sp500':
+        print("[S&P 500 분석 모드]")
+        tickers = get_sp500_tickers()
+        report_title = "S&P 500 Daily Stock Recommendations"
+    else:
+        print("[NASDAQ 100 분석 모드]")
+        tickers = get_nasdaq100_tickers()
+        report_title = "NASDAQ 100 Daily Stock Recommendations"
 
     if tickers is None:
         # 실패 시 기본 종목 사용
@@ -1591,9 +1514,11 @@ def main():
             print(f"[제외] {filtered_out}개 종목 제외 (50점 미만)")
         print(f"[추천 대상] {len(stocks_data)}개 종목")
 
-        html_content = generate_html_report(stocks_data)
+        html_content = generate_html_report(stocks_data, title=report_title)
 
-        filename = f"daily_stock_report_{datetime.now(KST).strftime('%Y%m%d')}.html"
+        # 파일명에 지수 타입 포함
+        index_prefix = 'nasdaq100' if index_type == 'nasdaq100' else 'sp500'
+        filename = f"{index_prefix}_report_{datetime.now(KST).strftime('%Y%m%d')}.html"
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(html_content)
 
