@@ -16,8 +16,13 @@ class MarketMonitor:
     """시장 급변 감지 클래스"""
 
     def __init__(self):
-        self.spy = yf.Ticker('SPY')
-        self.vix = yf.Ticker('^VIX')
+        self.spy = None
+        self.vix = None
+        try:
+            self.spy = yf.Ticker('SPY')
+            self.vix = yf.Ticker('^VIX')
+        except Exception as e:
+            print(f"[WARNING] yfinance 초기화 실패: {e}")
 
         # 임계값 설정
         self.CRASH_THRESHOLD = -3.0  # -3% 이상 하락
@@ -37,6 +42,9 @@ class MarketMonitor:
             }
         """
         try:
+            if self.spy is None:
+                return {'change_pct': 0, 'alert': False, 'alert_type': None}
+
             # 최근 2일 데이터
             df = self.spy.history(period='2d')
 
@@ -82,6 +90,9 @@ class MarketMonitor:
             }
         """
         try:
+            if self.vix is None:
+                return {'vix': 0, 'alert': False}
+
             df = self.vix.history(period='1d')
 
             if df.empty:

@@ -198,9 +198,16 @@ def main():
             print("[5] 리밸런싱 결과 전송...")
 
             # 간단한 성과 계산 (SPY 대비)
-            spy = yf.Ticker('SPY')
-            spy_df = spy.history(period='1mo')
-            spy_return = (spy_df['Close'].iloc[-1] - spy_df['Close'].iloc[0]) / spy_df['Close'].iloc[0]
+            try:
+                spy = yf.Ticker('SPY')
+                spy_df = spy.history(period='1mo')
+                if spy_df.empty or len(spy_df) < 2:
+                    spy_return = 0
+                else:
+                    spy_return = (spy_df['Close'].iloc[-1] - spy_df['Close'].iloc[0]) / spy_df['Close'].iloc[0]
+            except Exception as e:
+                print(f"    [WARNING] SPY 데이터 로드 실패: {e}")
+                spy_return = 0
 
             performance = {
                 'return': spy_return,
