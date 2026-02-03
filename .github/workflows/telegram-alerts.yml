@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install yfinance pandas numpy requests textblob pytz
+          pip install yfinance pandas numpy requests textblob pytz lxml html5lib
           python -m textblob.download_corpora
 
       - name: Create config.py
