@@ -4,10 +4,10 @@
 - "인건비 30% 폭등 -> 자동화는 필연"
 - "걷는 로봇은 시기상조, 바퀴 달린 로봇이 돈 된다"
 
-25점 만점:
+20점 만점:
 - AI 인프라 수혜: 10점
 - 자동화/로봇 수혜: 10점
-- 리쇼어링(미국 공장 복귀) 수혜: 5점
+(리쇼어링은 policy_analyzer로 이동)
 """
 
 import yfinance as yf
@@ -151,22 +151,21 @@ class AutomationAnalyzer:
 
     def calculate_total_score(self) -> Dict:
         """
-        자동화/AI 수혜 총점 계산 (25점 만점)
+        자동화/AI 수혜 총점 계산 (20점 만점)
         """
         ai_result = self.calculate_ai_infra_score()
         auto_result = self.calculate_automation_score()
-        reshoring_result = self.calculate_reshoring_score()
 
-        total = ai_result['score'] + auto_result['score'] + reshoring_result['score']
+        total = ai_result['score'] + auto_result['score']
 
         # 종합 평가
-        if total >= 20:
+        if total >= 16:
             verdict = "자동화 시대 최대 수혜주"
-        elif total >= 15:
+        elif total >= 12:
             verdict = "자동화 트렌드 수혜"
-        elif total >= 10:
+        elif total >= 8:
             verdict = "간접 수혜"
-        elif total >= 5:
+        elif total >= 4:
             verdict = "일부 수혜"
         else:
             verdict = "자동화 무관 - 인건비 리스크"
@@ -175,22 +174,19 @@ class AutomationAnalyzer:
             'total_score': total,
             'ai_infra_score': ai_result['score'],
             'automation_score': auto_result['score'],
-            'reshoring_score': reshoring_result['score'],
             'ai_reason': ai_result['reason'],
             'automation_reason': auto_result['reason'],
-            'reshoring_reason': reshoring_result['reason'],
             'verdict': verdict,
             'details': {
                 'ai_infra': ai_result,
-                'automation': auto_result,
-                'reshoring': reshoring_result
+                'automation': auto_result
             }
         }
 
 
 # 테스트
 if __name__ == "__main__":
-    test_tickers = ['TER', 'NVDA', 'TSLA', 'AAPL', 'LMT']
+    test_tickers = ['TER', 'NVDA', 'TSLA', 'AAPL', 'ROK']
 
     for ticker in test_tickers:
         print(f"\n{'='*50}")
@@ -202,6 +198,5 @@ if __name__ == "__main__":
 
         print(f"AI 인프라: {result['ai_infra_score']}/10 - {result['ai_reason']}")
         print(f"자동화/로봇: {result['automation_score']}/10 - {result['automation_reason']}")
-        print(f"리쇼어링: {result['reshoring_score']}/5 - {result['reshoring_reason']}")
-        print(f"\n총점: {result['total_score']}/25")
+        print(f"\n총점: {result['total_score']}/20")
         print(f"평가: {result['verdict']}")

@@ -2,41 +2,55 @@
 일일 주식 추천 웹페이지 생성기 V3
 - 김기현 파트장 투자 철학 반영
 - 밥값 점수 (Valuation) 추가
+- 미국 정책 수혜 점수 추가
 - 자동화/AI 수혜 점수 추가
-- 기술적 지표 비중 축소
 
-점수 체계 (90점 만점):
+점수 체계 (100점 만점):
 - 밥값 점수: 35점 (ROE, 마진, 성장)
-- 자동화/AI 수혜: 25점 (AI인프라, 자동화, 리쇼어링)
-- 기술적 분석: 20점 (모멘텀, 추세)
-- 테마/뉴스: 10점
+- 기술적 분석: 25점 (모멘텀, 추세)
+- 자동화/AI 수혜: 20점 (AI인프라, 자동화/로봇)
+- 정책 수혜: 20점 (CHIPS, IRA, 방산, 인프라)
 """
 
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timezone, timedelta
 import sys
+import time
+import concurrent.futures
 sys.path.insert(0, '.')
 
 # 한국 시간대 (UTC+9)
 KST = timezone(timedelta(hours=9))
 
+
+def get_sp500_tickers():
+    """S&P 500 종목 목록 가져오기"""
+    try:
+        from sp500_tickers import get_sp500_list
+        tickers = get_sp500_list()
+        print(f"S&P 500 종목 {len(tickers)}개 로드 완료")
+        return tickers
+    except Exception as e:
+        print(f"[WARNING] S&P 500 목록 로드 실패: {e}")
+        return None
+
 from quant_trading.technical_analyzer_v3 import TechnicalAnalyzerV3
-from quant_trading.theme_analyzer import ThemeAnalyzer
 from quant_trading.price_recommender import PriceRecommender
 from quant_trading.valuation_analyzer import ValuationAnalyzer
 from quant_trading.automation_analyzer import AutomationAnalyzer
+from quant_trading.policy_analyzer import PolicyAnalyzer
 
 
 def analyze_stock_for_report(ticker):
     """
     리포트용 종목 분석 - 김기현 투자 철학 반영
 
-    점수 체계 (90점 만점):
+    점수 체계 (100점 만점):
     - 밥값 점수: 35점 (ROE, 마진, 성장)
-    - 자동화/AI 수혜: 25점 (AI인프라, 자동화, 리쇼어링)
-    - 기술적 분석: 20점 (65점 -> 20점으로 스케일)
-    - 테마/뉴스: 10점 (25점 -> 10점으로 스케일)
+    - 기술적 분석: 25점 (65점 -> 25점으로 스케일)
+    - 자동화/AI 수혜: 20점 (AI인프라, 자동화/로봇)
+    - 정책 수혜: 20점 (25점 -> 20점으로 스케일)
     """
     try:
         stock = yf.Ticker(ticker)
@@ -45,28 +59,28 @@ def analyze_stock_for_report(ticker):
         if df.empty or len(df) < 180:
             return None
 
-        # 1. 기술적 분석 (20점 만점으로 스케일)
+        # 1. 기술적 분석 (25점 만점으로 스케일)
         tech_v3 = TechnicalAnalyzerV3(df)
         result_v3 = tech_v3.calculate_total_score()
-        tech_score_scaled = (result_v3['total_score'] / 65) * 20  # 65점 -> 20점
+        tech_score_scaled = (result_v3['total_score'] / 65) * 25  # 65점 -> 25점
 
         # 2. 밥값 점수 (35점 만점)
         valuation = ValuationAnalyzer(ticker)
         valuation_result = valuation.calculate_total_score()
         valuation_score = valuation_result['total_score']
 
-        # 3. 자동화/AI 수혜 점수 (25점 만점)
+        # 3. 자동화/AI 수혜 점수 (20점 만점)
         automation = AutomationAnalyzer(ticker)
         automation_result = automation.calculate_total_score()
         automation_score = automation_result['total_score']
 
-        # 4. 테마/뉴스 (10점 만점으로 스케일)
-        theme_analyzer = ThemeAnalyzer(ticker)
-        theme_result = theme_analyzer.calculate_total_score()
-        theme_score_scaled = (theme_result['total_score'] / 25) * 10  # 25점 -> 10점
+        # 4. 정책 수혜 점수 (20점 만점으로 스케일)
+        policy = PolicyAnalyzer(ticker)
+        policy_result = policy.calculate_total_score()
+        policy_score = (policy_result['total_score'] / 25) * 20  # 25점 -> 20점
 
-        # 총점 계산 (90점 만점)
-        total_score = valuation_score + automation_score + tech_score_scaled + theme_score_scaled
+        # 총점 계산 (100점 만점)
+        total_score = valuation_score + tech_score_scaled + automation_score + policy_score
 
         info = stock.info
         name = info.get('longName', ticker)
@@ -102,29 +116,31 @@ def analyze_stock_for_report(ticker):
             'postmarket_price': postmarket_price,
             'postmarket_change': postmarket_change,
             'total_score': total_score,
-            # 새 점수 체계
+            # 새 점수 체계 (100점 만점)
             'valuation_score': valuation_score,  # 35점 만점
-            'automation_score': automation_score,  # 25점 만점
-            'tech_score': tech_score_scaled,  # 20점 만점
-            'theme_score': theme_score_scaled,  # 10점 만점
+            'tech_score': tech_score_scaled,  # 25점 만점
+            'automation_score': automation_score,  # 20점 만점
+            'policy_score': policy_score,  # 20점 만점
             # 밥값 상세
             'roe': valuation_result['roe'],
             'operating_margin': valuation_result['operating_margin'],
             'is_profitable': valuation_result['is_profitable'],
             'valuation_verdict': valuation_result['verdict'],
+            # 정책 수혜 상세
+            'policy_summary': policy_result['policy_summary'],
+            'policy_verdict': policy_result['verdict'],
+            'chips_reason': policy_result['chips_reason'],
             # 자동화 상세
             'ai_reason': automation_result['ai_reason'],
             'automation_reason': automation_result['automation_reason'],
             'automation_verdict': automation_result['verdict'],
-            # 기술적 분석 (기존 호환)
+            # 기술적 분석
             'momentum': result_v3['momentum_score'],
             'mean_reversion': result_v3['mean_reversion_score'],
             'trend': result_v3['trend_score'],
             'volatility': result_v3['volatility_score'],
             'signal': result_v3['signals'],
-            'theme': theme_result['matched_theme'],
             'price_rec': price_recommendation,
-            'news_headlines': theme_result.get('positive_headlines', []),
         }
     except Exception as e:
         print(f"[ERROR] {ticker}: {e}")
@@ -222,7 +238,7 @@ def generate_stock_card_html(stock, idx, is_top5=False, market_session='regular'
                 <span class="rank-badge">#{idx}</span>
                 <h2>{stock['name']}</h2>
                 <div class="ticker">{stock['ticker']}</div>
-                <div class="sector">{stock['sector']} | {stock['theme']}</div>
+                <div class="sector">{stock['sector']}</div>
             </div>
             <div class="score-badge {badge_class}">
                 {stock['total_score']:.0f}점
@@ -234,25 +250,25 @@ def generate_stock_card_html(stock, idx, is_top5=False, market_session='regular'
         </div>
 
         <div class="metrics">
-            <div class="metric {'highlight' if stock.get('valuation_score', 0) >= 25 else ''}">
+            <div class="metric clickable {'highlight' if stock.get('valuation_score', 0) >= 25 else ''}" onclick="showScoreCriteria('valuation')">
                 <div class="label">밥값</div>
                 <div class="value">{stock.get('valuation_score', 0):.0f}/35</div>
             </div>
-            <div class="metric {'highlight' if stock.get('automation_score', 0) >= 15 else ''}">
-                <div class="label">자동화</div>
-                <div class="value">{stock.get('automation_score', 0):.0f}/25</div>
-            </div>
-            <div class="metric">
+            <div class="metric clickable {'highlight' if stock.get('tech_score', 0) >= 15 else ''}" onclick="showScoreCriteria('technical')">
                 <div class="label">기술적</div>
-                <div class="value">{stock.get('tech_score', 0):.0f}/20</div>
+                <div class="value">{stock.get('tech_score', 0):.0f}/25</div>
             </div>
-            <div class="metric">
-                <div class="label">테마</div>
-                <div class="value">{stock.get('theme_score', 0):.0f}/10</div>
+            <div class="metric clickable {'highlight' if stock.get('automation_score', 0) >= 12 else ''}" onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">{stock.get('automation_score', 0):.0f}/20</div>
+            </div>
+            <div class="metric clickable {'highlight' if stock.get('policy_score', 0) >= 12 else ''}" onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">{stock.get('policy_score', 0):.0f}/20</div>
             </div>
         </div>
 
-        <!-- 밥값/자동화 상세 -->
+        <!-- 핵심 지표 요약 -->
         <div class="verdict-section">
             <div class="verdict-item {'profitable' if stock.get('is_profitable') else 'unprofitable'}">
                 <span class="verdict-label">ROE:</span>
@@ -260,7 +276,11 @@ def generate_stock_card_html(stock, idx, is_top5=False, market_session='regular'
                 <span class="verdict-desc">| {stock.get('valuation_verdict', '')}</span>
             </div>
             <div class="verdict-item">
-                <span class="verdict-label">AI/자동화:</span>
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">{stock.get('policy_summary', '없음')}</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
                 <span class="verdict-value">{stock.get('ai_reason', '')}</span>
             </div>
         </div>
@@ -325,14 +345,6 @@ def generate_stock_card_html(stock, idx, is_top5=False, market_session='regular'
             <div class="ratio">{pr['risk_reward_ratio']:.2f}:1</div>
         </div>
 
-        {f'''
-        <div class="news-section">
-            <div class="news-title">📰 관련 뉴스</div>
-            <ul class="news-list">
-                {"".join(f'<li>{headline}</li>' for headline in stock.get('news_headlines', [])[:3])}
-            </ul>
-        </div>
-        ''' if stock.get('news_headlines') else ''}
     </div>
     """
 
@@ -975,103 +987,100 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             font-size: 0.9em;
         }}
 
-        /* 검색 박스 스타일 */
-        .search-box {{
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        /* 점수 항목 클릭 기능 */
+        .metric.clickable {{
+            cursor: pointer;
+            transition: all 0.2s ease;
             position: relative;
         }}
 
-        .search-box input {{
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 1.1em;
-            box-sizing: border-box;
-            transition: all 0.3s;
+        .metric.clickable:hover {{
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }}
 
-        .search-box input:focus {{
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        .metric.clickable:active {{
+            transform: scale(0.98);
         }}
 
-        .search-results {{
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            max-height: 400px;
-            overflow-y: auto;
-            z-index: 1000;
+        /* 점수 기준 팝업 */
+        .score-tooltip {{
             display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 400px;
+            width: 90%;
         }}
 
-        .search-results.show {{
+        .score-tooltip.show {{
             display: block;
         }}
 
-        .search-result-item {{
-            padding: 15px 20px;
+        .score-tooltip-overlay {{
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+        }}
+
+        .score-tooltip-overlay.show {{
+            display: block;
+        }}
+
+        .score-tooltip h3 {{
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }}
+
+        .score-tooltip .criteria-list {{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }}
+
+        .score-tooltip .criteria-list li {{
+            padding: 8px 0;
             border-bottom: 1px solid #e2e8f0;
-            cursor: pointer;
-            transition: background 0.2s;
+            font-size: 0.95em;
+            color: #4a5568;
         }}
 
-        .search-result-item:hover {{
-            background: #f7fafc;
-        }}
-
-        .search-result-item:last-child {{
+        .score-tooltip .criteria-list li:last-child {{
             border-bottom: none;
         }}
 
-        .search-result-ticker {{
+        .score-tooltip .criteria-list .score-value {{
             font-weight: 700;
-            color: #2d3748;
-            font-size: 1.1em;
+            color: #667eea;
         }}
 
-        .search-result-name {{
-            color: #718096;
-            font-size: 0.9em;
-            margin-left: 10px;
-        }}
-
-        .search-result-score {{
-            float: right;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 15px;
-        }}
-
-        .search-result-score.high {{
-            background: linear-gradient(135deg, #48bb78, #38a169);
-            color: white;
-        }}
-
-        .search-result-score.medium {{
-            background: linear-gradient(135deg, #ecc94b, #d69e2e);
-            color: white;
-        }}
-
-        .search-result-score.low {{
-            background: #e2e8f0;
-            color: #718096;
-        }}
-
-        .no-results {{
-            padding: 20px;
-            text-align: center;
+        .score-tooltip .close-btn {{
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
             color: #a0aec0;
+        }}
+
+        .score-tooltip .close-btn:hover {{
+            color: #2d3748;
         }}
 
         /* 뉴스 섹션 스타일 */
@@ -1122,12 +1131,6 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             <h1>📊 Daily Stock Recommendations</h1>
             <div class="subtitle">검증된 퀀트 전략 기반 매수/매도 가격 추천</div>
             <div class="date">{current_date} {current_time} 업데이트</div>
-        </div>
-
-        <!-- 종목 검색 -->
-        <div class="search-box">
-            <input type="text" id="stockSearch" placeholder="🔍 종목 검색 (티커 또는 종목명)" onkeyup="searchStocks()">
-            <div id="searchResults" class="search-results"></div>
         </div>
 
         <div class="summary">
@@ -1229,75 +1232,146 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
         </div>
     </div>
 
+    <!-- 점수 기준 팝업 -->
+    <div class="score-tooltip-overlay" id="scoreOverlay" onclick="hideScoreCriteria()"></div>
+    <div class="score-tooltip" id="scoreTooltip">
+        <button class="close-btn" onclick="hideScoreCriteria()">&times;</button>
+        <h3 id="scoreTooltipTitle"></h3>
+        <ul class="criteria-list" id="scoreTooltipContent"></ul>
+    </div>
+
     <script>
-        // 검색용 전체 종목 데이터
-        const allStocksData = """ + str([{
-            'ticker': s['ticker'],
-            'name': s['name'],
-            'total_score': s['total_score'],
-            'current_price': s.get('regular_market_price') or s['current_price'],
-            'sector': s.get('sector', 'N/A'),
-            'entry': s['price_rec']['entry']['price'],
-            'target_1': s['price_rec']['exit']['target_1'],
-            'stop_loss': s['price_rec']['stop_loss']['price'],
-        } for s in stocks_data]).replace("'", '"') + """;
-
-        function searchStocks() {
-            const query = document.getElementById('stockSearch').value.toUpperCase().trim();
-            const resultsDiv = document.getElementById('searchResults');
-
-            if (query.length === 0) {
-                resultsDiv.classList.remove('show');
-                return;
+        // 점수 기준 데이터
+        const scoreCriteria = {
+            valuation: {
+                title: '밥값 점수 (35점 만점)',
+                subtitle: '실체 있는 기업인가? - 꿈만 있고 숫자 없으면 도태',
+                criteria: [
+                    { label: 'ROE/ROA (15점)', items: [
+                        'ROE 20% 이상: 15점 (밥값 제대로 함)',
+                        'ROE 15-20%: 12점',
+                        'ROE 10-15%: 9점',
+                        'ROE 5-10%: 6점',
+                        'ROE 0-5%: 3점',
+                        'ROE 음수: 0점 (도태 대상)'
+                    ]},
+                    { label: '영업이익률 (10점)', items: [
+                        '20% 이상: 10점 (고마진)',
+                        '15-20%: 8점',
+                        '10-15%: 6점',
+                        '5-10%: 4점 (박리다매)',
+                        '0-5%: 2점',
+                        '음수: 0점 (구조조정 필요)'
+                    ]},
+                    { label: '성장성 + 흑자 (10점)', items: [
+                        '매출 20%↑ + 이익 10%↑: 10점',
+                        '매출 10%↑ + 흑자: 8점',
+                        '적자 + 고성장: 최대 3점 (리스크)',
+                        '적자 + 저성장: 0점 (도태)'
+                    ]}
+                ]
+            },
+            technical: {
+                title: '기술적 분석 점수 (25점 만점)',
+                subtitle: '모멘텀 + 추세 분석',
+                criteria: [
+                    { label: '모멘텀 (10점)', items: [
+                        'RSI 과매수/과매도 구간',
+                        'MACD 시그널',
+                        '가격 모멘텀 강도'
+                    ]},
+                    { label: '평균회귀 (7점)', items: [
+                        '볼린저 밴드 위치',
+                        '이동평균선 괴리율',
+                        '과매도 반등 시그널'
+                    ]},
+                    { label: '추세 (8점)', items: [
+                        '이동평균선 배열',
+                        '추세선 지지/저항',
+                        'ADX 추세 강도'
+                    ]}
+                ]
+            },
+            automation: {
+                title: '자동화/AI 수혜 점수 (20점 만점)',
+                subtitle: '인건비 30% 폭등 -> 자동화는 필연',
+                criteria: [
+                    { label: 'AI 인프라 수혜 (10점)', items: [
+                        'NVDA: 10점 (AI GPU 대장주)',
+                        'AMD/AVGO: 8점 (AI 반도체)',
+                        'MSFT/GOOGL: 7점 (클라우드 AI)',
+                        '반도체 섹터: 4점',
+                        'AI 무관: 0점'
+                    ]},
+                    { label: '자동화/로봇 수혜 (10점)', items: [
+                        'TER: 10점 (반도체테스트+협동로봇+물류로봇)',
+                        'ROK/ABB: 8점 (산업용 로봇)',
+                        'ASML: 8점 (EUV 독점)',
+                        'TSLA 옵티머스: 3점 (아직 꿈)',
+                        '자동화 무관: 0점'
+                    ]}
+                ]
+            },
+            policy: {
+                title: '미국 정책 수혜 점수 (20점 만점)',
+                subtitle: '트럼프/바이든 정책 수혜',
+                criteria: [
+                    { label: 'CHIPS Act (6점)', items: [
+                        'INTC: 6점 (미국 팹 투자 최대 수혜)',
+                        'AMAT/LRCX: 5점 (미국 팹 장비)',
+                        'TER: 5점 (미국 팹 테스트 장비)',
+                        '반도체 섹터: 2점',
+                        'CHIPS Act 무관: 0점'
+                    ]},
+                    { label: 'IRA 친환경 (6점)', items: [
+                        'TSLA: 6점 (전기차 세액공제)',
+                        'FSLR: 6점 (태양광 최대 수혜)',
+                        'F/GM: 5점 (미국 전기차)',
+                        'IRA 무관: 0점'
+                    ]},
+                    { label: '방산 예산 (4점)', items: [
+                        'LMT/RTX/NOC/GD: 4점 (방산 대형)',
+                        '방산 섹터: 2점',
+                        '방산 무관: 0점'
+                    ]},
+                    { label: '인프라법 (4점)', items: [
+                        'CAT: 4점 (건설장비 1위)',
+                        'ROK: 3점 (스마트 인프라)',
+                        '건설/산업재: 2점',
+                        '인프라법 무관: 0점'
+                    ]}
+                ]
             }
+        };
 
-            const matches = allStocksData.filter(s =>
-                s.ticker.toUpperCase().includes(query) ||
-                s.name.toUpperCase().includes(query)
-            );
+        function showScoreCriteria(type) {
+            const data = scoreCriteria[type];
+            if (!data) return;
 
-            if (matches.length === 0) {
-                resultsDiv.innerHTML = '<div class="no-results">검색 결과가 없습니다</div>';
-            } else {
-                let html = '';
-                matches.forEach(s => {
-                    const scoreClass = s.total_score >= 60 ? 'high' : s.total_score >= 50 ? 'medium' : 'low';
-                    const grade = s.total_score >= 70 ? '강력추천' : s.total_score >= 60 ? '추천' : s.total_score >= 50 ? '관망' : '비추천';
-                    html += `
-                        <div class="search-result-item" onclick="showStockDetail('${s.ticker}')">
-                            <span class="search-result-ticker">${s.ticker}</span>
-                            <span class="search-result-name">${s.name}</span>
-                            <span class="search-result-score ${scoreClass}">${s.total_score.toFixed(0)}점 ${grade}</span>
-                            <div style="clear:both; margin-top: 8px; font-size: 0.85em; color: #718096;">
-                                매수가: $${s.entry.toFixed(2)} | 목표가: $${s.target_1.toFixed(2)} | 손절가: $${s.stop_loss.toFixed(2)}
-                            </div>
-                        </div>
-                    `;
+            document.getElementById('scoreTooltipTitle').innerHTML = data.title + '<div style="font-size: 0.7em; color: #718096; margin-top: 5px;">' + data.subtitle + '</div>';
+
+            let html = '';
+            data.criteria.forEach(section => {
+                html += '<li style="font-weight: 700; color: #2d3748; background: #f7fafc; padding: 10px; margin: 8px -10px; border-radius: 5px;">' + section.label + '</li>';
+                section.items.forEach(item => {
+                    html += '<li style="padding-left: 15px;">' + item + '</li>';
                 });
-                resultsDiv.innerHTML = html;
-            }
-            resultsDiv.classList.add('show');
+            });
+
+            document.getElementById('scoreTooltipContent').innerHTML = html;
+            document.getElementById('scoreOverlay').classList.add('show');
+            document.getElementById('scoreTooltip').classList.add('show');
         }
 
-        function showStockDetail(ticker) {
-            // 해당 종목 카드로 스크롤
-            const cards = document.querySelectorAll('.stock-card');
-            for (const card of cards) {
-                if (card.querySelector('.ticker')?.textContent === ticker) {
-                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    card.style.boxShadow = '0 0 0 3px #667eea';
-                    setTimeout(() => { card.style.boxShadow = ''; }, 2000);
-                    break;
-                }
-            }
-            document.getElementById('searchResults').classList.remove('show');
-            document.getElementById('stockSearch').value = '';
+        function hideScoreCriteria() {
+            document.getElementById('scoreOverlay').classList.remove('show');
+            document.getElementById('scoreTooltip').classList.remove('show');
         }
 
-        // 검색창 외부 클릭 시 결과 숨기기
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.search-box')) {
-                document.getElementById('searchResults').classList.remove('show');
+        // ESC 키로 팝업 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideScoreCriteria();
             }
         });
 
@@ -1424,32 +1498,83 @@ def main():
     """메인 함수"""
     print("일일 주식 추천 리포트 생성 중...\n")
 
-    tickers = [
-        # AI 반도체
-        'NVDA', 'AMD', 'AVGO', 'QCOM', 'MU',
-        # 빅테크
-        'MSFT', 'GOOGL', 'META', 'AAPL', 'AMZN',
-        # 자동화/로봇 - 김기현 TOP PICK
-        'TER', 'ROK', 'HON', 'AMAT', 'LRCX',
-        # 에너지
-        'XOM', 'CVX',
-        # 방산 (리쇼어링 수혜)
-        'LMT', 'RTX', 'NOC', 'GD',
-        # 금융
-        'JPM', 'GS',
-    ]
+    # S&P 500 전체 종목 가져오기
+    tickers = get_sp500_tickers()
 
-    print(f"분석 중: {len(tickers)}개 종목\n")
+    if tickers is None:
+        # 실패 시 기본 종목 사용
+        tickers = [
+            'NVDA', 'AMD', 'AVGO', 'QCOM', 'MU',
+            'MSFT', 'GOOGL', 'META', 'AAPL', 'AMZN',
+            'TER', 'ROK', 'HON', 'AMAT', 'LRCX',
+            'XOM', 'CVX', 'LMT', 'RTX', 'NOC', 'GD',
+            'JPM', 'GS',
+        ]
+
+    print(f"분석 대상: {len(tickers)}개 종목\n")
+
+    # 병렬 처리 설정 (Rate Limiting 고려 + 성능 최적화)
+    MAX_WORKERS = 10  # 동시 처리 스레드 수 (안정성 확보)
+    BATCH_SIZE = 25   # 배치당 종목 수
+    BATCH_DELAY = 2.0 # 배치 간 대기 시간 (초) - Rate Limit 회피
 
     stocks_data = []
-    for idx, ticker in enumerate(tickers, 1):
-        print(f"[{idx}/{len(tickers)}] {ticker}... ", end='', flush=True)
-        result = analyze_stock_for_report(ticker)
-        if result:
-            stocks_data.append(result)
-            print(f"완료 (점수: {result['total_score']:.0f})")
-        else:
-            print("실패")
+    failed_count = 0
+    total = len(tickers)
+
+    print(f"병렬 처리: {MAX_WORKERS}개 스레드, 배치당 {BATCH_SIZE}개 종목\n")
+
+    # 배치로 나누기
+    batches = [tickers[i:i + BATCH_SIZE] for i in range(0, len(tickers), BATCH_SIZE)]
+
+    processed = 0
+    for batch_idx, batch in enumerate(batches):
+        # 병렬 처리
+        with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+            futures = {executor.submit(analyze_stock_for_report, ticker): ticker for ticker in batch}
+
+            for future in concurrent.futures.as_completed(futures):
+                ticker = futures[future]
+                try:
+                    result = future.result(timeout=30)
+                    if result:
+                        stocks_data.append(result)
+                    else:
+                        failed_count += 1
+                except Exception as e:
+                    print(f"[ERROR] {ticker}: {e}")
+                    failed_count += 1
+
+        processed += len(batch)
+        print(f"[배치 {batch_idx + 1}/{len(batches)}] {processed}/{total} 완료 (성공: {len(stocks_data)}, 실패: {failed_count})")
+
+        # 배치 간 대기 (마지막 배치 제외)
+        if batch_idx < len(batches) - 1:
+            time.sleep(BATCH_DELAY)
+
+    # 실패한 종목 재시도 (Rate Limit 해제 후)
+    if failed_count > 20:
+        print(f"\n[재시도] {failed_count}개 실패 종목 중 일부 재시도 중...")
+        time.sleep(5)  # Rate Limit 해제 대기
+
+        # 성공한 티커 목록
+        success_tickers = {s['ticker'] for s in stocks_data}
+        failed_tickers = [t for t in tickers if t not in success_tickers]
+
+        # 최대 50개까지만 재시도
+        retry_tickers = failed_tickers[:50]
+
+        for ticker in retry_tickers:
+            try:
+                result = analyze_stock_for_report(ticker)
+                if result:
+                    stocks_data.append(result)
+                    failed_count -= 1
+                time.sleep(0.2)  # 재시도는 더 느리게
+            except:
+                pass
+
+        print(f"[재시도 완료] 최종 성공: {len(stocks_data)}, 실패: {failed_count}")
 
     if stocks_data:
         print(f"\n총 {len(stocks_data)}개 종목 분석 완료!")
