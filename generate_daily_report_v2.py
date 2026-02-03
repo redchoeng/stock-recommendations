@@ -42,11 +42,13 @@ def analyze_stock_for_report(ticker):
         previous_close = df['Close'].iloc[-2]
         change_pct = ((current_price - previous_close) / previous_close) * 100
 
-        # 프리마켓/정규장 실시간 가격
+        # 프리마켓/정규장/애프터마켓 실시간 가격
         premarket_price = info.get('preMarketPrice')
         premarket_change = info.get('preMarketChangePercent')
         regular_market_price = info.get('regularMarketPrice')
         regular_market_change = info.get('regularMarketChangePercent')
+        postmarket_price = info.get('postMarketPrice')
+        postmarket_change = info.get('postMarketChangePercent')
 
         total_score = result_v3['total_score'] + theme_result['total_score']
 
@@ -66,6 +68,8 @@ def analyze_stock_for_report(ticker):
             'premarket_change': premarket_change,
             'regular_market_price': regular_market_price,
             'regular_market_change': regular_market_change,
+            'postmarket_price': postmarket_price,
+            'postmarket_change': postmarket_change,
             'total_score': total_score,
             'v3_score': result_v3['total_score'],
             'theme_score': theme_result['total_score'],
@@ -83,7 +87,38 @@ def analyze_stock_for_report(ticker):
         return None
 
 
-def generate_stock_card_html(stock, idx, is_top5=False):
+def get_market_session():
+    """현재 미국 시장 세션 반환"""
+    # 미국 동부시간 기준 (UTC-5, 서머타임 UTC-4)
+    import pytz
+    try:
+        et = pytz.timezone('US/Eastern')
+        now_et = datetime.now(et)
+        hour = now_et.hour
+        minute = now_et.minute
+
+        # 평일인지 확인 (0=월, 6=일)
+        if now_et.weekday() >= 5:
+            return 'closed'
+
+        time_val = hour * 60 + minute
+
+        # 프리마켓: 04:00 - 09:30 ET
+        if 240 <= time_val < 570:
+            return 'premarket'
+        # 정규장: 09:30 - 16:00 ET
+        elif 570 <= time_val < 960:
+            return 'regular'
+        # 애프터마켓: 16:00 - 20:00 ET
+        elif 960 <= time_val < 1200:
+            return 'afterhours'
+        else:
+            return 'closed'
+    except:
+        return 'regular'  # 기본값
+
+
+def generate_stock_card_html(stock, idx, is_top5=False, market_session='regular'):
     """개별 종목 카드 HTML 생성"""
     pr = stock['price_rec']
 
@@ -92,6 +127,48 @@ def generate_stock_card_html(stock, idx, is_top5=False):
     change_sign = '+' if stock['change_pct'] >= 0 else ''
 
     top5_badge = f'<span class="top5-label">TOP {idx}</span>' if is_top5 else ''
+
+    # 시장 세션별 가격 표시
+    if market_session == 'premarket':
+        # 프리마켓: 전날 종가 + 프리마켓 가격
+        price_html = f'''
+            <div class="price-row">
+                <span class="price-label">전날 종가:</span>
+                <span class="price">${stock['current_price']:.2f}</span>
+            </div>
+            {f"""
+            <div class="price-row premarket">
+                <span class="price-label">프리마켓:</span>
+                <span class="price">${stock['premarket_price']:.2f}</span>
+                <span class="change {'positive' if stock['premarket_change'] >= 0 else 'negative'}">{'+' if stock['premarket_change'] >= 0 else ''}{stock['premarket_change']:.2f}%</span>
+            </div>
+            """ if stock.get('premarket_price') else ''}
+        '''
+    elif market_session == 'afterhours':
+        # 애프터마켓: 종가 + 애프터 가격
+        price_html = f'''
+            <div class="price-row">
+                <span class="price-label">종가:</span>
+                <span class="price">${stock.get('regular_market_price') or stock['current_price']:.2f}</span>
+            </div>
+            {f"""
+            <div class="price-row afterhours">
+                <span class="price-label">애프터:</span>
+                <span class="price">${stock['postmarket_price']:.2f}</span>
+                <span class="change {'positive' if stock['postmarket_change'] >= 0 else 'negative'}">{'+' if stock['postmarket_change'] >= 0 else ''}{stock['postmarket_change']:.2f}%</span>
+            </div>
+            """ if stock.get('postmarket_price') else ''}
+        '''
+    else:
+        # 정규장 또는 휴장: 현재가만
+        current = stock.get('regular_market_price') or stock['current_price']
+        price_html = f'''
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">${current:.2f}</span>
+                <span class="change {change_class}">{change_sign}{stock['change_pct']:.2f}%</span>
+            </div>
+        '''
 
     return f"""
     <div class="stock-card {'top5-card' if is_top5 else ''}">
@@ -109,25 +186,7 @@ def generate_stock_card_html(stock, idx, is_top5=False):
         </div>
 
         <div class="current-price">
-            <div class="price-row">
-                <span class="price-label">전날 종가:</span>
-                <span class="price">${stock['current_price']:.2f}</span>
-                <span class="change {change_class}">{change_sign}{stock['change_pct']:.2f}%</span>
-            </div>
-            {f'''
-            <div class="price-row premarket">
-                <span class="price-label">프리마켓:</span>
-                <span class="price">${stock['premarket_price']:.2f}</span>
-                <span class="change {'positive' if stock['premarket_change'] >= 0 else 'negative'}">{'+' if stock['premarket_change'] >= 0 else ''}{stock['premarket_change']:.2f}%</span>
-            </div>
-            ''' if stock.get('premarket_price') else ''}
-            {f'''
-            <div class="price-row regular">
-                <span class="price-label">현재가:</span>
-                <span class="price">${stock['regular_market_price']:.2f}</span>
-                <span class="change {'positive' if stock['regular_market_change'] >= 0 else 'negative'}">{'+' if stock['regular_market_change'] >= 0 else ''}{stock['regular_market_change']:.2f}%</span>
-            </div>
-            ''' if stock.get('regular_market_price') else ''}
+            {price_html}
         </div>
 
         <div class="metrics">
@@ -231,6 +290,9 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
     kst_now = datetime.now(KST)
     current_date = kst_now.strftime('%Y년 %m월 %d일')
     current_time = kst_now.strftime('%H:%M:%S')
+
+    # 현재 시장 세션 확인
+    market_session = get_market_session()
 
     stocks_data = sorted(stocks_data, key=lambda x: x['total_score'], reverse=True)
 
@@ -600,6 +662,12 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             border-left: 3px solid #48bb78;
             padding-left: 8px;
             font-weight: 600;
+        }}
+
+        .price-row.afterhours {{
+            opacity: 0.9;
+            border-left: 3px solid #ed8936;
+            padding-left: 8px;
         }}
 
         .price-label {{
@@ -1009,7 +1077,7 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
 
     # TOP 5 종목 카드
     for idx, stock in enumerate(top5_stocks, 1):
-        html += generate_stock_card_html(stock, idx, is_top5=True)
+        html += generate_stock_card_html(stock, idx, is_top5=True, market_session=market_session)
 
     html += f"""
             <button class="show-more-btn" onclick="toggleOtherStocks()">
@@ -1022,7 +1090,7 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
 
     # 나머지 종목 카드
     for idx, stock in enumerate(other_stocks, 6):
-        html += generate_stock_card_html(stock, idx, is_top5=False)
+        html += generate_stock_card_html(stock, idx, is_top5=False, market_session=market_session)
 
     html += """
             </div>
@@ -1038,7 +1106,7 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             # 섹터 내에서도 점수순 정렬
             sector_stocks_sorted = sorted(sector_stocks, key=lambda x: x['total_score'], reverse=True)
             for idx, stock in enumerate(sector_stocks_sorted, 1):
-                html += generate_stock_card_html(stock, idx, is_top5=False)
+                html += generate_stock_card_html(stock, idx, is_top5=False, market_session=market_session)
 
             html += '        </div>\n'
 
