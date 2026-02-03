@@ -1,77 +1,102 @@
 """
 자동화/AI 수혜 점수 분석기 (Automation & AI Beneficiary Analyzer)
-- 김기현 파트장 투자 철학 기반
-- "인건비 30% 폭등 -> 자동화는 필연"
-- "걷는 로봇은 시기상조, 바퀴 달린 로봇이 돈 된다"
+- 객관적 기준 기반 점수 산정
+- yfinance 데이터 + 산업 분류 기반
 
 20점 만점:
 - AI 인프라 수혜: 10점
 - 자동화/로봇 수혜: 10점
-(리쇼어링은 policy_analyzer로 이동)
 """
 
 import yfinance as yf
-from typing import Dict, List
+from typing import Dict
 
 
 class AutomationAnalyzer:
-    """자동화/AI 수혜 분석기"""
+    """자동화/AI 수혜 분석기 - 객관적 기준 기반"""
 
-    # AI 인프라 수혜 기업 (철도 깔리는 중 = 오른다)
-    AI_INFRA_TICKERS = {
-        # AI 반도체 - 최우선
-        'NVDA': {'score': 10, 'reason': 'AI GPU 대장주 - 철도 깔리는 중'},
-        'AMD': {'score': 8, 'reason': 'AI GPU 2인자'},
-        'AVGO': {'score': 8, 'reason': 'AI 네트워킹/커스텀 칩'},
-        'QCOM': {'score': 6, 'reason': 'AI 엣지 칩'},
-        'MU': {'score': 7, 'reason': 'HBM 메모리 - AI 필수'},
-        'MRVL': {'score': 7, 'reason': 'AI 데이터센터 인프라'},
-        # 클라우드/데이터센터
-        'MSFT': {'score': 7, 'reason': 'Azure AI + OpenAI'},
-        'GOOGL': {'score': 7, 'reason': 'AI 원조 + 클라우드'},
-        'AMZN': {'score': 6, 'reason': 'AWS AI 서비스'},
-        'META': {'score': 6, 'reason': 'LLaMA AI 개발'},
-        # AI 서비스
-        'CRM': {'score': 5, 'reason': 'Einstein AI'},
-        'PLTR': {'score': 6, 'reason': 'AI 데이터 분석'},
-        'SNOW': {'score': 5, 'reason': 'AI 데이터 클라우드'},
+    # GICS 산업 코드별 AI 인프라 점수
+    # 레퍼런스: MSCI GICS 산업분류 + AI 관련성
+    AI_INFRA_BY_INDUSTRY = {
+        # 반도체 (Semiconductors) - AI 연산 핵심
+        'Semiconductors': 8,
+        'Semiconductor Equipment & Materials': 7,
+        'Semiconductor Materials & Equipment': 7,
+
+        # 소프트웨어/클라우드 - AI 서비스
+        'Systems Software': 6,
+        'Application Software': 5,
+        'Internet Services & Infrastructure': 7,
+        'IT Consulting & Other Services': 4,
+        'Data Processing & Outsourced Services': 5,
+
+        # 통신장비 - AI 네트워킹
+        'Communications Equipment': 5,
+        'Technology Hardware, Storage & Peripherals': 5,
+
+        # 인터넷 서비스
+        'Interactive Media & Services': 6,
+        'Interactive Home Entertainment': 3,
     }
 
-    # 자동화/로봇 수혜 기업 (실체 있는 로봇 = 돈 된다)
-    AUTOMATION_TICKERS = {
-        # 산업용 로봇 - 바퀴 달리거나 팔만 달린 것 = 돈 된다
-        'TER': {'score': 10, 'reason': '반도체테스트+협동로봇+물류로봇 = TOP PICK'},
-        'ROK': {'score': 8, 'reason': '산업 자동화 선두'},
-        'EMR': {'score': 7, 'reason': '공장 자동화'},
-        'HON': {'score': 7, 'reason': '물류 자동화'},
-        'ABB': {'score': 8, 'reason': '산업용 로봇 대장'},
-        # 반도체 장비 (공장 자동화 핵심)
-        'AMAT': {'score': 7, 'reason': '반도체 제조 자동화'},
-        'LRCX': {'score': 7, 'reason': '반도체 공정 자동화'},
-        'KLAC': {'score': 7, 'reason': '반도체 검사 자동화'},
-        'ASML': {'score': 8, 'reason': 'EUV 독점 - 자동화 핵심'},
+    # GICS 산업 코드별 자동화/로봇 점수
+    # 레퍼런스: 산업 자동화 도입률 + 로봇 밀도
+    AUTOMATION_BY_INDUSTRY = {
+        # 산업 자동화 장비
+        'Industrial Machinery & Supplies & Components': 8,
+        'Electrical Components & Equipment': 7,
+        'Industrial Machinery': 8,
+
+        # 반도체 장비 - 공정 자동화
+        'Semiconductor Equipment & Materials': 8,
+        'Semiconductor Materials & Equipment': 8,
+
+        # 전자 장비
+        'Electronic Equipment & Instruments': 6,
+        'Electronic Manufacturing Services': 5,
+        'Technology Distributors': 4,
+
+        # 항공우주/방산 - 고급 자동화
+        'Aerospace & Defense': 6,
+
+        # 건설/중장비 - 자율주행 장비
+        'Construction Machinery & Heavy Transportation Equipment': 6,
+        'Construction & Engineering': 4,
+
         # 물류 자동화
-        'AMZN': {'score': 6, 'reason': '물류 로봇 도입'},
-        # 걷는 로봇 = 아직 시기상조
-        'TSLA': {'score': 3, 'reason': '옵티머스는 아직 꿈 - 시기상조'},
+        'Air Freight & Logistics': 5,
+        'Cargo Ground Transportation': 4,
     }
 
-    # 리쇼어링 수혜 (미국 공장 복귀)
-    RESHORING_TICKERS = {
-        'TER': {'score': 5, 'reason': '미국 공장에 중국 로봇 못씀 = TER 독식'},
-        'NVDA': {'score': 3, 'reason': '미국 AI 팹 수혜'},
-        'AMD': {'score': 3, 'reason': '미국 반도체 수혜'},
-        'INTC': {'score': 4, 'reason': '미국 반도체 제조'},
-        'AMAT': {'score': 4, 'reason': '미국 팹 장비'},
-        'LRCX': {'score': 4, 'reason': '미국 팹 장비'},
-        'ROK': {'score': 4, 'reason': '미국 공장 자동화'},
-        'CAT': {'score': 3, 'reason': '인프라 장비'},
-        'DE': {'score': 3, 'reason': '농업 자동화'},
-        # 방산 - 미국 생산 필수
-        'LMT': {'score': 4, 'reason': '미국 방산 - 국내 생산 필수'},
-        'RTX': {'score': 4, 'reason': '미국 방산'},
-        'NOC': {'score': 4, 'reason': '미국 방산'},
-        'GD': {'score': 4, 'reason': '미국 방산'},
+    # 특정 기업 추가 점수 (공시/발표 기반 검증된 데이터)
+    # 레퍼런스: 기업 10-K, 실적발표, 공식 발표
+    AI_VERIFIED_COMPANIES = {
+        # GPU/AI 칩 제조사 (AI 매출 비중 공시 기반)
+        'NVDA': {'bonus': 2, 'ref': 'Data Center 매출 $47.5B (FY24), AI GPU 시장점유율 80%+'},
+        'AMD': {'bonus': 1, 'ref': 'MI300 AI 가속기 출시, Data Center 매출 급성장'},
+        'AVGO': {'bonus': 1, 'ref': 'AI 네트워킹 칩, Custom AI 칩 (Google TPU 등)'},
+
+        # 클라우드 AI (AI 서비스 매출 공시)
+        'MSFT': {'bonus': 1, 'ref': 'Azure AI 서비스, Copilot, OpenAI 투자 $13B'},
+        'GOOGL': {'bonus': 1, 'ref': 'Google Cloud AI, Gemini, TPU 자체개발'},
+        'AMZN': {'bonus': 1, 'ref': 'AWS AI/ML 서비스, Trainium/Inferentia 칩'},
+
+        # AI 메모리 (HBM 매출 공시)
+        'MU': {'bonus': 1, 'ref': 'HBM3E 양산, AI 메모리 매출 비중 확대'},
+    }
+
+    AUTOMATION_VERIFIED_COMPANIES = {
+        # 산업용 로봇/자동화 (로봇 매출 공시)
+        'TER': {'bonus': 2, 'ref': 'Universal Robots 인수, 협동로봇 시장 선두'},
+        'ROK': {'bonus': 1, 'ref': '산업 자동화 솔루션 매출 $8B+'},
+        'EMR': {'bonus': 1, 'ref': '공정 자동화, Aspen Technology 인수'},
+        'HON': {'bonus': 1, 'ref': '창고 자동화, Intelligrated 인수'},
+
+        # 반도체 장비 (팹 자동화)
+        'AMAT': {'bonus': 1, 'ref': '반도체 제조장비 1위, 자동화 공정'},
+        'LRCX': {'bonus': 1, 'ref': '에칭/증착 장비, 자동화 솔루션'},
+        'KLAC': {'bonus': 1, 'ref': '반도체 검사장비 자동화'},
+        'ASML': {'bonus': 1, 'ref': 'EUV 장비 독점, 고도 자동화'},
     }
 
     def __init__(self, ticker: str):
@@ -84,70 +109,103 @@ class AutomationAnalyzer:
         """기업 정보 가져오기"""
         try:
             self.info = self.stock.info
-        except:
+        except Exception as e:
+            print(f"[WARNING] {self.ticker} 정보 로드 실패: {e}")
             self.info = {}
 
     def calculate_ai_infra_score(self) -> Dict:
-        """AI 인프라 수혜 점수 (10점 만점)"""
-        if self.ticker in self.AI_INFRA_TICKERS:
-            data = self.AI_INFRA_TICKERS[self.ticker]
-            return {
-                'score': data['score'],
-                'reason': data['reason'],
-                'is_beneficiary': True
-            }
+        """
+        AI 인프라 수혜 점수 (10점 만점)
 
-        # 섹터로 간접 판단
-        sector = self.info.get('sector', '')
+        기준:
+        1. 산업 분류 기반 기본 점수 (0-8점)
+        2. 검증된 기업 추가 점수 (0-2점)
+        """
         industry = self.info.get('industry', '')
+        sector = self.info.get('sector', '')
 
-        if 'Semiconductor' in industry:
-            return {'score': 4, 'reason': '반도체 섹터', 'is_beneficiary': True}
-        elif 'Software' in industry and 'Cloud' in str(self.info.get('longBusinessSummary', '')):
-            return {'score': 3, 'reason': '클라우드 관련', 'is_beneficiary': True}
+        # 1. 산업 분류 기반 점수
+        base_score = 0
+        reason = ''
+
+        if industry in self.AI_INFRA_BY_INDUSTRY:
+            base_score = self.AI_INFRA_BY_INDUSTRY[industry]
+            reason = f'{industry} 산업'
         elif sector == 'Technology':
-            return {'score': 2, 'reason': '기술 섹터', 'is_beneficiary': True}
+            base_score = 3
+            reason = '기술 섹터'
+        elif sector == 'Communication Services':
+            base_score = 2
+            reason = '통신서비스 섹터'
 
-        return {'score': 0, 'reason': 'AI 인프라 무관', 'is_beneficiary': False}
+        # 2. 검증된 기업 추가 점수
+        bonus = 0
+        ref = ''
+        if self.ticker in self.AI_VERIFIED_COMPANIES:
+            data = self.AI_VERIFIED_COMPANIES[self.ticker]
+            bonus = data['bonus']
+            ref = data['ref']
+
+        total = min(base_score + bonus, 10)
+
+        if ref:
+            reason = f'{reason} + {ref}'
+
+        return {
+            'score': total,
+            'reason': reason if reason else 'AI 인프라 무관',
+            'is_beneficiary': total > 0,
+            'base_score': base_score,
+            'bonus': bonus,
+            'reference': ref
+        }
 
     def calculate_automation_score(self) -> Dict:
-        """자동화/로봇 수혜 점수 (10점 만점)"""
-        if self.ticker in self.AUTOMATION_TICKERS:
-            data = self.AUTOMATION_TICKERS[self.ticker]
-            return {
-                'score': data['score'],
-                'reason': data['reason'],
-                'is_beneficiary': True
-            }
+        """
+        자동화/로봇 수혜 점수 (10점 만점)
 
-        # 섹터로 간접 판단
+        기준:
+        1. 산업 분류 기반 기본 점수 (0-8점)
+        2. 검증된 기업 추가 점수 (0-2점)
+        """
         industry = self.info.get('industry', '')
+        sector = self.info.get('sector', '')
 
-        if 'Industrial' in industry or 'Machinery' in industry:
-            return {'score': 3, 'reason': '산업재 섹터', 'is_beneficiary': True}
-        elif 'Semiconductor Equipment' in industry:
-            return {'score': 4, 'reason': '반도체 장비', 'is_beneficiary': True}
+        # 1. 산업 분류 기반 점수
+        base_score = 0
+        reason = ''
 
-        return {'score': 0, 'reason': '자동화 무관', 'is_beneficiary': False}
+        if industry in self.AUTOMATION_BY_INDUSTRY:
+            base_score = self.AUTOMATION_BY_INDUSTRY[industry]
+            reason = f'{industry} 산업'
+        elif sector == 'Industrials':
+            base_score = 3
+            reason = '산업재 섹터'
+        elif sector == 'Technology':
+            base_score = 2
+            reason = '기술 섹터'
 
-    def calculate_reshoring_score(self) -> Dict:
-        """리쇼어링(미국 공장 복귀) 수혜 점수 (5점 만점)"""
-        if self.ticker in self.RESHORING_TICKERS:
-            data = self.RESHORING_TICKERS[self.ticker]
-            return {
-                'score': data['score'],
-                'reason': data['reason'],
-                'is_beneficiary': True
-            }
+        # 2. 검증된 기업 추가 점수
+        bonus = 0
+        ref = ''
+        if self.ticker in self.AUTOMATION_VERIFIED_COMPANIES:
+            data = self.AUTOMATION_VERIFIED_COMPANIES[self.ticker]
+            bonus = data['bonus']
+            ref = data['ref']
 
-        # 방산/반도체는 기본 수혜
-        industry = self.info.get('industry', '')
-        if 'Defense' in industry or 'Aerospace' in industry:
-            return {'score': 3, 'reason': '방산 - 미국 생산', 'is_beneficiary': True}
-        elif 'Semiconductor' in industry:
-            return {'score': 2, 'reason': '반도체 리쇼어링', 'is_beneficiary': True}
+        total = min(base_score + bonus, 10)
 
-        return {'score': 0, 'reason': '리쇼어링 무관', 'is_beneficiary': False}
+        if ref:
+            reason = f'{reason} + {ref}'
+
+        return {
+            'score': total,
+            'reason': reason if reason else '자동화 무관',
+            'is_beneficiary': total > 0,
+            'base_score': base_score,
+            'bonus': bonus,
+            'reference': ref
+        }
 
     def calculate_total_score(self) -> Dict:
         """
@@ -160,15 +218,15 @@ class AutomationAnalyzer:
 
         # 종합 평가
         if total >= 16:
-            verdict = "자동화 시대 최대 수혜주"
+            verdict = "자동화/AI 핵심 수혜"
         elif total >= 12:
-            verdict = "자동화 트렌드 수혜"
+            verdict = "자동화/AI 수혜"
         elif total >= 8:
             verdict = "간접 수혜"
         elif total >= 4:
             verdict = "일부 수혜"
         else:
-            verdict = "자동화 무관 - 인건비 리스크"
+            verdict = "자동화/AI 무관"
 
         return {
             'total_score': total,
@@ -186,17 +244,19 @@ class AutomationAnalyzer:
 
 # 테스트
 if __name__ == "__main__":
-    test_tickers = ['TER', 'NVDA', 'TSLA', 'AAPL', 'ROK']
+    test_tickers = ['NVDA', 'TER', 'AAPL', 'ROK', 'XOM']
 
     for ticker in test_tickers:
-        print(f"\n{'='*50}")
+        print(f"\n{'='*60}")
         print(f"{ticker} 자동화/AI 수혜 분석")
-        print('='*50)
+        print('='*60)
 
         analyzer = AutomationAnalyzer(ticker)
         result = analyzer.calculate_total_score()
 
-        print(f"AI 인프라: {result['ai_infra_score']}/10 - {result['ai_reason']}")
-        print(f"자동화/로봇: {result['automation_score']}/10 - {result['automation_reason']}")
+        print(f"AI 인프라: {result['ai_infra_score']}/10")
+        print(f"  - {result['ai_reason']}")
+        print(f"자동화/로봇: {result['automation_score']}/10")
+        print(f"  - {result['automation_reason']}")
         print(f"\n총점: {result['total_score']}/20")
         print(f"평가: {result['verdict']}")

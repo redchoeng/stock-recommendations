@@ -74,10 +74,10 @@ def analyze_stock_for_report(ticker):
         automation_result = automation.calculate_total_score()
         automation_score = automation_result['total_score']
 
-        # 4. 정책 수혜 점수 (20점 만점으로 스케일)
+        # 4. 정책 수혜 점수 (20점 만점)
         policy = PolicyAnalyzer(ticker)
         policy_result = policy.calculate_total_score()
-        policy_score = (policy_result['total_score'] / 25) * 20  # 25점 -> 20점
+        policy_score = policy_result['total_score']  # 이미 20점 만점
 
         # 총점 계산 (100점 만점)
         total_score = valuation_score + tech_score_scaled + automation_score + policy_score
@@ -1294,51 +1294,55 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             },
             automation: {
                 title: '자동화/AI 수혜 점수 (20점 만점)',
-                subtitle: '인건비 30% 폭등 -> 자동화는 필연',
+                subtitle: 'GICS 산업분류 + 공시 데이터 기반',
                 criteria: [
-                    { label: 'AI 인프라 수혜 (10점)', items: [
-                        'NVDA: 10점 (AI GPU 대장주)',
-                        'AMD/AVGO: 8점 (AI 반도체)',
-                        'MSFT/GOOGL: 7점 (클라우드 AI)',
-                        '반도체 섹터: 4점',
-                        'AI 무관: 0점'
+                    { label: 'AI 인프라 (10점) - GICS 산업분류', items: [
+                        'Semiconductors: 8점 + 검증기업 보너스 2점',
+                        'NVDA: Data Center 매출 $47.5B, AI GPU 점유율 80%+',
+                        'MSFT/GOOGL/AMZN: 클라우드 AI 서비스 매출 공시',
+                        'Internet Services: 7점, Systems Software: 6점',
+                        'Technology 섹터: 3점'
                     ]},
-                    { label: '자동화/로봇 수혜 (10점)', items: [
-                        'TER: 10점 (반도체테스트+협동로봇+물류로봇)',
-                        'ROK/ABB: 8점 (산업용 로봇)',
-                        'ASML: 8점 (EUV 독점)',
-                        'TSLA 옵티머스: 3점 (아직 꿈)',
-                        '자동화 무관: 0점'
+                    { label: '자동화/로봇 (10점) - GICS 산업분류', items: [
+                        'Industrial Machinery: 8점 + 검증기업 보너스 2점',
+                        'TER: Universal Robots 인수, 협동로봇 시장 선두',
+                        'ROK: 산업 자동화 매출 $8B+',
+                        'Semiconductor Equipment: 8점 (팹 자동화)',
+                        'Industrials 섹터: 3점'
                     ]}
                 ]
             },
             policy: {
                 title: '미국 정책 수혜 점수 (20점 만점)',
-                subtitle: '트럼프/바이든 정책 수혜',
+                subtitle: '미국 정부 공식 발표/공시 기반',
                 criteria: [
-                    { label: 'CHIPS Act (6점)', items: [
-                        'INTC: 6점 (미국 팹 투자 최대 수혜)',
-                        'AMAT/LRCX: 5점 (미국 팹 장비)',
-                        'TER: 5점 (미국 팹 테스트 장비)',
-                        '반도체 섹터: 2점',
-                        'CHIPS Act 무관: 0점'
+                    { label: 'CHIPS Act (6점) - 상무부 발표', items: [
+                        'INTC: 6점 ($85억 보조금 확정, 2024.03)',
+                        'TSM: 5점 ($66억 확정, Arizona 팹)',
+                        'MU: 4점 ($61억 확정, Idaho/NY)',
+                        '반도체 장비 산업: 5점 (팹 건설 수혜)',
+                        'Semiconductors: 3점 (팹리스 간접 수혜)'
                     ]},
-                    { label: 'IRA 친환경 (6점)', items: [
-                        'TSLA: 6점 (전기차 세액공제)',
-                        'FSLR: 6점 (태양광 최대 수혜)',
-                        'F/GM: 5점 (미국 전기차)',
-                        'IRA 무관: 0점'
+                    { label: 'IRA (6점) - 재무부/IRS 기준', items: [
+                        'TSLA/GM/F: 5점 (EV 세액공제 $7,500 적격)',
+                        'FSLR: 6점 (태양광 제조 세액공제, 미국 생산)',
+                        'NEE: 4점 (ITC 30%/PTC $27.5/MWh)',
+                        'Electric Utilities: 3점',
+                        '북미 조립 + 배터리/광물 요건 충족 필수'
                     ]},
-                    { label: '방산 예산 (4점)', items: [
-                        'LMT/RTX/NOC/GD: 4점 (방산 대형)',
-                        '방산 섹터: 2점',
-                        '방산 무관: 0점'
+                    { label: '방산 (4점) - DoD 계약 Top 10', items: [
+                        'LMT: 4점 (DoD 계약 1위 $75B+)',
+                        'RTX: 4점 (DoD 계약 2위 $27B+)',
+                        'GD/BA/NOC: 4점 (DoD Top 5)',
+                        'Aerospace & Defense 산업: 3점',
+                        '레퍼런스: usaspending.gov FY2023'
                     ]},
-                    { label: '인프라법 (4점)', items: [
-                        'CAT: 4점 (건설장비 1위)',
-                        'ROK: 3점 (스마트 인프라)',
-                        '건설/산업재: 2점',
-                        '인프라법 무관: 0점'
+                    { label: '인프라법 IIJA (4점) - $1.2조', items: [
+                        'CAT: 4점 (건설장비 점유율 40%+)',
+                        'VMC/MLM: 3점 (골재/시멘트 수요 증가)',
+                        'ETN: 3점 (전력망 장비)',
+                        'Construction Machinery: 4점',
+                        '도로/교량 $110B, 전력망 $65B 배정'
                     ]}
                 ]
             }
