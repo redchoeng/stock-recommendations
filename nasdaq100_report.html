@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>NASDAQ 100 Report</title>
+<style>
+body{font-family:sans-serif;background:#1a1a2e;color:#eee;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+h1{color:#00d4ff;text-align:center}
+.date{text-align:center;color:#888;margin-bottom:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px}
+.card{background:#16213e;border-radius:12px;padding:20px;border:1px solid #0f3460}
+.card.top5{border:2px solid #00d4ff;background:#1a1a3e}
+.ticker{font-size:1.4em;font-weight:bold;color:#00d4ff}
+.name{color:#888;font-size:0.9em}
+.price{font-size:1.3em;margin:10px 0}
+.change{padding:3px 8px;border-radius:5px;font-size:0.9em}
+.up{background:#0a3622;color:#4ade80}
+.down{background:#3b1c1c;color:#f87171}
+.score{background:#00d4ff;color:#000;padding:5px 12px;border-radius:15px;font-weight:bold}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:0.85em;color:#aaa}
+</style></head><body>
+<div class="container">
+<h1>NASDAQ 100 Daily Report</h1>
+<div class="date">2026-02-04 03:08 KST</div>
+<div class="grid"><div class="card top5">
+    <div class="ticker">CMCSA <span class="score">100</span></div>
+    <div class="name">Comcast Corporation</div>
+    <div class="price">$30.08 <span class="change up">+1.67%</span></div>
+    <div class="metrics">
+    <div>RSI: 67.6</div>
+    <div>SMA20: $28.64</div>
+    </div></div><div class="card top5">
+    <div class="ticker">AEP <span class="score">100</span></div>
+    <div class="name">American Electric Power Company</div>
+    <div class="price">$121.21 <span class="change up">+2.43%</span></div>
+    <div class="metrics">
+    <div>RSI: 65.5</div>
+    <div>SMA20: $117.97</div>
+    </div></div><div class="card top5">
+    <div class="ticker">FANG <span class="score">100</span></div>
+    <div class="name">Diamondback Energy, Inc.</div>
+    <div class="price">$159.90 <span class="change up">+0.79%</span></div>
+    <div class="metrics">
+    <div>RSI: 62.9</div>
+    <div>SMA20: $153.03</div>
+    </div></div><div class="card top5">
+    <div class="ticker">GOOGL <span class="score">90</span></div>
+    <div class="name">Alphabet Inc.</div>
+    <div class="price">$340.71 <span class="change down">-0.87%</span></div>
+    <div class="metrics">
+    <div>RSI: 55.3</div>
+    <div>SMA20: $331.51</div>
+    </div></div><div class="card top5">
+    <div class="ticker">COST <span class="score">90</span></div>
+    <div class="name">Costco Wholesale Corporation</div>
+    <div class="price">$988.50 <span class="change up">+2.08%</span></div>
+    <div class="metrics">
+    <div>RSI: 66.6</div>
+    <div>SMA20: $950.57</div>
+    </div></div><div class="card">
+    <div class="ticker">AMD <span class="score">90</span></div>
+    <div class="name">Advanced Micro Devices, Inc.</div>
+    <div class="price">$241.02 <span class="change down">-2.13%</span></div>
+    <div class="metrics">
+    <div>RSI: 62.6</div>
+    <div>SMA20: $233.58</div>
+    </div></div><div class="card">
+    <div class="ticker">TMUS <span class="score">90</span></div>
+    <div class="name">T-Mobile US, Inc.</div>
+    <div class="price">$198.54 <span class="change up">+1.82%</span></div>
+    <div class="metrics">
+    <div>RSI: 62.0</div>
+    <div>SMA20: $191.40</div>
+    </div></div><div class="card">
+    <div class="ticker">INTC <span class="score">90</span></div>
+    <div class="name">Intel Corporation</div>
+    <div class="price">$49.15 <span class="change up">+0.71%</span></div>
+    <div class="metrics">
+    <div>RSI: 52.8</div>
+    <div>SMA20: $46.76</div>
+    </div></div><div class="card">
+    <div class="ticker">AMGN <span class="score">90</span></div>
+    <div class="name">Amgen Inc.</div>
+    <div class="price">$341.43 <span class="change down">-0.94%</span></div>
+    <div class="metrics">
+    <div>RSI: 67.6</div>
+    <div>SMA20: $337.39</div>
+    </div></div><div class="card">
+    <div class="ticker">VRTX <span class="score">90</span></div>
+    <div class="name">Vertex Pharmaceuticals Incorpor</div>
+    <div class="price">$464.76 <span class="change down">-1.54%</span></div>
+    <div class="metrics">
+    <div>RSI: 56.5</div>
+    <div>SMA20: $464.07</div>
+    </div></div><div class="card">
+    <div class="ticker">LRCX <span class="score">90</span></div>
+    <div class="name">Lam Research Corporation</div>
+    <div class="price">$231.63 <span class="change down">-2.47%</span></div>
+    <div class="metrics">
+    <div>RSI: 59.4</div>
+    <div>SMA20: $222.72</div>
+    </div></div><div class="card">
+    <div class="ticker">AMAT <span class="score">90</span></div>
+    <div class="name">Applied Materials, Inc.</div>
+    <div class="price">$316.99 <span class="change down">-3.47%</span></div>
+    <div class="metrics">
+    <div>RSI: 55.3</div>
+    <div>SMA20: $315.69</div>
+    </div></div><div class="card">
+    <div class="ticker">SBUX <span class="score">90</span></div>
+    <div class="name">Starbucks Corporation</div>
+    <div class="price">$93.33 <span class="change up">+1.79%</span></div>
+    <div class="metrics">
+    <div>RSI: 58.5</div>
+    <div>SMA20: $92.64</div>
+    </div></div><div class="card">
+    <div class="ticker">GILD <span class="score">90</span></div>
+    <div class="name">Gilead Sciences, Inc.</div>
+    <div class="price">$145.01 <span class="change up">+1.48%</span></div>
+    <div class="metrics">
+    <div>RSI: 85.0</div>
+    <div>SMA20: $130.51</div>
+    </div></div><div class="card">
+    <div class="ticker">ADI <span class="score">90</span></div>
+    <div class="name">Analog Devices, Inc.</div>
+    <div class="price">$315.20 <span class="change down">-0.53%</span></div>
+    <div class="metrics">
+    <div>RSI: 65.8</div>
+    <div>SMA20: $303.91</div>
+    </div></div><div class="card">
+    <div class="ticker">REGN <span class="score">90</span></div>
+    <div class="name">Regeneron Pharmaceuticals, Inc.</div>
+    <div class="price">$757.95 <span class="change up">+0.39%</span></div>
+    <div class="metrics">
+    <div>RSI: 49.6</div>
+    <div>SMA20: $761.17</div>
+    </div></div><div class="card">
+    <div class="ticker">MDLZ <span class="score">90</span></div>
+    <div class="name">Mondelez International, Inc.</div>
+    <div class="price">$59.81 <span class="change up">+1.90%</span></div>
+    <div class="metrics">
+    <div>RSI: 72.3</div>
+    <div>SMA20: $56.84</div>
+    </div></div><div class="card">
+    <div class="ticker">ORLY <span class="score">90</span></div>
+    <div class="name">O'Reilly Automotive, Inc.</div>
+    <div class="price">$97.74 <span class="change down">-0.28%</span></div>
+    <div class="metrics">
+    <div>RSI: 61.8</div>
+    <div>SMA20: $96.38</div>
+    </div></div><div class="card">
+    <div class="ticker">MNST <span class="score">90</span></div>
+    <div class="name">Monster Beverage Corporation</div>
+    <div class="price">$82.32 <span class="change up">+1.50%</span></div>
+    <div class="metrics">
+    <div>RSI: 67.5</div>
+    <div>SMA20: $79.46</div>
+    </div></div><div class="card">
+    <div class="ticker">ASML <span class="score">90</span></div>
+    <div class="name">ASML Holding N.V. - New York Re</div>
+    <div class="price">$1391.36 <span class="change down">-3.47%</span></div>
+    <div class="metrics">
+    <div>RSI: 63.8</div>
+    <div>SMA20: $1345.81</div>
+    </div></div><div class="card">
+    <div class="ticker">PCAR <span class="score">90</span></div>
+    <div class="name">PACCAR Inc.</div>
+    <div class="price">$126.80 <span class="change up">+1.76%</span></div>
+    <div class="metrics">
+    <div>RSI: 68.6</div>
+    <div>SMA20: $121.07</div>
+    </div></div><div class="card">
+    <div class="ticker">ODFL <span class="score">90</span></div>
+    <div class="name">Old Dominion Freight Line, Inc.</div>
+    <div class="price">$186.67 <span class="change up">+0.29%</span></div>
+    <div class="metrics">
+    <div>RSI: 67.1</div>
+    <div>SMA20: $174.60</div>
+    </div></div><div class="card">
+    <div class="ticker">ROST <span class="score">90</span></div>
+    <div class="name">Ross Stores, Inc.</div>
+    <div class="price">$192.95 <span class="change up">+1.49%</span></div>
+    <div class="metrics">
+    <div>RSI: 49.5</div>
+    <div>SMA20: $189.70</div>
+    </div></div><div class="card">
+    <div class="ticker">META <span class="score">90</span></div>
+    <div class="name">Meta Platforms, Inc.</div>
+    <div class="price">$694.23 <span class="change down">-1.72%</span></div>
+    <div class="metrics">
+    <div>RSI: 64.1</div>
+    <div>SMA20: $656.55</div>
+    </div></div><div class="card">
+    <div class="ticker">KDP <span class="score">90</span></div>
+    <div class="name">Keurig Dr Pepper Inc.</div>
+    <div class="price">$28.14 <span class="change up">+2.42%</span></div>
+    <div class="metrics">
+    <div>RSI: 54.4</div>
+    <div>SMA20: $27.58</div>
+    </div></div><div class="card">
+    <div class="ticker">DXCM <span class="score">90</span></div>
+    <div class="name">DexCom, Inc.</div>
+    <div class="price">$71.49 <span class="change down">-1.43%</span></div>
+    <div class="metrics">
+    <div>RSI: 55.6</div>
+    <div>SMA20: $71.33</div>
+    </div></div><div class="card">
+    <div class="ticker">MRNA <span class="score">90</span></div>
+    <div class="name">Moderna, Inc.</div>
+    <div class="price">$42.73 <span class="change up">+0.42%</span></div>
+    <div class="metrics">
+    <div>RSI: 55.7</div>
+    <div>SMA20: $42.16</div>
+    </div></div><div class="card">
+    <div class="ticker">AZN <span class="score">90</span></div>
+    <div class="name">ASTRAZENECA PLC</div>
+    <div class="price">$186.51 <span class="change down">-1.01%</span></div>
+    <div class="metrics">
+    <div>RSI: 47.9</div>
+    <div>SMA20: $186.02</div>
+    </div></div><div class="card">
+    <div class="ticker">CHTR <span class="score">90</span></div>
+    <div class="name">Charter Communications, Inc.</div>
+    <div class="price">$211.57 <span class="change down">-0.96%</span></div>
+    <div class="metrics">
+    <div>RSI: 58.8</div>
+    <div>SMA20: $198.34</div>
+    </div></div><div class="card">
+    <div class="ticker">EXC <span class="score">90</span></div>
+    <div class="name">Exelon Corporation</div>
+    <div class="price">$45.03 <span class="change up">+2.54%</span></div>
+    <div class="metrics">
+    <div>RSI: 63.8</div>
+    <div>SMA20: $44.16</div>
+    </div></div><div class="card">
+    <div class="ticker">XEL <span class="score">90</span></div>
+    <div class="name">Xcel Energy Inc.</div>
+    <div class="price">$76.05 <span class="change up">+2.08%</span></div>
+    <div class="metrics">
+    <div>RSI: 55.8</div>
+    <div>SMA20: $75.28</div>
+    </div></div><div class="card">
+    <div class="ticker">BIIB <span class="score">90</span></div>
+    <div class="name">Biogen Inc.</div>
+    <div class="price">$177.84 <span class="change down">-0.70%</span></div>
+    <div class="metrics">
+    <div>RSI: 49.4</div>
+    <div>SMA20: $176.39</div>
+    </div></div><div class="card">
+    <div class="ticker">BKR <span class="score">90</span></div>
+    <div class="name">Baker Hughes Company</div>
+    <div class="price">$56.66 <span class="change up">+0.37%</span></div>
+    <div class="metrics">
+    <div>RSI: 83.1</div>
+    <div>SMA20: $52.88</div>
+    </div></div><div class="card">
+    <div class="ticker">CTSH <span class="score">85</span></div>
+    <div class="name">Cognizant Technology Solutions </div>
+    <div class="price">$74.72 <span class="change down">-9.88%</span></div>
+    <div class="metrics">
+    <div>RSI: 29.3</div>
+    <div>SMA20: $83.82</div>
+    </div></div><div class="card">
+    <div class="ticker">DLTR <span class="score">85</span></div>
+    <div class="name">Dollar Tree, Inc.</div>
+    <div class="price">$121.06 <span class="change up">+3.27%</span></div>
+    <div class="metrics">
+    <div>RSI: 27.6</div>
+    <div>SMA20: $129.38</div>
+    </div></div><div class="card">
+    <div class="ticker">AMZN <span class="score">80</span></div>
+    <div class="name">Amazon.com, Inc.</div>
+    <div class="price">$237.44 <span class="change down">-2.27%</span></div>
+    <div class="metrics">
+    <div>RSI: 44.4</div>
+    <div>SMA20: $240.13</div>
+    </div></div><div class="card">
+    <div class="ticker">AAPL <span class="score">80</span></div>
+    <div class="name">Apple Inc.</div>
+    <div class="price">$270.23 <span class="change up">+0.08%</span></div>
+    <div class="metrics">
+    <div>RSI: 60.9</div>
+    <div>SMA20: $257.75</div>
+    </div></div><div class="card">
+    <div class="ticker">PEP <span class="score">80</span></div>
+    <div class="name">Pepsico, Inc.</div>
+    <div class="price">$161.70 <span class="change up">+4.19%</span></div>
+    <div class="metrics">
+    <div>RSI: 85.3</div>
+    <div>SMA20: $146.23</div>
+    </div></div><div class="card">
+    <div class="ticker">TXN <span class="score">80</span></div>
+    <div class="name">Texas Instruments Incorporated</div>
+    <div class="price">$223.94 <span class="change down">-0.48%</span></div>
+    <div class="metrics">
+    <div>RSI: 81.2</div>
+    <div>SMA20: $197.60</div>
+    </div></div><div class="card">
+    <div class="ticker">HON <span class="score">80</span></div>
+    <div class="name">Honeywell International Inc.</div>
+    <div class="price">$230.82 <span class="change up">+1.43%</span></div>
+    <div class="metrics">
+    <div>RSI: 75.1</div>
+    <div>SMA20: $216.67</div>
+    </div></div><div class="card">
+    <div class="ticker">MU <span class="score">80</span></div>
+    <div class="name">Micron Technology, Inc.</div>
+    <div class="price">$417.50 <span class="change down">-4.64%</span></div>
+    <div class="metrics">
+    <div>RSI: 70.6</div>
+    <div>SMA20: $378.19</div>
+    </div></div><div class="card">
+    <div class="ticker">KLAC <span class="score">80</span></div>
+    <div class="name">KLA Corporation</div>
+    <div class="price">$1347.07 <span class="change down">-4.49%</span></div>
+    <div class="metrics">
+    <div>RSI: 44.1</div>
+    <div>SMA20: $1478.61</div>
+    </div></div><div class="card">
+    <div class="ticker">MAR <span class="score">80</span></div>
+    <div class="name">Marriott International</div>
+    <div class="price">$317.81 <span class="change down">-0.46%</span></div>
+    <div class="metrics">
+    <div>RSI: 45.4</div>
+    <div>SMA20: $320.13</div>
+    </div></div><div class="card">
+    <div class="ticker">CSX <span class="score">80</span></div>
+    <div class="name">CSX Corporation</div>
+    <div class="price">$38.87 <span class="change up">+1.24%</span></div>
+    <div class="metrics">
+    <div>RSI: 72.7</div>
+    <div>SMA20: $36.55</div>
+    </div></div><div class="card">
+    <div class="ticker">CPRT <span class="score">80</span></div>
+    <div class="name">Copart, Inc.</div>
+    <div class="price">$39.24 <span class="change down">-1.12%</span></div>
+    <div class="metrics">
+    <div>RSI: 44.9</div>
+    <div>SMA20: $40.25</div>
+    </div></div><div class="card">
+    <div class="ticker">CTAS <span class="score">80</span></div>
+    <div class="name">Cintas Corporation</div>
+    <div class="price">$190.53 <span class="change down">-0.20%</span></div>
+    <div class="metrics">
+    <div>RSI: 43.8</div>
+    <div>SMA20: $192.02</div>
+    </div></div><div class="card">
+    <div class="ticker">FAST <span class="score">80</span></div>
+    <div class="name">Fastenal Company</div>
+    <div class="price">$46.08 <span class="change up">+2.87%</span></div>
+    <div class="metrics">
+    <div>RSI: 71.7</div>
+    <div>SMA20: $43.04</div>
+    </div></div><div class="card">
+    <div class="ticker">GEHC <span class="score">80</span></div>
+    <div class="name">GE HealthCare Technologies Inc.</div>
+    <div class="price">$78.98 <span class="change down">-1.41%</span></div>
+    <div class="metrics">
+    <div>RSI: 32.7</div>
+    <div>SMA20: $82.37</div>
+    </div></div><div class="card">
+    <div class="ticker">ON <span class="score">80</span></div>
+    <div class="name">ON Semiconductor Corporation</div>
+    <div class="price">$58.40 <span class="change down">-5.09%</span></div>
+    <div class="metrics">
+    <div>RSI: 47.5</div>
+    <div>SMA20: $61.25</div>
+    </div></div><div class="card">
+    <div class="ticker">ILMN <span class="score">80</span></div>
+    <div class="name">Illumina, Inc.</div>
+    <div class="price">$138.37 <span class="change down">-1.96%</span></div>
+    <div class="metrics">
+    <div>RSI: 39.6</div>
+    <div>SMA20: $147.02</div>
+    </div></div></div></div></body></html>
