@@ -76,6 +76,7 @@ def analyze_stock_for_report(ticker):
             'signal': result_v3['signals'],
             'theme': theme_result['matched_theme'],
             'price_rec': price_recommendation,
+            'news_headlines': theme_result.get('positive_headlines', []),
         }
     except Exception as e:
         print(f"[ERROR] {ticker}: {e}")
@@ -211,6 +212,15 @@ def generate_stock_card_html(stock, idx, is_top5=False):
             <div>리스크/리워드 비율</div>
             <div class="ratio">{pr['risk_reward_ratio']:.2f}:1</div>
         </div>
+
+        {f'''
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                {"".join(f'<li>{headline}</li>' for headline in stock.get('news_headlines', [])[:3])}
+            </ul>
+        </div>
+        ''' if stock.get('news_headlines') else ''}
     </div>
     """
 
@@ -788,6 +798,146 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             margin-right: 8px;
             font-size: 0.9em;
         }}
+
+        /* 검색 박스 스타일 */
+        .search-box {{
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: relative;
+        }}
+
+        .search-box input {{
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }}
+
+        .search-box input:focus {{
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }}
+
+        .search-results {{
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }}
+
+        .search-results.show {{
+            display: block;
+        }}
+
+        .search-result-item {{
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }}
+
+        .search-result-item:hover {{
+            background: #f7fafc;
+        }}
+
+        .search-result-item:last-child {{
+            border-bottom: none;
+        }}
+
+        .search-result-ticker {{
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1.1em;
+        }}
+
+        .search-result-name {{
+            color: #718096;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }}
+
+        .search-result-score {{
+            float: right;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 15px;
+        }}
+
+        .search-result-score.high {{
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }}
+
+        .search-result-score.medium {{
+            background: linear-gradient(135deg, #ecc94b, #d69e2e);
+            color: white;
+        }}
+
+        .search-result-score.low {{
+            background: #e2e8f0;
+            color: #718096;
+        }}
+
+        .no-results {{
+            padding: 20px;
+            text-align: center;
+            color: #a0aec0;
+        }}
+
+        /* 뉴스 섹션 스타일 */
+        .news-section {{
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }}
+
+        .news-title {{
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 1em;
+        }}
+
+        .news-list {{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }}
+
+        .news-list li {{
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }}
+
+        .news-list li:last-child {{
+            border-bottom: none;
+        }}
+
+        .news-list li:before {{
+            content: "•";
+            color: #667eea;
+            margin-right: 8px;
+            font-weight: bold;
+        }}
     </style>
 </head>
 <body>
@@ -796,6 +946,12 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
             <h1>📊 Daily Stock Recommendations</h1>
             <div class="subtitle">검증된 퀀트 전략 기반 매수/매도 가격 추천</div>
             <div class="date">{current_date} {current_time} 업데이트</div>
+        </div>
+
+        <!-- 종목 검색 -->
+        <div class="search-box">
+            <input type="text" id="stockSearch" placeholder="🔍 종목 검색 (티커 또는 종목명)" onkeyup="searchStocks()">
+            <div id="searchResults" class="search-results"></div>
         </div>
 
         <div class="summary">
@@ -898,6 +1054,77 @@ def generate_html_report(stocks_data, title="Daily Stock Recommendations"):
     </div>
 
     <script>
+        // 검색용 전체 종목 데이터
+        const allStocksData = """ + str([{
+            'ticker': s['ticker'],
+            'name': s['name'],
+            'total_score': s['total_score'],
+            'current_price': s.get('regular_market_price') or s['current_price'],
+            'sector': s.get('sector', 'N/A'),
+            'entry': s['price_rec']['entry']['price'],
+            'target_1': s['price_rec']['exit']['target_1'],
+            'stop_loss': s['price_rec']['stop_loss']['price'],
+        } for s in stocks_data]).replace("'", '"') + """;
+
+        function searchStocks() {
+            const query = document.getElementById('stockSearch').value.toUpperCase().trim();
+            const resultsDiv = document.getElementById('searchResults');
+
+            if (query.length === 0) {
+                resultsDiv.classList.remove('show');
+                return;
+            }
+
+            const matches = allStocksData.filter(s =>
+                s.ticker.toUpperCase().includes(query) ||
+                s.name.toUpperCase().includes(query)
+            );
+
+            if (matches.length === 0) {
+                resultsDiv.innerHTML = '<div class="no-results">검색 결과가 없습니다</div>';
+            } else {
+                let html = '';
+                matches.forEach(s => {
+                    const scoreClass = s.total_score >= 60 ? 'high' : s.total_score >= 50 ? 'medium' : 'low';
+                    const grade = s.total_score >= 70 ? '강력추천' : s.total_score >= 60 ? '추천' : s.total_score >= 50 ? '관망' : '비추천';
+                    html += `
+                        <div class="search-result-item" onclick="showStockDetail('${s.ticker}')">
+                            <span class="search-result-ticker">${s.ticker}</span>
+                            <span class="search-result-name">${s.name}</span>
+                            <span class="search-result-score ${scoreClass}">${s.total_score.toFixed(0)}점 ${grade}</span>
+                            <div style="clear:both; margin-top: 8px; font-size: 0.85em; color: #718096;">
+                                매수가: $${s.entry.toFixed(2)} | 목표가: $${s.target_1.toFixed(2)} | 손절가: $${s.stop_loss.toFixed(2)}
+                            </div>
+                        </div>
+                    `;
+                });
+                resultsDiv.innerHTML = html;
+            }
+            resultsDiv.classList.add('show');
+        }
+
+        function showStockDetail(ticker) {
+            // 해당 종목 카드로 스크롤
+            const cards = document.querySelectorAll('.stock-card');
+            for (const card of cards) {
+                if (card.querySelector('.ticker')?.textContent === ticker) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.style.boxShadow = '0 0 0 3px #667eea';
+                    setTimeout(() => { card.style.boxShadow = ''; }, 2000);
+                    break;
+                }
+            }
+            document.getElementById('searchResults').classList.remove('show');
+            document.getElementById('stockSearch').value = '';
+        }
+
+        // 검색창 외부 클릭 시 결과 숨기기
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-box')) {
+                document.getElementById('searchResults').classList.remove('show');
+            }
+        });
+
         function showTab(tabName) {
             // 모든 탭 컨텐츠 숨기기
             var contents = document.getElementsByClassName('tab-content');

@@ -170,15 +170,24 @@ class ThemeAnalyzer:
 
         for news_item in self.news:
             try:
-                # 뉴스 발행 시간 확인
-                publish_time = datetime.fromtimestamp(news_item.get('providerPublishTime', 0))
+                # yfinance 새 구조 처리
+                if 'content' in news_item:
+                    content = news_item['content']
+                    title = content.get('title', '')
+                    # pubDate 형식: '2026-02-02T23:52:14Z'
+                    pub_date_str = content.get('pubDate', '')
+                    if pub_date_str:
+                        publish_time = datetime.fromisoformat(pub_date_str.replace('Z', '+00:00')).replace(tzinfo=None)
+                    else:
+                        continue
+                else:
+                    title = news_item.get('title', '')
+                    publish_time = datetime.fromtimestamp(news_item.get('providerPublishTime', 0))
 
                 if publish_time < three_days_ago:
                     continue
 
                 # 헤드라인에서 긍정 키워드 찾기
-                title = news_item.get('title', '')
-
                 for keyword in self.POSITIVE_KEYWORDS:
                     if keyword.lower() in title.lower():
                         result['positive_count'] += 1
@@ -222,6 +231,20 @@ class ThemeAnalyzer:
         theme_score = theme_result['score'] if theme_result['matched'] else 0
         total = min(theme_score + news_result['bonus_score'], 25)
 
+        # 최근 뉴스 헤드라인 가져오기 (최대 3개)
+        recent_headlines = []
+        for news_item in self.news[:5]:
+            try:
+                # yfinance 새 구조: news[i]['content']['title']
+                if 'content' in news_item:
+                    title = news_item['content'].get('title', '')
+                else:
+                    title = news_item.get('title', '')
+                if title:
+                    recent_headlines.append(title)
+            except:
+                pass
+
         result = {
             'total_score': total,
             'theme_score': theme_score,
@@ -229,7 +252,7 @@ class ThemeAnalyzer:
             'matched_theme': theme_result['theme'] if theme_result['matched'] else '미분류',
             'match_reason': theme_result['reason'] if theme_result['matched'] else '',
             'positive_news': news_result['positive_count'],
-            'positive_headlines': news_result['headlines'][:3]  # 상위 3개만
+            'positive_headlines': recent_headlines[:3]  # 최근 뉴스 3개
         }
 
         return result
