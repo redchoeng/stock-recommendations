@@ -1,0 +1,2445 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASDAQ 100 Daily Stock Recommendations - 2026년 02월 04일</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 30%, #F7DC6F 70%, #FADBD8 100%);
+            background-attachment: fixed;
+            padding: 20px;
+            min-height: 100vh;
+            color: #5D4E37;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 구름 애니메이션 */
+        .cloud {
+            position: fixed;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.8;
+            animation: float 25s infinite linear;
+            z-index: 0;
+        }
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+        .cloud-1 { width: 100px; height: 40px; top: 10%; left: -100px; animation-delay: 0s; }
+        .cloud-1::before { width: 50px; height: 50px; top: -25px; left: 15px; }
+        .cloud-1::after { width: 35px; height: 35px; top: -15px; left: 55px; }
+        .cloud-2 { width: 120px; height: 45px; top: 25%; left: -120px; animation-delay: -8s; }
+        .cloud-2::before { width: 55px; height: 55px; top: -30px; left: 20px; }
+        .cloud-2::after { width: 40px; height: 40px; top: -18px; left: 65px; }
+        .cloud-3 { width: 80px; height: 35px; top: 40%; left: -80px; animation-delay: -16s; }
+        .cloud-3::before { width: 40px; height: 40px; top: -20px; left: 10px; }
+        .cloud-3::after { width: 30px; height: 30px; top: -12px; left: 40px; }
+
+        @keyframes float {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(100vw + 200px)); }
+        }
+
+        /* 반짝이 효과 */
+        .sparkle {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: sparkle 2s infinite;
+            z-index: 1;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            background: white;
+            border-radius: 30px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 0 #5BA3E0, 0 12px 20px rgba(0,0,0,0.15);
+            border: 4px solid #5D4E37;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #5D4E37;
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 0 #B8E4FF;
+        }
+
+        .header .subtitle {
+            color: #7B6B4F;
+            font-size: 1em;
+        }
+
+        .header .date {
+            color: #5BA3E0;
+            font-weight: 600;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            background: white;
+            border: 3px solid #5D4E37;
+            padding: 12px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #5D4E37;
+            box-shadow: 0 4px 0 #C4A35A;
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #C4A35A;
+        }
+
+        .tab.active {
+            background: #5BA3E0;
+            border-color: #5D4E37;
+            color: white;
+            box-shadow: 0 4px 0 #3B83BD;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 100%);
+            border-radius: 20px;
+            padding: 20px;
+            border: 3px solid #5D4E37;
+            box-shadow: 0 4px 0 #C4A35A;
+            text-align: center;
+        }
+
+        .summary-card .label {
+            color: #7B6B4F;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            color: #FF6B35;
+            font-size: 1.8em;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #5D4E37;
+        }
+
+        .section-title {
+            font-size: 1.6em;
+            color: #5D4E37;
+            margin: 30px 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            border: 3px solid #5D4E37;
+            box-shadow: 0 4px 0 #C4A35A;
+        }
+
+        .stock-card {
+            background: linear-gradient(180deg, #FFFFFF 0%, #F5F5DC 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 3px solid #5D4E37;
+            box-shadow: 0 5px 0 #5BA3E0, 0 8px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stock-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 0 #5BA3E0, 0 15px 25px rgba(0,0,0,0.15);
+        }
+
+        .top5-card {
+            border: 4px solid #F5B041;
+            background: linear-gradient(180deg, #FFFACD 0%, #FFF8DC 100%);
+            box-shadow: 0 6px 0 #E8A838, 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .top5-card:hover {
+            box-shadow: 0 12px 0 #E8A838, 0 18px 30px rgba(0,0,0,0.15);
+        }
+
+        .top5-label {
+            display: inline-block;
+            background: linear-gradient(135deg, #F5B041 0%, #E8A838 100%);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 10px;
+            border: 2px solid #5D4E37;
+        }
+
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px dashed #C4A35A;
+        }
+
+        .stock-title {
+            flex: 1;
+        }
+
+        .stock-title h2 {
+            color: #5D4E37;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .stock-title .ticker {
+            color: #5BA3E0;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .stock-title .sector {
+            color: #7B6B4F;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .score-badge {
+            background: #5BA3E0;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-align: center;
+            min-width: 90px;
+            border: 3px solid #5D4E37;
+            box-shadow: 0 3px 0 #3B83BD;
+        }
+
+        .score-badge.top5 {
+            background: linear-gradient(135deg, #F5B041 0%, #E8A838 100%);
+            font-size: 1.5em;
+            box-shadow: 0 4px 0 #C4842F;
+        }
+
+        .score-badge.high {
+            background: #4CAF50;
+            box-shadow: 0 3px 0 #388E3C;
+        }
+
+        .score-badge.medium {
+            background: #5BA3E0;
+        }
+
+        .current-price {
+            margin-bottom: 20px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .price-row.premarket {
+            opacity: 0.9;
+            border-left: 3px solid #5BA3E0;
+            padding-left: 8px;
+        }
+
+        .price-row.regular {
+            opacity: 1;
+            border-left: 3px solid #4CAF50;
+            padding-left: 8px;
+            font-weight: 600;
+        }
+
+        .price-row.afterhours {
+            opacity: 0.9;
+            border-left: 3px solid #F5B041;
+            padding-left: 8px;
+        }
+
+        .price-label {
+            font-size: 0.9em;
+            color: #7B6B4F;
+            min-width: 90px;
+        }
+
+        .current-price .price {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #5D4E37;
+        }
+
+        .current-price .change {
+            font-size: 1.0em;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 2px solid;
+        }
+
+        .current-price .change.positive {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-color: #4CAF50;
+        }
+
+        .current-price .change.negative {
+            background: #FFEBEE;
+            color: #C62828;
+            border-color: #E53935;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .metric {
+            background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 100%);
+            padding: 12px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #C4A35A;
+        }
+
+        .metric .label {
+            color: #7B6B4F;
+            font-size: 0.75em;
+            margin-bottom: 6px;
+        }
+
+        .metric .value {
+            color: #5D4E37;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .metric.highlight {
+            background: linear-gradient(135deg, #4CAF50, #45A049);
+            color: white;
+            border-color: #388E3C;
+        }
+
+        .metric.highlight .label,
+        .metric.highlight .value {
+            color: white;
+        }
+
+        /* 밥값/자동화 상세 섹션 */
+        .verdict-section {
+            background: linear-gradient(180deg, #E8F4FD 0%, #D6EAF8 100%);
+            border-radius: 15px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 2px solid #5BA3E0;
+        }
+
+        .verdict-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }
+
+        .verdict-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .verdict-label {
+            font-weight: 600;
+            color: #5D4E37;
+            min-width: 80px;
+        }
+
+        .verdict-value {
+            color: #5D4E37;
+            font-weight: 500;
+        }
+
+        .verdict-desc {
+            color: #7B6B4F;
+            font-size: 0.9em;
+        }
+
+        .verdict-item.profitable .verdict-value {
+            color: #4CAF50;
+        }
+
+        .verdict-item.unprofitable .verdict-value {
+            color: #E53935;
+        }
+
+        .price-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .price-box {
+            background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 100%);
+            border-radius: 15px;
+            padding: 18px;
+            border: 3px solid #5D4E37;
+        }
+
+        .price-box.buy {
+            border-color: #5BA3E0;
+            background: linear-gradient(180deg, #E8F4FD 0%, #D6EAF8 100%);
+        }
+
+        .price-box.sell {
+            border-color: #9B59B6;
+            background: linear-gradient(180deg, #F5EEF8 0%, #E8DAEF 100%);
+        }
+
+        .price-box.stop {
+            border-color: #E53935;
+            background: linear-gradient(180deg, #FFEBEE 0%, #FFCDD2 100%);
+        }
+
+        .price-box h3 {
+            color: #5D4E37;
+            margin-bottom: 12px;
+            font-size: 1em;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 2px dashed rgba(93, 78, 55, 0.2);
+        }
+
+        .price-item:last-child {
+            border-bottom: none;
+        }
+
+        .price-item .label {
+            color: #7B6B4F;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .price-item .value {
+            color: #5D4E37;
+            font-weight: bold;
+        }
+
+        .signal {
+            background: linear-gradient(180deg, #E8F4FD 0%, #D6EAF8 100%);
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border: 2px solid #5BA3E0;
+        }
+
+        .signal .label {
+            color: #7B6B4F;
+            font-size: 0.85em;
+            margin-bottom: 6px;
+        }
+
+        .signal .value {
+            color: #5D4E37;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .risk-reward {
+            background: linear-gradient(180deg, #FFEBEE 0%, #FFCDD2 100%);
+            border: 3px solid #E53935;
+            border-radius: 15px;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .risk-reward .ratio {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #C62828;
+        }
+
+        .show-more-btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 30px auto;
+            padding: 15px 30px;
+            background: white;
+            border: 3px solid #5D4E37;
+            color: #5D4E37;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Noto Sans KR', sans-serif;
+            box-shadow: 0 4px 0 #C4A35A;
+        }
+
+        .show-more-btn:hover {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #C4A35A;
+        }
+
+        #other-stocks {
+            display: none;
+        }
+
+        #other-stocks.show {
+            display: block;
+        }
+
+        .footer {
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            color: #7B6B4F;
+            margin-top: 30px;
+            font-size: 0.9em;
+            border: 3px solid #C4A35A;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 100%);
+            color: #5D4E37;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+            font-size: 0.9em;
+            border: 2px solid #C4A35A;
+        }
+
+        /* 점수 항목 클릭 기능 */
+        .metric.clickable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .metric.clickable:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(91, 163, 224, 0.3);
+        }
+
+        .metric.clickable:active {
+            transform: scale(0.98);
+        }
+
+        /* 점수 기준 팝업 */
+        .score-tooltip {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFF8DC 100%);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 0 #C4A35A, 0 15px 40px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 420px;
+            width: 90%;
+            border: 4px solid #5D4E37;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .score-tooltip.show {
+            display: block;
+        }
+
+        .score-tooltip-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+        }
+
+        .score-tooltip-overlay.show {
+            display: block;
+        }
+
+        .score-tooltip h3 {
+            color: #5D4E37;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 3px solid #5BA3E0;
+            padding-bottom: 10px;
+        }
+
+        .score-tooltip .criteria-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .score-tooltip .criteria-list li {
+            padding: 8px 0;
+            border-bottom: 2px dashed #C4A35A;
+            font-size: 0.95em;
+            color: #5D4E37;
+        }
+
+        .score-tooltip .criteria-list li:last-child {
+            border-bottom: none;
+        }
+
+        .score-tooltip .criteria-list .score-value {
+            font-weight: 700;
+            color: #5BA3E0;
+        }
+
+        .score-tooltip .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #E53935;
+            border: 2px solid #5D4E37;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-tooltip .close-btn:hover {
+            background: #C62828;
+        }
+
+        /* 뉴스 섹션 스타일 */
+        .news-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .news-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 1em;
+        }
+
+        .news-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .news-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .news-list li:last-child {
+            border-bottom: none;
+        }
+
+        .news-list li:before {
+            content: "•";
+            color: #667eea;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 구름들 -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+
+    <!-- 반짝이들 -->
+    <div class="sparkle" style="top: 15%; left: 10%;"></div>
+    <div class="sparkle" style="top: 25%; right: 15%; animation-delay: 0.5s;"></div>
+    <div class="sparkle" style="top: 45%; left: 8%; animation-delay: 1s;"></div>
+    <div class="sparkle" style="top: 65%; right: 12%; animation-delay: 1.5s;"></div>
+
+    <div class="container">
+        <div class="header">
+            <div style="font-size: 3em; margin-bottom: 10px;">🚀</div>
+            <h1>NASDAQ 100 Recommendations</h1>
+            <div class="subtitle">검증된 퀀트 전략 기반 매수/매도 가격 추천</div>
+            <div class="date">2026년 02월 04일 02:35:46 업데이트</div>
+        </div>
+
+        <div class="summary">
+            <div class="summary-card">
+                <div class="label">분석 종목 수</div>
+                <div class="value">6개</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">평균 점수</div>
+                <div class="value">60.4</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">추천 종목 (60점 이상)</div>
+                <div class="value">3개</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">최고 점수</div>
+                <div class="value">69점</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('all')">전체</div>
+            <div class="tab" onclick="showTab('Technology')">Technology (6)</div>
+
+        </div>
+
+        <div id="tab-all" class="tab-content active">
+            <h2 class="section-title">🏆 TOP 5 추천 종목</h2>
+
+    <div class="stock-card top5-card">
+        <div class="stock-header">
+            <div class="stock-title">
+                <span class="top5-label">TOP 1</span>
+                <span class="rank-badge">#1</span>
+                <h2>Lam Research Corporation</h2>
+                <div class="ticker">LRCX</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge top5">
+                69점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$230.65</span>
+                <span class="change negative">-2.88%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">35/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">13/25</div>
+            </div>
+            <div class="metric clickable highlight" onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">16/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">5/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">65.6%</span>
+                <span class="verdict-desc">| 밥값 제대로 하는 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductor Equipment & Materials 산업</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$222.67</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$230.65</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$143.81</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$247.36 (+11.1%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$254.78 (+14.4%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$262.43 (+17.9%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$203.63 (8.6%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$209.98</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$197.29</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">강력 모멘텀(6M) + 강력 모멘텀(12M) + 정배열</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">1.69:1</div>
+        </div>
+
+    </div>
+    
+    <div class="stock-card top5-card">
+        <div class="stock-header">
+            <div class="stock-title">
+                <span class="top5-label">TOP 2</span>
+                <span class="rank-badge">#2</span>
+                <h2>Micron Technology, Inc.</h2>
+                <div class="ticker">MU</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge top5">
+                61점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$419.77</span>
+                <span class="change negative">-4.13%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">33/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">13/25</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">11/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">4/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">22.6%</span>
+                <span class="verdict-desc">| 밥값 제대로 하는 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductors 산업 + HBM3E 양산, AI 메모리 매출 비중 확대</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$378.30</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$419.77</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$211.44</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$428.79 (+13.3%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$444.78 (+17.6%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$455.78 (+20.5%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$340.43 (10.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$353.06</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$327.81</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">강력 모멘텀(6M) + 강력 모멘텀(12M) + 정배열</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">1.76:1</div>
+        </div>
+
+    </div>
+    
+    <div class="stock-card top5-card">
+        <div class="stock-header">
+            <div class="stock-title">
+                <span class="top5-label">TOP 3</span>
+                <span class="rank-badge">#3</span>
+                <h2>Applied Materials, Inc.</h2>
+                <div class="ticker">AMAT</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge top5">
+                61점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$317.49</span>
+                <span class="change negative">-3.32%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">27/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">13/25</div>
+            </div>
+            <div class="metric clickable highlight" onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">16/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">5/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">35.5%</span>
+                <span class="verdict-desc">| 괜찮은 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductor Equipment & Materials 산업</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$307.97</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$317.49</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$219.43</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$336.62 (+9.3%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$346.72 (+12.6%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$357.12 (+16.0%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$286.48 (7.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$293.65</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$279.32</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">강력 모멘텀(6M) + 강력 모멘텀(12M) + 정배열</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">1.80:1</div>
+        </div>
+
+    </div>
+    
+    <div class="stock-card top5-card">
+        <div class="stock-header">
+            <div class="stock-title">
+                <span class="top5-label">TOP 4</span>
+                <span class="rank-badge">#4</span>
+                <h2>Teradyne, Inc.</h2>
+                <div class="ticker">TER</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge top5">
+                59점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$279.98</span>
+                <span class="change positive">+12.20%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable " onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">24/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">13/25</div>
+            </div>
+            <div class="metric clickable highlight" onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">17/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">5/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">15.8%</span>
+                <span class="verdict-desc">| 평범한 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductor Equipment & Materials 산업</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$234.12</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$279.98</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$160.85</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$258.94 (+10.6%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$266.71 (+13.9%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$274.71 (+17.3%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$215.51 (8.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$221.71</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$209.30</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">강력 모멘텀(6M) + 강력 모멘텀(12M) + 정배열</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">1.75:1</div>
+        </div>
+
+    </div>
+    
+    <div class="stock-card top5-card">
+        <div class="stock-header">
+            <div class="stock-title">
+                <span class="top5-label">TOP 5</span>
+                <span class="rank-badge">#5</span>
+                <h2>Broadcom Inc.</h2>
+                <div class="ticker">AVGO</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge top5">
+                59점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$310.33</span>
+                <span class="change negative">-6.28%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">33/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">12/25</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">11/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">3/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">31.1%</span>
+                <span class="verdict-desc">| 밥값 제대로 하는 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductors 산업 + AI 네트워킹 칩, Custom AI 칩 (Google TPU 등)</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$301.02</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$310.33</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$322.90</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$328.94 (+9.3%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$357.97 (+18.9%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$407.45 (+35.4%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$280.08 (7.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$287.06</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$273.10</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">약한 모멘텀(6M) + 강력 모멘텀(12M) + RSI 과매도 구간 + BB 하단 근접</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">2.72:1</div>
+        </div>
+
+    </div>
+    
+            <button class="show-more-btn" onclick="toggleOtherStocks()">
+                <span id="show-more-text">▼ 나머지 1개 종목 보기</span>
+            </button>
+
+            <div id="other-stocks">
+                <h2 class="section-title">📋 기타 종목</h2>
+
+    <div class="stock-card ">
+        <div class="stock-header">
+            <div class="stock-title">
+                
+                <span class="rank-badge">#6</span>
+                <h2>QUALCOMM Incorporated</h2>
+                <div class="ticker">QCOM</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge medium">
+                52점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$146.10</span>
+                <span class="change negative">-4.27%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">33/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">6/25</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">10/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">3/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">23.3%</span>
+                <span class="verdict-desc">| 밥값 제대로 하는 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductors 산업</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$141.72</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$146.10</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$152.35</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$149.21 (+5.3%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$183.85 (+29.7%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$189.36 (+33.6%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$136.10 (4.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$137.97</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$134.23</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">약한 모멘텀(6M) + 약한 모멘텀(12M) + RSI 과매도 구간</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">7.50:1</div>
+        </div>
+
+    </div>
+    
+            </div>
+        </div>
+        <div id="tab-Technology" class="tab-content">
+            <h2 class="section-title">Technology 섹터 (6개)</h2>
+
+    <div class="stock-card ">
+        <div class="stock-header">
+            <div class="stock-title">
+                
+                <span class="rank-badge">#1</span>
+                <h2>Lam Research Corporation</h2>
+                <div class="ticker">LRCX</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge high">
+                69점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$230.65</span>
+                <span class="change negative">-2.88%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">35/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">13/25</div>
+            </div>
+            <div class="metric clickable highlight" onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">16/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">5/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">65.6%</span>
+                <span class="verdict-desc">| 밥값 제대로 하는 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductor Equipment & Materials 산업</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$222.67</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$230.65</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$143.81</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$247.36 (+11.1%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$254.78 (+14.4%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$262.43 (+17.9%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$203.63 (8.6%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$209.98</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$197.29</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">강력 모멘텀(6M) + 강력 모멘텀(12M) + 정배열</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">1.69:1</div>
+        </div>
+
+    </div>
+    
+    <div class="stock-card ">
+        <div class="stock-header">
+            <div class="stock-title">
+                
+                <span class="rank-badge">#2</span>
+                <h2>Micron Technology, Inc.</h2>
+                <div class="ticker">MU</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge high">
+                61점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$419.77</span>
+                <span class="change negative">-4.13%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">33/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">13/25</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">11/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">4/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">22.6%</span>
+                <span class="verdict-desc">| 밥값 제대로 하는 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductors 산업 + HBM3E 양산, AI 메모리 매출 비중 확대</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$378.30</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$419.77</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$211.44</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$428.79 (+13.3%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$444.78 (+17.6%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$455.78 (+20.5%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$340.43 (10.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$353.06</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$327.81</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">강력 모멘텀(6M) + 강력 모멘텀(12M) + 정배열</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">1.76:1</div>
+        </div>
+
+    </div>
+    
+    <div class="stock-card ">
+        <div class="stock-header">
+            <div class="stock-title">
+                
+                <span class="rank-badge">#3</span>
+                <h2>Applied Materials, Inc.</h2>
+                <div class="ticker">AMAT</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge high">
+                61점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$317.49</span>
+                <span class="change negative">-3.32%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">27/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">13/25</div>
+            </div>
+            <div class="metric clickable highlight" onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">16/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">5/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">35.5%</span>
+                <span class="verdict-desc">| 괜찮은 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductor Equipment & Materials 산업</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$307.97</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$317.49</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$219.43</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$336.62 (+9.3%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$346.72 (+12.6%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$357.12 (+16.0%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$286.48 (7.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$293.65</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$279.32</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">강력 모멘텀(6M) + 강력 모멘텀(12M) + 정배열</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">1.80:1</div>
+        </div>
+
+    </div>
+    
+    <div class="stock-card ">
+        <div class="stock-header">
+            <div class="stock-title">
+                
+                <span class="rank-badge">#4</span>
+                <h2>Teradyne, Inc.</h2>
+                <div class="ticker">TER</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge medium">
+                59점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$279.98</span>
+                <span class="change positive">+12.20%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable " onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">24/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">13/25</div>
+            </div>
+            <div class="metric clickable highlight" onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">17/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">5/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">15.8%</span>
+                <span class="verdict-desc">| 평범한 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductor Equipment & Materials 산업</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$234.12</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$279.98</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$160.85</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$258.94 (+10.6%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$266.71 (+13.9%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$274.71 (+17.3%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$215.51 (8.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$221.71</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$209.30</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">강력 모멘텀(6M) + 강력 모멘텀(12M) + 정배열</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">1.75:1</div>
+        </div>
+
+    </div>
+    
+    <div class="stock-card ">
+        <div class="stock-header">
+            <div class="stock-title">
+                
+                <span class="rank-badge">#5</span>
+                <h2>Broadcom Inc.</h2>
+                <div class="ticker">AVGO</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge medium">
+                59점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$310.33</span>
+                <span class="change negative">-6.28%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">33/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">12/25</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">11/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">3/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">31.1%</span>
+                <span class="verdict-desc">| 밥값 제대로 하는 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductors 산업 + AI 네트워킹 칩, Custom AI 칩 (Google TPU 등)</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$301.02</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$310.33</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$322.90</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$328.94 (+9.3%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$357.97 (+18.9%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$407.45 (+35.4%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$280.08 (7.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$287.06</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$273.10</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">약한 모멘텀(6M) + 강력 모멘텀(12M) + RSI 과매도 구간 + BB 하단 근접</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">2.72:1</div>
+        </div>
+
+    </div>
+    
+    <div class="stock-card ">
+        <div class="stock-header">
+            <div class="stock-title">
+                
+                <span class="rank-badge">#6</span>
+                <h2>QUALCOMM Incorporated</h2>
+                <div class="ticker">QCOM</div>
+                <div class="sector">Technology</div>
+            </div>
+            <div class="score-badge medium">
+                52점
+            </div>
+        </div>
+
+        <div class="current-price">
+            
+            <div class="price-row">
+                <span class="price-label">현재가:</span>
+                <span class="price">$146.10</span>
+                <span class="change negative">-4.27%</span>
+            </div>
+        
+        </div>
+
+        <div class="metrics">
+            <div class="metric clickable highlight" onclick="showScoreCriteria('valuation')">
+                <div class="label">밥값</div>
+                <div class="value">33/35</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('technical')">
+                <div class="label">기술적</div>
+                <div class="value">6/25</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('automation')">
+                <div class="label">자동화</div>
+                <div class="value">10/20</div>
+            </div>
+            <div class="metric clickable " onclick="showScoreCriteria('policy')">
+                <div class="label">정책</div>
+                <div class="value">3/20</div>
+            </div>
+        </div>
+
+        <!-- 핵심 지표 요약 -->
+        <div class="verdict-section">
+            <div class="verdict-item profitable">
+                <span class="verdict-label">ROE:</span>
+                <span class="verdict-value">23.3%</span>
+                <span class="verdict-desc">| 밥값 제대로 하는 기업</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">정책 수혜:</span>
+                <span class="verdict-value">CHIPS</span>
+            </div>
+            <div class="verdict-item">
+                <span class="verdict-label">자동화:</span>
+                <span class="verdict-value">Semiconductors 산업</span>
+            </div>
+        </div>
+
+        <div class="price-section">
+            <div class="price-box buy">
+                <h3>💰 매수 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$141.72</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">공격적</span>
+                    <span class="value">$146.10</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">보수적</span>
+                    <span class="value">$152.35</span>
+                </div>
+            </div>
+
+            <div class="price-box sell">
+                <h3>🎯 매도 목표가</h3>
+                <div class="price-item">
+                    <span class="label">1차 목표</span>
+                    <span class="value">$149.21 (+5.3%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">2차 목표</span>
+                    <span class="value">$183.85 (+29.7%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">3차 목표</span>
+                    <span class="value">$189.36 (+33.6%)</span>
+                </div>
+            </div>
+
+            <div class="price-box stop">
+                <h3>⚠️ 손절 가격</h3>
+                <div class="price-item">
+                    <span class="label">추천가</span>
+                    <span class="value">$136.10 (4.0%)</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">타이트</span>
+                    <span class="value">$137.97</span>
+                </div>
+                <div class="price-item">
+                    <span class="label">여유</span>
+                    <span class="value">$134.23</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="signal">
+            <div class="label">📡 시그널</div>
+            <div class="value">약한 모멘텀(6M) + 약한 모멘텀(12M) + RSI 과매도 구간</div>
+        </div>
+
+        <div class="risk-reward">
+            <div>리스크/리워드 비율</div>
+            <div class="ratio">7.50:1</div>
+        </div>
+
+    </div>
+            </div>
+
+        <div class="footer">
+            <p><strong>※ 면책 조항</strong></p>
+            <p>본 리포트는 투자 참고 자료이며, 투자 판단 및 결과에 대한 책임은 투자자 본인에게 있습니다.</p>
+            <p>손절가는 반드시 지켜서 리스크를 관리하시기 바랍니다.</p>
+            <p style="margin-top: 15px; color: #a0aec0;">
+                Powered by 검증된 퀀트 전략 (Jegadeesh & Titman 1993, De Bondt & Thaler 1985, Hurst et al. 2013)
+            </p>
+        </div>
+    </div>
+
+    <!-- 점수 기준 팝업 -->
+    <div class="score-tooltip-overlay" id="scoreOverlay" onclick="hideScoreCriteria()"></div>
+    <div class="score-tooltip" id="scoreTooltip">
+        <button class="close-btn" onclick="hideScoreCriteria()">&times;</button>
+        <h3 id="scoreTooltipTitle"></h3>
+        <ul class="criteria-list" id="scoreTooltipContent"></ul>
+    </div>
+
+    <script>
+        // 점수 기준 데이터
+        const scoreCriteria = {
+            valuation: {
+                title: '밥값 점수 (35점 만점)',
+                subtitle: '실체 있는 기업인가? - 꿈만 있고 숫자 없으면 도태',
+                criteria: [
+                    { label: 'ROE/ROA (15점)', items: [
+                        'ROE 20% 이상: 15점 (밥값 제대로 함)',
+                        'ROE 15-20%: 12점',
+                        'ROE 10-15%: 9점',
+                        'ROE 5-10%: 6점',
+                        'ROE 0-5%: 3점',
+                        'ROE 음수: 0점 (도태 대상)'
+                    ]},
+                    { label: '영업이익률 (10점)', items: [
+                        '20% 이상: 10점 (고마진)',
+                        '15-20%: 8점',
+                        '10-15%: 6점',
+                        '5-10%: 4점 (박리다매)',
+                        '0-5%: 2점',
+                        '음수: 0점 (구조조정 필요)'
+                    ]},
+                    { label: '성장성 + 흑자 (10점)', items: [
+                        '매출 20%↑ + 이익 10%↑: 10점',
+                        '매출 10%↑ + 흑자: 8점',
+                        '적자 + 고성장: 최대 3점 (리스크)',
+                        '적자 + 저성장: 0점 (도태)'
+                    ]}
+                ]
+            },
+            technical: {
+                title: '기술적 분석 점수 (25점 만점)',
+                subtitle: '모멘텀 + 추세 분석',
+                criteria: [
+                    { label: '모멘텀 (10점)', items: [
+                        'RSI 과매수/과매도 구간',
+                        'MACD 시그널',
+                        '가격 모멘텀 강도'
+                    ]},
+                    { label: '평균회귀 (7점)', items: [
+                        '볼린저 밴드 위치',
+                        '이동평균선 괴리율',
+                        '과매도 반등 시그널'
+                    ]},
+                    { label: '추세 (8점)', items: [
+                        '이동평균선 배열',
+                        '추세선 지지/저항',
+                        'ADX 추세 강도'
+                    ]}
+                ]
+            },
+            automation: {
+                title: '자동화/AI 수혜 점수 (20점 만점)',
+                subtitle: 'GICS 산업분류 + 공시 데이터 기반',
+                criteria: [
+                    { label: 'AI 인프라 (10점) - GICS 산업분류', items: [
+                        'Semiconductors: 8점 + 검증기업 보너스 2점',
+                        'NVDA: Data Center 매출 $47.5B, AI GPU 점유율 80%+',
+                        'MSFT/GOOGL/AMZN: 클라우드 AI 서비스 매출 공시',
+                        'Internet Services: 7점, Systems Software: 6점',
+                        'Technology 섹터: 3점'
+                    ]},
+                    { label: '자동화/로봇 (10점) - GICS 산업분류', items: [
+                        'Industrial Machinery: 8점 + 검증기업 보너스 2점',
+                        'TER: Universal Robots 인수, 협동로봇 시장 선두',
+                        'ROK: 산업 자동화 매출 $8B+',
+                        'Semiconductor Equipment: 8점 (팹 자동화)',
+                        'Industrials 섹터: 3점'
+                    ]}
+                ]
+            },
+            policy: {
+                title: '미국 정책 수혜 점수 (20점 만점)',
+                subtitle: '미국 정부 공식 발표/공시 기반',
+                criteria: [
+                    { label: 'CHIPS Act (6점) - 상무부 발표', items: [
+                        'INTC: 6점 ($85억 보조금 확정, 2024.03)',
+                        'TSM: 5점 ($66억 확정, Arizona 팹)',
+                        'MU: 4점 ($61억 확정, Idaho/NY)',
+                        '반도체 장비 산업: 5점 (팹 건설 수혜)',
+                        'Semiconductors: 3점 (팹리스 간접 수혜)'
+                    ]},
+                    { label: 'IRA (6점) - 재무부/IRS 기준', items: [
+                        'TSLA/GM/F: 5점 (EV 세액공제 $7,500 적격)',
+                        'FSLR: 6점 (태양광 제조 세액공제, 미국 생산)',
+                        'NEE: 4점 (ITC 30%/PTC $27.5/MWh)',
+                        'Electric Utilities: 3점',
+                        '북미 조립 + 배터리/광물 요건 충족 필수'
+                    ]},
+                    { label: '방산 (4점) - DoD 계약 Top 10', items: [
+                        'LMT: 4점 (DoD 계약 1위 $75B+)',
+                        'RTX: 4점 (DoD 계약 2위 $27B+)',
+                        'GD/BA/NOC: 4점 (DoD Top 5)',
+                        'Aerospace & Defense 산업: 3점',
+                        '레퍼런스: usaspending.gov FY2023'
+                    ]},
+                    { label: '인프라법 IIJA (4점) - $1.2조', items: [
+                        'CAT: 4점 (건설장비 점유율 40%+)',
+                        'VMC/MLM: 3점 (골재/시멘트 수요 증가)',
+                        'ETN: 3점 (전력망 장비)',
+                        'Construction Machinery: 4점',
+                        '도로/교량 $110B, 전력망 $65B 배정'
+                    ]}
+                ]
+            }
+        };
+
+        function showScoreCriteria(type) {
+            const data = scoreCriteria[type];
+            if (!data) return;
+
+            document.getElementById('scoreTooltipTitle').innerHTML = data.title + '<div style="font-size: 0.7em; color: #718096; margin-top: 5px;">' + data.subtitle + '</div>';
+
+            let html = '';
+            data.criteria.forEach(section => {
+                html += '<li style="font-weight: 700; color: #2d3748; background: #f7fafc; padding: 10px; margin: 8px -10px; border-radius: 5px;">' + section.label + '</li>';
+                section.items.forEach(item => {
+                    html += '<li style="padding-left: 15px;">' + item + '</li>';
+                });
+            });
+
+            document.getElementById('scoreTooltipContent').innerHTML = html;
+            document.getElementById('scoreOverlay').classList.add('show');
+            document.getElementById('scoreTooltip').classList.add('show');
+        }
+
+        function hideScoreCriteria() {
+            document.getElementById('scoreOverlay').classList.remove('show');
+            document.getElementById('scoreTooltip').classList.remove('show');
+        }
+
+        // ESC 키로 팝업 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideScoreCriteria();
+            }
+        });
+
+        function showTab(tabName) {
+            // 모든 탭 컨텐츠 숨기기
+            var contents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove('active');
+            }
+
+            // 모든 탭 버튼 비활성화
+            var tabs = document.getElementsByClassName('tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+
+            // 선택한 탭 표시
+            if (tabName === 'all') {
+                document.getElementById('tab-all').classList.add('active');
+                event.target.classList.add('active');
+            } else {
+                document.getElementById('tab-' + tabName).classList.add('active');
+                event.target.classList.add('active');
+            }
+        }
+
+        function toggleOtherStocks() {
+            var otherStocks = document.getElementById('other-stocks');
+            var showMoreText = document.getElementById('show-more-text');
+
+            if (otherStocks.classList.contains('show')) {
+                otherStocks.classList.remove('show');
+                showMoreText.textContent = '▼ 나머지 1개 종목 보기';
+            } else {
+                otherStocks.classList.add('show');
+                showMoreText.textContent = '▲ 접기';
+            }
+        }
+
+    </script>
+</body>
+</html>
