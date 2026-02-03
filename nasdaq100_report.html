@@ -1,373 +1,497 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>NASDAQ 100 Report</title>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NASDAQ 100 Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body{font-family:sans-serif;background:#1a1a2e;color:#eee;padding:20px}
-.container{max-width:1200px;margin:0 auto}
-h1{color:#00d4ff;text-align:center}
-.date{text-align:center;color:#888;margin-bottom:30px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px}
-.card{background:#16213e;border-radius:12px;padding:20px;border:1px solid #0f3460}
-.card.top5{border:2px solid #00d4ff;background:#1a1a3e}
-.ticker{font-size:1.4em;font-weight:bold;color:#00d4ff}
-.name{color:#888;font-size:0.9em}
-.price{font-size:1.3em;margin:10px 0}
-.change{padding:3px 8px;border-radius:5px;font-size:0.9em}
-.up{background:#0a3622;color:#4ade80}
-.down{background:#3b1c1c;color:#f87171}
-.score{background:#00d4ff;color:#000;padding:5px 12px;border-radius:15px;font-weight:bold}
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:0.85em;color:#aaa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:linear-gradient(180deg,#87CEEB 0%,#98D8C8 30%,#F7DC6F 70%,#FADBD8 100%);background-attachment:fixed;padding:15px;color:#5D4E37;min-height:100vh}
+.cloud{position:fixed;background:#fff;border-radius:50px;opacity:0.7;animation:float 30s infinite linear;z-index:0}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.c1{width:80px;height:32px;top:8%;left:-80px}.c1::before{width:40px;height:40px;top:-20px;left:12px}.c1::after{width:28px;height:28px;top:-12px;left:44px}
+.c2{width:100px;height:40px;top:22%;left:-100px;animation-delay:-10s}.c2::before{width:50px;height:50px;top:-25px;left:18px}.c2::after{width:35px;height:35px;top:-15px;left:58px}
+@keyframes float{0%{transform:translateX(0)}100%{transform:translateX(calc(100vw + 150px))}}
+.container{max-width:1200px;margin:0 auto;position:relative;z-index:10}
+.header{background:#fff;border-radius:25px;padding:25px;margin-bottom:20px;box-shadow:0 6px 0 #E8A838;border:3px solid #5D4E37;text-align:center}
+.header h1{font-size:1.6em;margin-bottom:5px;text-shadow:2px 2px 0 #FFF5BA}
+.header .sub{color:#7B6B4F;font-size:0.9em}
+.header .date{color:#E8A838;font-weight:700;margin-top:8px}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.sum-card{background:#FFF8DC;border-radius:15px;padding:12px;text-align:center;border:2px solid #5D4E37}
+.sum-card .label{font-size:0.75em;color:#7B6B4F}
+.sum-card .value{font-size:1.3em;font-weight:700;color:#FF6B35}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px}
+.card{background:#fff;border-radius:18px;padding:18px;border:3px solid #5D4E37;box-shadow:0 5px 0 #E8A838;transition:transform 0.2s}
+.card:hover{transform:translateY(-3px)}
+.card.top{background:#FFFACD;border:3px solid #F5B041}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:2px dashed #C4A35A}
+.ticker{font-size:1.2em;font-weight:700;color:#5D4E37}
+.name{font-size:0.8em;color:#7B6B4F}
+.score{background:#E8A838;color:#fff;padding:8px 14px;border-radius:20px;font-weight:700;border:2px solid #5D4E37}
+.card.top .score{background:linear-gradient(135deg,#F5B041,#E8A838)}
+.price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.price{font-size:1.2em;font-weight:700}
+.chg{padding:3px 8px;border-radius:8px;font-size:0.85em}
+.up{background:#E8F5E9;color:#2E7D32}
+.down{background:#FFEBEE;color:#C62828}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.metric{background:#FFF8DC;padding:8px 4px;border-radius:10px;text-align:center;border:2px solid #C4A35A;cursor:pointer;transition:all 0.2s}
+.metric:hover{transform:scale(1.05);box-shadow:0 3px 8px rgba(0,0,0,0.15)}
+.metric.hi{background:linear-gradient(135deg,#4CAF50,#45A049);border-color:#388E3C}
+.metric.hi .ml,.metric.hi .mv{color:#fff}
+.ml{font-size:0.65em;color:#7B6B4F}
+.mv{font-size:0.9em;font-weight:700;color:#5D4E37}
+.details{font-size:0.75em;color:#7B6B4F;padding-top:8px;border-top:2px dashed #C4A35A}
+.badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:0.7em;margin-left:5px}
+.badge.div{background:#4CAF50;color:#fff}
+.badge.pol{background:#9B59B6;color:#fff}
+.top-badge{background:#F5B041;color:#fff;padding:3px 10px;border-radius:10px;font-size:0.75em;margin-right:6px;border:2px solid #5D4E37}
+.overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999}
+.overlay.show{display:block}
+.popup{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:20px;max-width:400px;width:90%;max-height:80vh;overflow-y:auto;z-index:10000;border:4px solid #5D4E37;box-shadow:0 8px 0 #C4A35A}
+.popup.show{display:block}
+.popup h3{color:#5D4E37;border-bottom:3px solid #E8A838;padding-bottom:10px;margin-bottom:15px}
+.popup .close{position:absolute;top:10px;right:15px;background:#E53935;color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:1.2em}
+.popup ul{list-style:none}
+.popup li{padding:6px 0;border-bottom:1px dashed #C4A35A;font-size:0.9em}
+.popup .sec{font-weight:700;color:#E8A838;background:#FFF8DC;padding:8px;margin:8px -10px;border-radius:8px}
+@media(max-width:600px){.summary{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
 </style></head><body>
+<div class="cloud c1"></div><div class="cloud c2"></div>
 <div class="container">
-<h1>NASDAQ 100 Daily Report</h1>
-<div class="date">2026-02-04 03:08 KST</div>
-<div class="grid"><div class="card top5">
-    <div class="ticker">CMCSA <span class="score">100</span></div>
-    <div class="name">Comcast Corporation</div>
-    <div class="price">$30.08 <span class="change up">+1.67%</span></div>
-    <div class="metrics">
-    <div>RSI: 67.6</div>
-    <div>SMA20: $28.64</div>
-    </div></div><div class="card top5">
-    <div class="ticker">AEP <span class="score">100</span></div>
-    <div class="name">American Electric Power Company</div>
-    <div class="price">$121.21 <span class="change up">+2.43%</span></div>
-    <div class="metrics">
-    <div>RSI: 65.5</div>
-    <div>SMA20: $117.97</div>
-    </div></div><div class="card top5">
-    <div class="ticker">FANG <span class="score">100</span></div>
-    <div class="name">Diamondback Energy, Inc.</div>
-    <div class="price">$159.90 <span class="change up">+0.79%</span></div>
-    <div class="metrics">
-    <div>RSI: 62.9</div>
-    <div>SMA20: $153.03</div>
-    </div></div><div class="card top5">
-    <div class="ticker">GOOGL <span class="score">90</span></div>
-    <div class="name">Alphabet Inc.</div>
-    <div class="price">$340.71 <span class="change down">-0.87%</span></div>
-    <div class="metrics">
-    <div>RSI: 55.3</div>
-    <div>SMA20: $331.51</div>
-    </div></div><div class="card top5">
-    <div class="ticker">COST <span class="score">90</span></div>
-    <div class="name">Costco Wholesale Corporation</div>
-    <div class="price">$988.50 <span class="change up">+2.08%</span></div>
-    <div class="metrics">
-    <div>RSI: 66.6</div>
-    <div>SMA20: $950.57</div>
-    </div></div><div class="card">
-    <div class="ticker">AMD <span class="score">90</span></div>
-    <div class="name">Advanced Micro Devices, Inc.</div>
-    <div class="price">$241.02 <span class="change down">-2.13%</span></div>
-    <div class="metrics">
-    <div>RSI: 62.6</div>
-    <div>SMA20: $233.58</div>
-    </div></div><div class="card">
-    <div class="ticker">TMUS <span class="score">90</span></div>
-    <div class="name">T-Mobile US, Inc.</div>
-    <div class="price">$198.54 <span class="change up">+1.82%</span></div>
-    <div class="metrics">
-    <div>RSI: 62.0</div>
-    <div>SMA20: $191.40</div>
-    </div></div><div class="card">
-    <div class="ticker">INTC <span class="score">90</span></div>
-    <div class="name">Intel Corporation</div>
-    <div class="price">$49.15 <span class="change up">+0.71%</span></div>
-    <div class="metrics">
-    <div>RSI: 52.8</div>
-    <div>SMA20: $46.76</div>
-    </div></div><div class="card">
-    <div class="ticker">AMGN <span class="score">90</span></div>
-    <div class="name">Amgen Inc.</div>
-    <div class="price">$341.43 <span class="change down">-0.94%</span></div>
-    <div class="metrics">
-    <div>RSI: 67.6</div>
-    <div>SMA20: $337.39</div>
-    </div></div><div class="card">
-    <div class="ticker">VRTX <span class="score">90</span></div>
-    <div class="name">Vertex Pharmaceuticals Incorpor</div>
-    <div class="price">$464.76 <span class="change down">-1.54%</span></div>
-    <div class="metrics">
-    <div>RSI: 56.5</div>
-    <div>SMA20: $464.07</div>
-    </div></div><div class="card">
-    <div class="ticker">LRCX <span class="score">90</span></div>
-    <div class="name">Lam Research Corporation</div>
-    <div class="price">$231.63 <span class="change down">-2.47%</span></div>
-    <div class="metrics">
-    <div>RSI: 59.4</div>
-    <div>SMA20: $222.72</div>
-    </div></div><div class="card">
-    <div class="ticker">AMAT <span class="score">90</span></div>
-    <div class="name">Applied Materials, Inc.</div>
-    <div class="price">$316.99 <span class="change down">-3.47%</span></div>
-    <div class="metrics">
-    <div>RSI: 55.3</div>
-    <div>SMA20: $315.69</div>
-    </div></div><div class="card">
-    <div class="ticker">SBUX <span class="score">90</span></div>
-    <div class="name">Starbucks Corporation</div>
-    <div class="price">$93.33 <span class="change up">+1.79%</span></div>
-    <div class="metrics">
-    <div>RSI: 58.5</div>
-    <div>SMA20: $92.64</div>
-    </div></div><div class="card">
-    <div class="ticker">GILD <span class="score">90</span></div>
-    <div class="name">Gilead Sciences, Inc.</div>
-    <div class="price">$145.01 <span class="change up">+1.48%</span></div>
-    <div class="metrics">
-    <div>RSI: 85.0</div>
-    <div>SMA20: $130.51</div>
-    </div></div><div class="card">
-    <div class="ticker">ADI <span class="score">90</span></div>
-    <div class="name">Analog Devices, Inc.</div>
-    <div class="price">$315.20 <span class="change down">-0.53%</span></div>
-    <div class="metrics">
-    <div>RSI: 65.8</div>
-    <div>SMA20: $303.91</div>
-    </div></div><div class="card">
-    <div class="ticker">REGN <span class="score">90</span></div>
-    <div class="name">Regeneron Pharmaceuticals, Inc.</div>
-    <div class="price">$757.95 <span class="change up">+0.39%</span></div>
-    <div class="metrics">
-    <div>RSI: 49.6</div>
-    <div>SMA20: $761.17</div>
-    </div></div><div class="card">
-    <div class="ticker">MDLZ <span class="score">90</span></div>
-    <div class="name">Mondelez International, Inc.</div>
-    <div class="price">$59.81 <span class="change up">+1.90%</span></div>
-    <div class="metrics">
-    <div>RSI: 72.3</div>
-    <div>SMA20: $56.84</div>
-    </div></div><div class="card">
-    <div class="ticker">ORLY <span class="score">90</span></div>
-    <div class="name">O'Reilly Automotive, Inc.</div>
-    <div class="price">$97.74 <span class="change down">-0.28%</span></div>
-    <div class="metrics">
-    <div>RSI: 61.8</div>
-    <div>SMA20: $96.38</div>
-    </div></div><div class="card">
-    <div class="ticker">MNST <span class="score">90</span></div>
-    <div class="name">Monster Beverage Corporation</div>
-    <div class="price">$82.32 <span class="change up">+1.50%</span></div>
-    <div class="metrics">
-    <div>RSI: 67.5</div>
-    <div>SMA20: $79.46</div>
-    </div></div><div class="card">
-    <div class="ticker">ASML <span class="score">90</span></div>
-    <div class="name">ASML Holding N.V. - New York Re</div>
-    <div class="price">$1391.36 <span class="change down">-3.47%</span></div>
-    <div class="metrics">
-    <div>RSI: 63.8</div>
-    <div>SMA20: $1345.81</div>
-    </div></div><div class="card">
-    <div class="ticker">PCAR <span class="score">90</span></div>
-    <div class="name">PACCAR Inc.</div>
-    <div class="price">$126.80 <span class="change up">+1.76%</span></div>
-    <div class="metrics">
-    <div>RSI: 68.6</div>
-    <div>SMA20: $121.07</div>
-    </div></div><div class="card">
-    <div class="ticker">ODFL <span class="score">90</span></div>
-    <div class="name">Old Dominion Freight Line, Inc.</div>
-    <div class="price">$186.67 <span class="change up">+0.29%</span></div>
-    <div class="metrics">
-    <div>RSI: 67.1</div>
-    <div>SMA20: $174.60</div>
-    </div></div><div class="card">
-    <div class="ticker">ROST <span class="score">90</span></div>
-    <div class="name">Ross Stores, Inc.</div>
-    <div class="price">$192.95 <span class="change up">+1.49%</span></div>
-    <div class="metrics">
-    <div>RSI: 49.5</div>
-    <div>SMA20: $189.70</div>
-    </div></div><div class="card">
-    <div class="ticker">META <span class="score">90</span></div>
-    <div class="name">Meta Platforms, Inc.</div>
-    <div class="price">$694.23 <span class="change down">-1.72%</span></div>
-    <div class="metrics">
-    <div>RSI: 64.1</div>
-    <div>SMA20: $656.55</div>
-    </div></div><div class="card">
-    <div class="ticker">KDP <span class="score">90</span></div>
-    <div class="name">Keurig Dr Pepper Inc.</div>
-    <div class="price">$28.14 <span class="change up">+2.42%</span></div>
-    <div class="metrics">
-    <div>RSI: 54.4</div>
-    <div>SMA20: $27.58</div>
-    </div></div><div class="card">
-    <div class="ticker">DXCM <span class="score">90</span></div>
-    <div class="name">DexCom, Inc.</div>
-    <div class="price">$71.49 <span class="change down">-1.43%</span></div>
-    <div class="metrics">
-    <div>RSI: 55.6</div>
-    <div>SMA20: $71.33</div>
-    </div></div><div class="card">
-    <div class="ticker">MRNA <span class="score">90</span></div>
-    <div class="name">Moderna, Inc.</div>
-    <div class="price">$42.73 <span class="change up">+0.42%</span></div>
-    <div class="metrics">
-    <div>RSI: 55.7</div>
-    <div>SMA20: $42.16</div>
-    </div></div><div class="card">
-    <div class="ticker">AZN <span class="score">90</span></div>
-    <div class="name">ASTRAZENECA PLC</div>
-    <div class="price">$186.51 <span class="change down">-1.01%</span></div>
-    <div class="metrics">
-    <div>RSI: 47.9</div>
-    <div>SMA20: $186.02</div>
-    </div></div><div class="card">
-    <div class="ticker">CHTR <span class="score">90</span></div>
-    <div class="name">Charter Communications, Inc.</div>
-    <div class="price">$211.57 <span class="change down">-0.96%</span></div>
-    <div class="metrics">
-    <div>RSI: 58.8</div>
-    <div>SMA20: $198.34</div>
-    </div></div><div class="card">
-    <div class="ticker">EXC <span class="score">90</span></div>
-    <div class="name">Exelon Corporation</div>
-    <div class="price">$45.03 <span class="change up">+2.54%</span></div>
-    <div class="metrics">
-    <div>RSI: 63.8</div>
-    <div>SMA20: $44.16</div>
-    </div></div><div class="card">
-    <div class="ticker">XEL <span class="score">90</span></div>
-    <div class="name">Xcel Energy Inc.</div>
-    <div class="price">$76.05 <span class="change up">+2.08%</span></div>
-    <div class="metrics">
-    <div>RSI: 55.8</div>
-    <div>SMA20: $75.28</div>
-    </div></div><div class="card">
-    <div class="ticker">BIIB <span class="score">90</span></div>
-    <div class="name">Biogen Inc.</div>
-    <div class="price">$177.84 <span class="change down">-0.70%</span></div>
-    <div class="metrics">
-    <div>RSI: 49.4</div>
-    <div>SMA20: $176.39</div>
-    </div></div><div class="card">
-    <div class="ticker">BKR <span class="score">90</span></div>
-    <div class="name">Baker Hughes Company</div>
-    <div class="price">$56.66 <span class="change up">+0.37%</span></div>
-    <div class="metrics">
-    <div>RSI: 83.1</div>
-    <div>SMA20: $52.88</div>
-    </div></div><div class="card">
-    <div class="ticker">CTSH <span class="score">85</span></div>
-    <div class="name">Cognizant Technology Solutions </div>
-    <div class="price">$74.72 <span class="change down">-9.88%</span></div>
-    <div class="metrics">
-    <div>RSI: 29.3</div>
-    <div>SMA20: $83.82</div>
-    </div></div><div class="card">
-    <div class="ticker">DLTR <span class="score">85</span></div>
-    <div class="name">Dollar Tree, Inc.</div>
-    <div class="price">$121.06 <span class="change up">+3.27%</span></div>
-    <div class="metrics">
-    <div>RSI: 27.6</div>
-    <div>SMA20: $129.38</div>
-    </div></div><div class="card">
-    <div class="ticker">AMZN <span class="score">80</span></div>
-    <div class="name">Amazon.com, Inc.</div>
-    <div class="price">$237.44 <span class="change down">-2.27%</span></div>
-    <div class="metrics">
-    <div>RSI: 44.4</div>
-    <div>SMA20: $240.13</div>
-    </div></div><div class="card">
-    <div class="ticker">AAPL <span class="score">80</span></div>
-    <div class="name">Apple Inc.</div>
-    <div class="price">$270.23 <span class="change up">+0.08%</span></div>
-    <div class="metrics">
-    <div>RSI: 60.9</div>
-    <div>SMA20: $257.75</div>
-    </div></div><div class="card">
-    <div class="ticker">PEP <span class="score">80</span></div>
-    <div class="name">Pepsico, Inc.</div>
-    <div class="price">$161.70 <span class="change up">+4.19%</span></div>
-    <div class="metrics">
-    <div>RSI: 85.3</div>
-    <div>SMA20: $146.23</div>
-    </div></div><div class="card">
-    <div class="ticker">TXN <span class="score">80</span></div>
-    <div class="name">Texas Instruments Incorporated</div>
-    <div class="price">$223.94 <span class="change down">-0.48%</span></div>
-    <div class="metrics">
-    <div>RSI: 81.2</div>
-    <div>SMA20: $197.60</div>
-    </div></div><div class="card">
-    <div class="ticker">HON <span class="score">80</span></div>
-    <div class="name">Honeywell International Inc.</div>
-    <div class="price">$230.82 <span class="change up">+1.43%</span></div>
-    <div class="metrics">
-    <div>RSI: 75.1</div>
-    <div>SMA20: $216.67</div>
-    </div></div><div class="card">
-    <div class="ticker">MU <span class="score">80</span></div>
-    <div class="name">Micron Technology, Inc.</div>
-    <div class="price">$417.50 <span class="change down">-4.64%</span></div>
-    <div class="metrics">
-    <div>RSI: 70.6</div>
-    <div>SMA20: $378.19</div>
-    </div></div><div class="card">
-    <div class="ticker">KLAC <span class="score">80</span></div>
-    <div class="name">KLA Corporation</div>
-    <div class="price">$1347.07 <span class="change down">-4.49%</span></div>
-    <div class="metrics">
-    <div>RSI: 44.1</div>
-    <div>SMA20: $1478.61</div>
-    </div></div><div class="card">
-    <div class="ticker">MAR <span class="score">80</span></div>
-    <div class="name">Marriott International</div>
-    <div class="price">$317.81 <span class="change down">-0.46%</span></div>
-    <div class="metrics">
-    <div>RSI: 45.4</div>
-    <div>SMA20: $320.13</div>
-    </div></div><div class="card">
-    <div class="ticker">CSX <span class="score">80</span></div>
-    <div class="name">CSX Corporation</div>
-    <div class="price">$38.87 <span class="change up">+1.24%</span></div>
-    <div class="metrics">
-    <div>RSI: 72.7</div>
-    <div>SMA20: $36.55</div>
-    </div></div><div class="card">
-    <div class="ticker">CPRT <span class="score">80</span></div>
-    <div class="name">Copart, Inc.</div>
-    <div class="price">$39.24 <span class="change down">-1.12%</span></div>
-    <div class="metrics">
-    <div>RSI: 44.9</div>
-    <div>SMA20: $40.25</div>
-    </div></div><div class="card">
-    <div class="ticker">CTAS <span class="score">80</span></div>
-    <div class="name">Cintas Corporation</div>
-    <div class="price">$190.53 <span class="change down">-0.20%</span></div>
-    <div class="metrics">
-    <div>RSI: 43.8</div>
-    <div>SMA20: $192.02</div>
-    </div></div><div class="card">
-    <div class="ticker">FAST <span class="score">80</span></div>
-    <div class="name">Fastenal Company</div>
-    <div class="price">$46.08 <span class="change up">+2.87%</span></div>
-    <div class="metrics">
-    <div>RSI: 71.7</div>
-    <div>SMA20: $43.04</div>
-    </div></div><div class="card">
-    <div class="ticker">GEHC <span class="score">80</span></div>
-    <div class="name">GE HealthCare Technologies Inc.</div>
-    <div class="price">$78.98 <span class="change down">-1.41%</span></div>
-    <div class="metrics">
-    <div>RSI: 32.7</div>
-    <div>SMA20: $82.37</div>
-    </div></div><div class="card">
-    <div class="ticker">ON <span class="score">80</span></div>
-    <div class="name">ON Semiconductor Corporation</div>
-    <div class="price">$58.40 <span class="change down">-5.09%</span></div>
-    <div class="metrics">
-    <div>RSI: 47.5</div>
-    <div>SMA20: $61.25</div>
-    </div></div><div class="card">
-    <div class="ticker">ILMN <span class="score">80</span></div>
-    <div class="name">Illumina, Inc.</div>
-    <div class="price">$138.37 <span class="change down">-1.96%</span></div>
-    <div class="metrics">
-    <div>RSI: 39.6</div>
-    <div>SMA20: $147.02</div>
-    </div></div></div></div></body></html>
+<div class="header"><h1>NASDAQ 100 Report</h1><div class="sub">김기현방법 (밥값+배당 45 / 기술 25 / 안정 15 / 정책 15)</div><div class="date">2026-02-04 03:15 KST</div></div>
+<div class="summary">
+<div class="sum-card"><div class="label">분석 종목</div><div class="value">68</div></div>
+<div class="sum-card"><div class="label">평균 점수</div><div class="value">54</div></div>
+<div class="sum-card"><div class="label">60점 이상</div><div class="value">24</div></div>
+<div class="sum-card"><div class="label">최고 점수</div><div class="value">73</div></div>
+</div>
+<div class="grid"><div class="card top">
+<div class="card-head"><div><span class="top-badge">TOP 1</span><span class="ticker">MU</span><span class="badge div">11.0%</span><span class="badge pol">CHIPS</span><div class="name">Micron Technology, I | Technology</div></div><span class="score">73점</span></div>
+<div class="price-row"><span class="price">$416.04</span><span class="chg down">-4.97%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">45/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">1/15</div></div>
+<div class="metric hi" onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">12/15</div></div>
+</div>
+<div class="details">ROE 22.6% | 마진 45.0% | 베타 1.50 | 변동성 63.1% | RSI 70</div>
+</div><div class="card top">
+<div class="card-head"><div><span class="top-badge">TOP 2</span><span class="ticker">AMGN</span><span class="badge div">2.8%</span><div class="name">Amgen Inc. | Healthcare</div></div><span class="score">70점</span></div>
+<div class="price-row"><span class="price">$341.02</span><span class="chg down">-1.06%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">39/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">11/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 81.7% | 마진 34.2% | 베타 0.47 | 변동성 28.1% | RSI 67</div>
+</div><div class="card top">
+<div class="card-head"><div><span class="top-badge">TOP 3</span><span class="ticker">AEP</span><span class="badge div">3.2%</span><div class="name">American Electric Po | Utilities</div></div><span class="score">68점</span></div>
+<div class="price-row"><span class="price">$121.03</span><span class="chg up">+2.28%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">35/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">13/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 12.9% | 마진 25.9% | 베타 0.62 | 변동성 18.8% | RSI 65</div>
+</div><div class="card top">
+<div class="card-head"><div><span class="top-badge">TOP 4</span><span class="ticker">LLY</span><span class="badge div">60.0%</span><div class="name">Eli Lilly and Compan | Healthcare</div></div><span class="score">68점</span></div>
+<div class="price-row"><span class="price">$999.48</span><span class="chg down">-4.28%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">45/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">8/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 96.5% | 마진 48.3% | 베타 0.39 | 변동성 40.3% | RSI 33</div>
+</div><div class="card top">
+<div class="card-head"><div><span class="top-badge">TOP 5</span><span class="ticker">GOOGL</span><span class="badge div">24.0%</span><div class="name">Alphabet Inc. | Communication Services</div></div><span class="score">67점</span></div>
+<div class="price-row"><span class="price">$339.75</span><span class="chg down">-1.15%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">43/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">4/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 35.4% | 마진 30.5% | 베타 1.09 | 변동성 31.8% | RSI 54</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">META</span><span class="badge div">30.0%</span><div class="name">Meta Platforms, Inc. | Communication Services</div></div><span class="score">67점</span></div>
+<div class="price-row"><span class="price">$690.52</span><span class="chg down">-2.25%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">45/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">2/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 30.2% | 마진 41.3% | 베타 1.28 | 변동성 39.5% | RSI 63</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">ROST</span><span class="badge div">85.0%</span><div class="name">Ross Stores, Inc. | Consumer Cyclical</div></div><span class="score">67점</span></div>
+<div class="price-row"><span class="price">$192.32</span><span class="chg up">+1.16%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">39/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">8/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 37.4% | 마진 11.6% | 베타 0.99 | 변동성 25.7% | RSI 48</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">LRCX</span><span class="badge div">44.0%</span><div class="name">Lam Research Corpora | Technology</div></div><span class="score">66점</span></div>
+<div class="price-row"><span class="price">$231.32</span><span class="chg down">-2.60%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">45/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">1/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 65.6% | 마진 33.9% | 베타 1.78 | 변동성 50.6% | RSI 59</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">MNST</span><div class="name">Monster Beverage Cor | Consumer Defensive</div></div><span class="score">66점</span></div>
+<div class="price-row"><span class="price">$82.09</span><span class="chg up">+1.22%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">33/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">13/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 25.5% | 마진 30.7% | 베타 0.45 | 변동성 23.0% | RSI 67</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">CTAS</span><span class="badge div">94.0%</span><div class="name">Cintas Corporation | Industrials</div></div><span class="score">66점</span></div>
+<div class="price-row"><span class="price">$190.14</span><span class="chg down">-0.40%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">41/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">10/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 43.4% | 마진 23.4% | 베타 0.95 | 변동성 21.3% | RSI 43</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">CMCSA</span><span class="badge div">4.5%</span><div class="name">Comcast Corporation | Communication Services</div></div><span class="score">65점</span></div>
+<div class="price-row"><span class="price">$30.00</span><span class="chg up">+1.37%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">35/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">10/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 21.4% | 마진 10.8% | 베타 0.79 | 변동성 25.6% | RSI 67</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">PEP</span><span class="badge div">3.7%</span><div class="name">Pepsico, Inc. | Consumer Defensive</div></div><span class="score">63점</span></div>
+<div class="price-row"><span class="price">$161.73</span><span class="chg up">+4.21%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">35/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">13/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 37.2% | 마진 16.9% | 베타 0.42 | 변동성 22.9% | RSI 85</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">FANG</span><span class="badge div">2.5%</span><div class="name">Diamondback Energy,  | Energy</div></div><span class="score">63점</span></div>
+<div class="price-row"><span class="price">$160.05</span><span class="chg up">+0.89%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">35/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">8/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 10.9% | 마진 36.6% | 베타 0.58 | 변동성 39.5% | RSI 63</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">NVDA</span><span class="badge div">2.0%</span><span class="badge pol">CHIPS</span><div class="name">NVIDIA Corporation | Technology</div></div><span class="score">62점</span></div>
+<div class="price-row"><span class="price">$179.01</span><span class="chg down">-3.56%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">41/45</div></div>
+<div class="metric " onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">10/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">1/15</div></div>
+<div class="metric hi" onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">10/15</div></div>
+</div>
+<div class="details">ROE 107.4% | 마진 63.2% | 베타 2.31 | 변동성 44.2% | RSI 43</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">AAPL</span><span class="badge div">39.0%</span><div class="name">Apple Inc. | Technology</div></div><span class="score">62점</span></div>
+<div class="price-row"><span class="price">$269.46</span><span class="chg down">-0.20%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">43/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">4/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 152.0% | 마진 35.4% | 베타 1.11 | 변동성 31.9% | RSI 60</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">COST</span><span class="badge div">54.0%</span><div class="name">Costco Wholesale Cor | Consumer Defensive</div></div><span class="score">61점</span></div>
+<div class="price-row"><span class="price">$985.11</span><span class="chg up">+1.73%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">33/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">8/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 30.3% | 마진 3.7% | 베타 1.01 | 변동성 22.0% | RSI 66</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">GILD</span><span class="badge div">2.2%</span><div class="name">Gilead Sciences, Inc | Healthcare</div></div><span class="score">61점</span></div>
+<div class="price-row"><span class="price">$144.82</span><span class="chg up">+1.35%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">35/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">11/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 40.7% | 마진 45.2% | 베타 0.39 | 변동성 28.9% | RSI 85</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">EXC</span><span class="badge div">3.6%</span><div class="name">Exelon Corporation | Utilities</div></div><span class="score">61점</span></div>
+<div class="price-row"><span class="price">$44.94</span><span class="chg up">+2.36%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">33/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">13/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 10.3% | 마진 22.2% | 베타 0.57 | 변동성 17.9% | RSI 63</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">TMUS</span><span class="badge div">2.1%</span><div class="name">T-Mobile US, Inc. | Communication Services</div></div><span class="score">60점</span></div>
+<div class="price-row"><span class="price">$198.43</span><span class="chg up">+1.76%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">34/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">11/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 19.0% | 마진 22.2% | 베타 0.43 | 변동성 27.2% | RSI 62</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">AMAT</span><span class="badge div">56.0%</span><div class="name">Applied Materials, I | Technology</div></div><span class="score">60점</span></div>
+<div class="price-row"><span class="price">$316.31</span><span class="chg down">-3.68%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">39/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">1/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 35.5% | 마진 28.4% | 베타 1.68 | 변동성 46.6% | RSI 55</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">ASML</span><span class="badge div">61.0%</span><div class="name">ASML Holding N.V. -  | Technology</div></div><span class="score">60점</span></div>
+<div class="price-row"><span class="price">$1391.53</span><span class="chg down">-3.46%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">39/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">1/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 50.5% | 마진 35.3% | 베타 1.46 | 변동성 40.9% | RSI 64</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">ODFL</span><span class="badge div">60.0%</span><div class="name">Old Dominion Freight | Industrials</div></div><span class="score">60점</span></div>
+<div class="price-row"><span class="price">$186.31</span><span class="chg up">+0.10%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">39/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">1/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 25.1% | 마진 25.7% | 베타 1.27 | 변동성 40.8% | RSI 67</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">AZN</span><div class="name">ASTRAZENECA PLC | Healthcare</div></div><span class="score">60점</span></div>
+<div class="price-row"><span class="price">$185.99</span><span class="chg down">-1.28%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">37/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">8/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 21.7% | 마진 24.1% | 베타 0.19 | 변동성 40.0% | RSI 47</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">FAST</span><span class="badge div">2.0%</span><div class="name">Fastenal Company | Industrials</div></div><span class="score">60점</span></div>
+<div class="price-row"><span class="price">$46.10</span><span class="chg up">+2.89%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">37/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">8/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 33.3% | 마진 19.0% | 베타 0.89 | 변동성 25.4% | RSI 72</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">TXN</span><span class="badge div">2.5%</span><div class="name">Texas Instruments In | Technology</div></div><span class="score">59점</span></div>
+<div class="price-row"><span class="price">$224.13</span><span class="chg down">-0.39%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">39/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">5/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 30.1% | 마진 34.0% | 베타 0.99 | 변동성 41.2% | RSI 81</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">XEL</span><span class="badge div">3.1%</span><div class="name">Xcel Energy Inc. | Utilities</div></div><span class="score">59점</span></div>
+<div class="price-row"><span class="price">$75.98</span><span class="chg up">+1.99%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">30/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">14/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 9.4% | 마진 26.6% | 베타 0.48 | 변동성 19.6% | RSI 55</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">KDP</span><span class="badge div">3.4%</span><div class="name">Keurig Dr Pepper Inc | Consumer Defensive</div></div><span class="score">58점</span></div>
+<div class="price-row"><span class="price">$28.06</span><span class="chg up">+2.13%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">32/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">11/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 6.3% | 마진 23.1% | 베타 0.35 | 변동성 26.6% | RSI 54</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">PAYX</span><span class="badge div">4.2%</span><div class="name">Paychex, Inc. | Technology</div></div><span class="score">58점</span></div>
+<div class="price-row"><span class="price">$97.62</span><span class="chg down">-4.73%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">43/45</div></div>
+<div class="metric " onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">5/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">10/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 40.9% | 마진 41.7% | 베타 0.89 | 변동성 24.8% | RSI 15</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">CSCO</span><span class="badge div">2.0%</span><div class="name">Cisco Systems, Inc. | Technology</div></div><span class="score">57점</span></div>
+<div class="price-row"><span class="price">$82.19</span><span class="chg up">+1.92%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">37/45</div></div>
+<div class="metric " onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">10/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">10/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 22.4% | 마진 23.6% | 베타 0.86 | 변동성 23.9% | RSI 74</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">VRTX</span><div class="name">Vertex Pharmaceutica | Healthcare</div></div><span class="score">57점</span></div>
+<div class="price-row"><span class="price">$463.89</span><span class="chg down">-1.72%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">33/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">9/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 22.3% | 마진 40.3% | 베타 0.32 | 변동성 33.6% | RSI 56</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">KLAC</span><span class="badge div">54.0%</span><div class="name">KLA Corporation | Technology</div></div><span class="score">57점</span></div>
+<div class="price-row"><span class="price">$1344.72</span><span class="chg down">-4.66%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">41/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">1/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 100.7% | 마진 41.3% | 베타 1.46 | 변동성 47.5% | RSI 44</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">MDLZ</span><span class="badge div">3.4%</span><div class="name">Mondelez Internation | Consumer Defensive</div></div><span class="score">57점</span></div>
+<div class="price-row"><span class="price">$59.67</span><span class="chg up">+1.68%</span></div>
+<div class="metrics">
+<div class="metric " onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">29/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric hi" onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">13/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 13.1% | 마진 10.8% | 베타 0.40 | 변동성 22.4% | RSI 72</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">HON</span><span class="badge div">2.0%</span><div class="name">Honeywell Internatio | Industrials</div></div><span class="score">56점</span></div>
+<div class="price-row"><span class="price">$230.73</span><span class="chg up">+1.39%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">33/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">8/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 28.2% | 마진 15.4% | 베타 0.93 | 변동성 25.7% | RSI 75</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">REGN</span><span class="badge div">50.0%</span><div class="name">Regeneron Pharmaceut | Healthcare</div></div><span class="score">56점</span></div>
+<div class="price-row"><span class="price">$757.66</span><span class="chg up">+0.35%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">33/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">8/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 14.9% | 마진 23.1% | 베타 0.41 | 변동성 41.2% | RSI 49</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">MSFT</span><span class="badge div">86.0%</span><div class="name">Microsoft Corporatio | Technology</div></div><span class="score">54점</span></div>
+<div class="price-row"><span class="price">$411.62</span><span class="chg down">-2.78%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">43/45</div></div>
+<div class="metric " onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">5/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">6/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 34.4% | 마진 47.1% | 베타 1.08 | 변동성 25.6% | RSI 29</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">ADI</span><div class="name">Analog Devices, Inc. | Technology</div></div><span class="score">54점</span></div>
+<div class="price-row"><span class="price">$315.34</span><span class="chg down">-0.48%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">30/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">4/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 6.6% | 마진 30.5% | 베타 1.03 | 변동성 39.3% | RSI 66</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">CSX</span><div class="name">CSX Corporation | Industrials</div></div><span class="score">54점</span></div>
+<div class="price-row"><span class="price">$38.83</span><span class="chg up">+1.13%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">33/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">6/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 22.5% | 마진 31.6% | 베타 1.29 | 변동성 23.6% | RSI 73</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">VRSK</span><span class="badge div">84.0%</span><div class="name">Verisk Analytics, In | Industrials</div></div><span class="score">54점</span></div>
+<div class="price-row"><span class="price">$193.59</span><span class="chg down">-9.60%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">41/45</div></div>
+<div class="metric " onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">5/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">8/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 268.1% | 마진 45.5% | 베타 0.80 | 변동성 26.2% | RSI 20</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">GEHC</span><span class="badge div">17.0%</span><div class="name">GE HealthCare Techno | Healthcare</div></div><span class="score">54점</span></div>
+<div class="price-row"><span class="price">$78.88</span><span class="chg down">-1.54%</span></div>
+<div class="metrics">
+<div class="metric hi" onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">37/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">15/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">2/15</div></div>
+<div class="metric " onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">0/15</div></div>
+</div>
+<div class="details">ROE 24.5% | 마진 14.2% | 베타 1.23 | 변동성 36.9% | RSI 32</div>
+</div><div class="card">
+<div class="card-head"><div><span class="ticker">AMD</span><span class="badge pol">CHIPS</span><div class="name">Advanced Micro Devic | Technology</div></div><span class="score">53점</span></div>
+<div class="price-row"><span class="price">$240.36</span><span class="chg down">-2.40%</span></div>
+<div class="metrics">
+<div class="metric " onclick="showInfo('val')"><div class="ml">밥값+배당</div><div class="mv">22/45</div></div>
+<div class="metric hi" onclick="showInfo('tech')"><div class="ml">기술적</div><div class="mv">20/25</div></div>
+<div class="metric " onclick="showInfo('stab')"><div class="ml">안정성</div><div class="mv">1/15</div></div>
+<div class="metric hi" onclick="showInfo('pol')"><div class="ml">정책</div><div class="mv">10/15</div></div>
+</div>
+<div class="details">ROE 5.3% | 마진 13.7% | 베타 1.95 | 변동성 61.0% | RSI 62</div>
+</div></div></div>
+<div class="overlay" id="ov" onclick="hideInfo()"></div>
+<div class="popup" id="pop"><button class="close" onclick="hideInfo()">&times;</button><h3 id="popT"></h3><ul id="popC"></ul></div>
+<script>
+const info={
+val:{t:'밥값+배당 (45점)',c:[
+{s:'ROE (15점)',i:['20%+: 15점','15-20%: 12점','10-15%: 9점','5-10%: 6점','0-5%: 3점','음수: 0점']},
+{s:'영업이익률 (10점)',i:['20%+: 10점','15-20%: 8점','10-15%: 6점','5-10%: 4점','0-5%: 2점']},
+{s:'성장성+흑자 (10점)',i:['20%성장+흑자: 10점','10%성장+흑자: 8점','5%성장+흑자: 6점','흑자: 4점','성장만: 2점']},
+{s:'배당 (10점)',i:['4%+: 10점','3-4%: 8점','2-3%: 6점','1-2%: 4점','0-1%: 2점']}
+]},
+tech:{t:'기술적 분석 (25점)',c:[
+{s:'이평선 (15점)',i:['현재가>SMA20: +5점','현재가>SMA50: +5점','SMA20>SMA50: +5점 (골든크로스)']},
+{s:'RSI (10점)',i:['30-70 적정구간: +5점','35미만 과매도: +5점 (반등기대)']}
+]},
+stab:{t:'안정성 (15점)',c:[
+{s:'변동성 (7점)',i:['15%이하: 7점','15-20%: 6점','20-25%: 5점','25-30%: 3점','30-40%: 1점']},
+{s:'베타 (8점)',i:['0.5이하: 8점 (방어주)','0.5-0.8: 7점','0.8-1.0: 5점','1.0-1.2: 3점','1.2+: 1점']}
+]},
+pol:{t:'정책 수혜 (15점)',c:[
+{s:'CHIPS Act',i:['INTC: 15점','MU: 12점','AMD/NVDA: 10점']},
+{s:'IRA (인플레 감축법)',i:['NEE: 12점','AES: 10점','TSLA/GM: 8-10점']},
+{s:'방산 NDAA',i:['LMT/RTX: 15점','NOC/GD: 12점']},
+{s:'인프라 IIJA',i:['CAT: 12점','DE/VMC/MLM: 10점']}
+]}
+};
+function showInfo(k){const d=info[k];document.getElementById('popT').textContent=d.t;let h='';d.c.forEach(s=>{h+='<li class="sec">'+s.s+'</li>';s.i.forEach(i=>{h+='<li>'+i+'</li>'});});document.getElementById('popC').innerHTML=h;document.getElementById('ov').classList.add('show');document.getElementById('pop').classList.add('show');}
+function hideInfo(){document.getElementById('ov').classList.remove('show');document.getElementById('pop').classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')hideInfo();});
+</script></body></html>
