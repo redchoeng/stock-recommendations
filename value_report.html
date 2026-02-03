@@ -9,20 +9,42 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Noto Sans KR', sans-serif; background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 30%, #F7DC6F 70%, #FADBD8 100%); background-attachment: fixed; padding: 20px; min-height: 100vh; }
         .container { max-width: 1200px; margin: 0 auto; }
+        .back-link { display: block; text-align: center; margin-bottom: 20px; color: #5D4E37; text-decoration: none; font-weight: 500; }
         .header { background: white; border-radius: 30px; padding: 35px; margin-bottom: 25px; box-shadow: 0 8px 0 #E8A838; border: 4px solid #5D4E37; text-align: center; }
-        .header h1 { color: #5D4E37; font-size: 2em; }
-        .header .date { color: #E8A838; margin-top: 10px; }
-        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .summary-card { background: linear-gradient(180deg, #FFF8DC, #FAEBD7); border-radius: 20px; padding: 20px; border: 3px solid #5D4E37; text-align: center; }
-        .summary-card .value { color: #FF6B35; font-size: 1.8em; font-weight: bold; }
-        .stock-card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 15px; border: 3px solid #5D4E37; box-shadow: 0 5px 0 #E8A838; }
-        .stock-card h2 { color: #5D4E37; margin-bottom: 10px; }
-        .stock-card .ticker { color: #E8A838; }
-        .stock-card .score { background: #E8A838; color: white; padding: 8px 20px; border-radius: 20px; float: right; }
-        .stock-card .score.high { background: #4CAF50; }
-        .dividend { color: #4CAF50; font-weight: bold; }
-        .back-link { display: block; text-align: center; margin-bottom: 20px; color: #5D4E37; }
-        .footer { background: rgba(255,255,255,0.9); border-radius: 20px; padding: 20px; text-align: center; color: #7B6B4F; margin-top: 30px; }
+        .header h1 { color: #5D4E37; font-size: 2em; text-shadow: 2px 2px 0 #FFF5BA; }
+        .header .subtitle { color: #7B6B4F; margin-top: 5px; }
+        .header .date { color: #E8A838; margin-top: 10px; font-weight: 600; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .summary-card { background: linear-gradient(180deg, #FFF8DC, #FAEBD7); border-radius: 20px; padding: 20px; border: 3px solid #5D4E37; text-align: center; box-shadow: 0 4px 0 #C4A35A; }
+        .summary-card .label { color: #7B6B4F; font-size: 0.85em; }
+        .summary-card .value { color: #FF6B35; font-size: 1.6em; font-weight: bold; }
+        .section-title { background: white; border-radius: 20px; padding: 15px 25px; margin: 25px 0 20px; border: 3px solid #5D4E37; box-shadow: 0 4px 0 #C4A35A; color: #5D4E37; font-size: 1.3em; text-align: center; }
+        .stock-card { background: linear-gradient(180deg, #FFFFFF 0%, #F5F5DC 100%); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 3px solid #5D4E37; box-shadow: 0 5px 0 #E8A838; transition: transform 0.2s; }
+        .stock-card:hover { transform: translateY(-3px); }
+        .stock-card.top { background: linear-gradient(180deg, #FFFACD 0%, #FFF8DC 100%); border: 4px solid #F5B041; }
+        .stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 2px dashed #C4A35A; }
+        .stock-info h2 { color: #5D4E37; font-size: 1.2em; margin-bottom: 5px; }
+        .stock-info .ticker { color: #E8A838; font-weight: 600; }
+        .stock-info .sector { color: #7B6B4F; font-size: 0.85em; }
+        .score-badge { background: #E8A838; color: white; padding: 10px 18px; border-radius: 20px; font-weight: bold; font-size: 1.1em; border: 3px solid #5D4E37; }
+        .score-badge.high { background: #4CAF50; }
+        .top-badge { background: linear-gradient(135deg, #F5B041 0%, #E8A838 100%); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 8px; border: 2px solid #5D4E37; }
+        .price-section { display: flex; align-items: baseline; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; }
+        .price { font-size: 1.5em; font-weight: bold; color: #5D4E37; }
+        .change { padding: 4px 10px; border-radius: 10px; font-size: 0.9em; font-weight: 600; }
+        .change.positive { background: #E8F5E9; color: #2E7D32; }
+        .change.negative { background: #FFEBEE; color: #C62828; }
+        .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        .metric { background: linear-gradient(180deg, #FFF8DC 0%, #FAEBD7 100%); padding: 12px; border-radius: 12px; text-align: center; border: 2px solid #C4A35A; }
+        .metric .label { color: #7B6B4F; font-size: 0.75em; }
+        .metric .value { color: #5D4E37; font-size: 1em; font-weight: bold; }
+        .metric.highlight { background: linear-gradient(135deg, #4CAF50, #45A049); border-color: #388E3C; }
+        .metric.highlight .label, .metric.highlight .value { color: white; }
+        .score-details { background: #F5F5DC; padding: 12px; border-radius: 12px; margin-top: 10px; }
+        .score-details .title { color: #5D4E37; font-weight: 600; margin-bottom: 8px; font-size: 0.9em; }
+        .score-details .item { color: #7B6B4F; font-size: 0.85em; padding: 3px 0; }
+        .footer { background: rgba(255,255,255,0.9); border-radius: 20px; padding: 20px; text-align: center; color: #7B6B4F; margin-top: 30px; border: 3px solid #C4A35A; }
+        @media (max-width: 768px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
 <body>
@@ -31,114 +53,633 @@
         <div class="header">
             <div style="font-size: 3em;">💰</div>
             <h1>Value Stocks Recommendations</h1>
-            <div class="date">2026-02-03 17:36 UTC 업데이트</div>
+            <div class="subtitle">가치주/배당주 중심 분석 (금융, 헬스케어, 에너지, 유틸리티)</div>
+            <div class="date">2026-02-03 17:52 UTC 업데이트</div>
         </div>
         <div class="summary">
             <div class="summary-card"><div class="label">분석 종목</div><div class="value">60개</div></div>
-            <div class="summary-card"><div class="label">추천 종목</div><div class="value">60개</div></div>
+            <div class="summary-card"><div class="label">TOP 5</div><div class="value">5개</div></div>
+            <div class="summary-card"><div class="label">평균 배당률</div><div class="value">12.3%</div></div>
+            <div class="summary-card"><div class="label">최고 점수</div><div class="value">100점</div></div>
         </div>
+        <div class="section-title">🏆 TOP 5 추천 종목</div>
 
+        <div class="stock-card top">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Bank of America Corporation<span class="top-badge">TOP 1</span></h2>
+                    <span class="ticker">BAC</span> | <span class="sector">Financial Services</span>
+                </div>
+                <span class="score-badge high">100점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$54.15</span>
+                <span class="change positive">+0.23%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric "><div class="label">배당률</div><div class="value">2.1%</div></div>
+                <div class="metric"><div class="label">PER</div><div class="value">14.2</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">28.4%</div></div>
+                <div class="metric"><div class="label">52주 고점대비</div><div class="value">-5.9%</div></div>
+            </div>
+            <div class="score-details">
+                <div class="title">📊 점수 상세</div>
+                <div class="item">✓ 배당 2.1% (+15)</div><div class="item">✓ 저PER 14.2 (+15)</div><div class="item">✓ 고수익 28.4% (+10)</div><div class="item">✓ SMA20 상회 (+5)</div><div class="item">✓ SMA50 상회 (+5)</div>
+            </div>
+        </div>
+        <div class="stock-card top">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Pfizer, Inc.<span class="top-badge">TOP 2</span></h2>
+                    <span class="ticker">PFE</span> | <span class="sector">Healthcare</span>
+                </div>
+                <span class="score-badge high">100점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$25.59</span>
+                <span class="change negative">-3.99%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric highlight"><div class="label">배당률</div><div class="value">6.5%</div></div>
+                <div class="metric"><div class="label">PER</div><div class="value">14.9</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">15.7%</div></div>
+                <div class="metric"><div class="label">52주 고점대비</div><div class="value">-4.6%</div></div>
+            </div>
+            <div class="score-details">
+                <div class="title">📊 점수 상세</div>
+                <div class="item">✓ 고배당 6.5% (+25)</div><div class="item">✓ 저PER 14.9 (+15)</div><div class="item">✓ 고수익 15.7% (+10)</div><div class="item">✓ SMA20 상회 (+5)</div><div class="item">✓ SMA50 상회 (+5)</div>
+            </div>
+        </div>
+        <div class="stock-card top">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Bristol-Myers Squibb Company<span class="top-badge">TOP 3</span></h2>
+                    <span class="ticker">BMY</span> | <span class="sector">Healthcare</span>
+                </div>
+                <span class="score-badge high">100점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$56.17</span>
+                <span class="change positive">+0.49%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric highlight"><div class="label">배당률</div><div class="value">4.5%</div></div>
+                <div class="metric"><div class="label">PER</div><div class="value">18.9</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">12.6%</div></div>
+                <div class="metric"><div class="label">52주 고점대비</div><div class="value">-1.5%</div></div>
+            </div>
+            <div class="score-details">
+                <div class="title">📊 점수 상세</div>
+                <div class="item">✓ 고배당 4.5% (+25)</div><div class="item">✓ 적정PER 18.9 (+10)</div><div class="item">✓ 수익성 12.6% (+5)</div><div class="item">✓ SMA20 상회 (+5)</div><div class="item">✓ SMA50 상회 (+5)</div>
+            </div>
+        </div>
+        <div class="stock-card top">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Target Corporation<span class="top-badge">TOP 4</span></h2>
+                    <span class="ticker">TGT</span> | <span class="sector">Consumer Defensive</span>
+                </div>
+                <span class="score-badge high">100점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$111.25</span>
+                <span class="change positive">+1.57%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric highlight"><div class="label">배당률</div><div class="value">4.2%</div></div>
+                <div class="metric"><div class="label">PER</div><div class="value">13.5</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">3.6%</div></div>
+                <div class="metric"><div class="label">52주 고점대비</div><div class="value">-1.5%</div></div>
+            </div>
+            <div class="score-details">
+                <div class="title">📊 점수 상세</div>
+                <div class="item">✓ 고배당 4.2% (+25)</div><div class="item">✓ 저PER 13.5 (+15)</div><div class="item">✓ SMA20 상회 (+5)</div><div class="item">✓ SMA50 상회 (+5)</div>
+            </div>
+        </div>
+        <div class="stock-card top">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>General Mills, Inc.<span class="top-badge">TOP 5</span></h2>
+                    <span class="ticker">GIS</span> | <span class="sector">Consumer Defensive</span>
+                </div>
+                <span class="score-badge high">100점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$46.70</span>
+                <span class="change positive">+2.37%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric highlight"><div class="label">배당률</div><div class="value">5.3%</div></div>
+                <div class="metric"><div class="label">PER</div><div class="value">10.0</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">13.5%</div></div>
+                <div class="metric"><div class="label">52주 고점대비</div><div class="value">-6.6%</div></div>
+            </div>
+            <div class="score-details">
+                <div class="title">📊 점수 상세</div>
+                <div class="item">✓ 고배당 5.3% (+25)</div><div class="item">✓ 저PER 10.0 (+15)</div><div class="item">✓ 수익성 13.5% (+5)</div><div class="item">✓ SMA20 상회 (+5)</div><div class="item">✓ SMA50 상회 (+5)</div>
+            </div>
+        </div><div class="section-title">📋 기타 추천 종목</div>
         <div class="stock-card">
-            <span class="score high">100점</span>
-            <h2>Pfizer, Inc.</h2>
-            <span class="ticker">PFE</span> | $25.60 | <span class='dividend'>배당 6.5%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Altria Group, Inc.</h2>
+                    <span class="ticker">MO</span> | <span class="sector">Consumer Defensive</span>
+                </div>
+                <span class="score-badge high">100점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$64.31</span>
+                <span class="change positive">+3.34%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 6.8%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">15.6</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">34.5%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$60.50</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$58.69</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">100점</span>
-            <h2>Bristol-Myers Squibb Company</h2>
-            <span class="ticker">BMY</span> | $56.19 | <span class='dividend'>배당 4.5%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>EOG Resources, Inc.</h2>
+                    <span class="ticker">EOG</span> | <span class="sector">Energy</span>
+                </div>
+                <span class="score-badge high">100점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$110.25</span>
+                <span class="change positive">+1.69%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 3.8%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">10.9</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">24.4%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$107.33</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$106.39</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">100점</span>
-            <h2>General Mills, Inc.</h2>
-            <span class="ticker">GIS</span> | $46.64 | <span class='dividend'>배당 5.3%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Wells Fargo & Company</h2>
+                    <span class="ticker">WFC</span> | <span class="sector">Financial Services</span>
+                </div>
+                <span class="score-badge high">95점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$92.82</span>
+                <span class="change positive">+0.59%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 1.9%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">14.8</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">26.7%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$90.81</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$90.68</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">100점</span>
-            <h2>Altria Group, Inc.</h2>
-            <span class="ticker">MO</span> | $64.43 | <span class='dividend'>배당 6.8%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Citigroup, Inc.</h2>
+                    <span class="ticker">C</span> | <span class="sector">Financial Services</span>
+                </div>
+                <span class="score-badge high">95점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$116.32</span>
+                <span class="change positive">+0.08%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 2.1%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">16.6</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">18.9%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$116.00</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$112.50</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Bank of America Corporation</h2>
-            <span class="ticker">BAC</span> | $54.31 | <span class='dividend'>배당 2.1%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Mastercard Incorporated</h2>
+                    <span class="ticker">MA</span> | <span class="sector">Financial Services</span>
+                </div>
+                <span class="score-badge high">95점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$556.54</span>
+                <span class="change positive">+0.21%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 63.0%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">33.8</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">45.6%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$546.70</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$552.97</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Citigroup, Inc.</h2>
-            <span class="ticker">C</span> | $116.56 | <span class='dividend'>배당 2.1%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Merck & Company, Inc.</h2>
+                    <span class="ticker">MRK</span> | <span class="sector">Healthcare</span>
+                </div>
+                <span class="score-badge high">95점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$116.65</span>
+                <span class="change positive">+2.89%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 3.0%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">15.4</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">29.6%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$109.80</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$104.87</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Visa Inc.</h2>
-            <span class="ticker">V</span> | $334.14 | <span class='dividend'>배당 80.0%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>ConocoPhillips</h2>
+                    <span class="ticker">COP</span> | <span class="sector">Energy</span>
+                </div>
+                <span class="score-badge high">95점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$104.64</span>
+                <span class="change positive">+2.80%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 3.3%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">14.8</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">14.4%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$98.89</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$94.92</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Mastercard Incorporated</h2>
-            <span class="ticker">MA</span> | $557.23 | <span class='dividend'>배당 63.0%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>United Parcel Service, Inc.</h2>
+                    <span class="ticker">UPS</span> | <span class="sector">Industrials</span>
+                </div>
+                <span class="score-badge high">95점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$112.10</span>
+                <span class="change positive">+1.66%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 6.0%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">17.1</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">6.3%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$107.40</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$101.88</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Merck & Company, Inc.</h2>
-            <span class="ticker">MRK</span> | $116.70 | <span class='dividend'>배당 3.0%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Duke Energy Corporation (Holdin</h2>
+                    <span class="ticker">DUK</span> | <span class="sector">Utilities</span>
+                </div>
+                <span class="score-badge high">95점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$121.66</span>
+                <span class="change positive">+1.82%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 3.6%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">19.2</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">16.0%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$118.79</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$118.35</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Target Corporation</h2>
-            <span class="ticker">TGT</span> | $111.10 | <span class='dividend'>배당 4.2%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Dominion Energy, Inc.</h2>
+                    <span class="ticker">D</span> | <span class="sector">Utilities</span>
+                </div>
+                <span class="score-badge high">95점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$61.58</span>
+                <span class="change positive">+2.58%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 4.5%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">20.1</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">16.8%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$59.85</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$59.60</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>ConocoPhillips</h2>
-            <span class="ticker">COP</span> | $104.85 | <span class='dividend'>배당 3.3%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>American Electric Power Company</h2>
+                    <span class="ticker">AEP</span> | <span class="sector">Utilities</span>
+                </div>
+                <span class="score-badge high">95점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$121.20</span>
+                <span class="change positive">+2.43%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 3.2%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">17.7</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">17.2%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$117.97</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$117.43</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>EOG Resources, Inc.</h2>
-            <span class="ticker">EOG</span> | $110.50 | <span class='dividend'>배당 3.8%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Morgan Stanley</h2>
+                    <span class="ticker">MS</span> | <span class="sector">Financial Services</span>
+                </div>
+                <span class="score-badge high">90점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$180.55</span>
+                <span class="change negative">-2.46%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 2.2%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">17.7</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">24.0%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$183.10</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$177.59</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Caterpillar, Inc.</h2>
-            <span class="ticker">CAT</span> | $700.45 | <span class='dividend'>배당 87.0%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Visa Inc.</h2>
+                    <span class="ticker">V</span> | <span class="sector">Financial Services</span>
+                </div>
+                <span class="score-badge high">90점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$334.27</span>
+                <span class="change positive">+0.13%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 80.0%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">31.4</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">50.2%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$333.89</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$337.77</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>United Parcel Service, Inc.</h2>
-            <span class="ticker">UPS</span> | $112.30 | <span class='dividend'>배당 6.0%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Caterpillar, Inc.</h2>
+                    <span class="ticker">CAT</span> | <span class="sector">Industrials</span>
+                </div>
+                <span class="score-badge high">90점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$699.00</span>
+                <span class="change positive">+1.17%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 87.0%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">37.2</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">13.1%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$640.57</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$605.49</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Duke Energy Corporation (Holdin</h2>
-            <span class="ticker">DUK</span> | $121.72 | <span class='dividend'>배당 3.6%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>GE Aerospace</h2>
+                    <span class="ticker">GE</span> | <span class="sector">Industrials</span>
+                </div>
+                <span class="score-badge high">90점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$309.17</span>
+                <span class="change positive">+0.15%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 47.0%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">38.4</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">19.0%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$311.54</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$304.18</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Dominion Energy, Inc.</h2>
-            <span class="ticker">D</span> | $61.57 | <span class='dividend'>배당 4.5%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Exelon Corporation</h2>
+                    <span class="ticker">EXC</span> | <span class="sector">Utilities</span>
+                </div>
+                <span class="score-badge high">90점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$44.99</span>
+                <span class="change positive">+2.45%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 3.6%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">16.1</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">11.6%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$44.16</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$44.25</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>American Electric Power Company</h2>
-            <span class="ticker">AEP</span> | $121.20 | <span class='dividend'>배당 3.2%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Consolidated Edison, Inc.</h2>
+                    <span class="ticker">ED</span> | <span class="sector">Utilities</span>
+                </div>
+                <span class="score-badge high">90점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$107.61</span>
+                <span class="change positive">+2.08%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 3.3%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">18.8</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">12.3%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$103.08</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$100.30</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Exelon Corporation</h2>
-            <span class="ticker">EXC</span> | $44.91 | <span class='dividend'>배당 3.6%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>JP Morgan Chase & Co.</h2>
+                    <span class="ticker">JPM</span> | <span class="sector">Financial Services</span>
+                </div>
+                <span class="score-badge high">85점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$311.68</span>
+                <span class="change positive">+1.15%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 1.9%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">15.6</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">33.9%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$311.30</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$312.78</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">90점</span>
-            <h2>Consolidated Edison, Inc.</h2>
-            <span class="ticker">ED</span> | $107.43 | <span class='dividend'>배당 3.3%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Goldman Sachs Group, Inc. (The)</h2>
+                    <span class="ticker">GS</span> | <span class="sector">Financial Services</span>
+                </div>
+                <span class="score-badge high">85점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$931.53</span>
+                <span class="change negative">-1.56%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 1.9%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">18.2</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">28.9%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$942.51</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$894.79</div></div>
+            </div>
         </div>
         <div class="stock-card">
-            <span class="score high">85점</span>
-            <h2>Morgan Stanley</h2>
-            <span class="ticker">MS</span> | $180.82 | <span class='dividend'>배당 2.2%</span>
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>American Express Company</h2>
+                    <span class="ticker">AXP</span> | <span class="sector">Financial Services</span>
+                </div>
+                <span class="score-badge high">85점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$350.25</span>
+                <span class="change negative">-0.73%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 93.0%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">22.8</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">16.2%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$362.67</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$367.28</div></div>
+            </div>
         </div>
-        <div class="footer">⚠️ 본 리포트는 투자 참고 자료입니다.</div>
+        <div class="stock-card">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Johnson & Johnson</h2>
+                    <span class="ticker">JNJ</span> | <span class="sector">Healthcare</span>
+                </div>
+                <span class="score-badge high">85점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$234.13</span>
+                <span class="change positive">+1.47%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 2.2%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">21.2</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">28.5%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$218.52</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$211.22</div></div>
+            </div>
+        </div>
+        <div class="stock-card">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Eli Lilly and Company</h2>
+                    <span class="ticker">LLY</span> | <span class="sector">Healthcare</span>
+                </div>
+                <span class="score-badge high">85점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$1003.09</span>
+                <span class="change negative">-3.93%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 60.0%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">49.3</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">31.0%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$1056.49</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$1054.20</div></div>
+            </div>
+        </div>
+        <div class="stock-card">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Thermo Fisher Scientific Inc</h2>
+                    <span class="ticker">TMO</span> | <span class="sector">Healthcare</span>
+                </div>
+                <span class="score-badge high">85점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$575.19</span>
+                <span class="change negative">-1.13%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 30.0%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">32.4</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">15.0%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$612.90</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$592.71</div></div>
+            </div>
+        </div>
+        <div class="stock-card">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Procter & Gamble Company (The)</h2>
+                    <span class="ticker">PG</span> | <span class="sector">Consumer Defensive</span>
+                </div>
+                <span class="score-badge high">85점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$156.20</span>
+                <span class="change positive">+1.96%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 2.8%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">23.1</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">19.3%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$146.09</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$144.59</div></div>
+            </div>
+        </div>
+        <div class="stock-card">
+            <div class="stock-header">
+                <div class="stock-info">
+                    <h2>Coca-Cola Company (The)</h2>
+                    <span class="ticker">KO</span> | <span class="sector">Consumer Defensive</span>
+                </div>
+                <span class="score-badge high">85점</span>
+            </div>
+            <div class="price-section">
+                <span class="price">$77.31</span>
+                <span class="change positive">+2.63%</span>
+                <span style="color: #4CAF50; font-weight: bold; margin-left: 10px;">배당 2.7%</span>
+            </div>
+            <div class="metrics">
+                <div class="metric"><div class="label">PER</div><div class="value">25.6</div></div>
+                <div class="metric"><div class="label">수익률</div><div class="value">27.3%</div></div>
+                <div class="metric"><div class="label">SMA20</div><div class="value">$71.90</div></div>
+                <div class="metric"><div class="label">SMA50</div><div class="value">$71.08</div></div>
+            </div>
+        </div>
+        <div class="footer">⚠️ 본 리포트는 투자 참고 자료이며, 투자 판단의 책임은 투자자 본인에게 있습니다.</div>
     </div>
 </body>
 </html>
