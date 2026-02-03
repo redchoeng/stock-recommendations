@@ -1044,6 +1044,14 @@ def main():
     if stocks_data:
         print(f"\n총 {len(stocks_data)}개 종목 분석 완료!")
 
+        # 50점 이하 종목 제외
+        before_filter = len(stocks_data)
+        stocks_data = [s for s in stocks_data if s['total_score'] >= 50]
+        filtered_out = before_filter - len(stocks_data)
+        if filtered_out > 0:
+            print(f"⚠️ {filtered_out}개 종목 제외 (50점 미만)")
+        print(f"📊 추천 대상: {len(stocks_data)}개 종목")
+
         html_content = generate_html_report(stocks_data)
 
         filename = f"daily_stock_report_{datetime.now(KST).strftime('%Y%m%d')}.html"
