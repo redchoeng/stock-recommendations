@@ -550,6 +550,146 @@
             margin-right: 8px;
             font-size: 0.9em;
         }
+
+        /* 검색 박스 스타일 */
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: #f7fafc;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-ticker {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1.1em;
+        }
+
+        .search-result-name {
+            color: #718096;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .search-result-score {
+            float: right;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 15px;
+        }
+
+        .search-result-score.high {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .search-result-score.medium {
+            background: linear-gradient(135deg, #ecc94b, #d69e2e);
+            color: white;
+        }
+
+        .search-result-score.low {
+            background: #e2e8f0;
+            color: #718096;
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #a0aec0;
+        }
+
+        /* 뉴스 섹션 스타일 */
+        .news-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .news-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 1em;
+        }
+
+        .news-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .news-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .news-list li:last-child {
+            border-bottom: none;
+        }
+
+        .news-list li:before {
+            content: "•";
+            color: #667eea;
+            margin-right: 8px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -557,7 +697,13 @@
         <div class="header">
             <h1>📊 Daily Stock Recommendations</h1>
             <div class="subtitle">검증된 퀀트 전략 기반 매수/매도 가격 추천</div>
-            <div class="date">2026년 02월 03일 19:42:20 업데이트</div>
+            <div class="date">2026년 02월 03일 19:50:26 업데이트</div>
+        </div>
+
+        <!-- 종목 검색 -->
+        <div class="search-box">
+            <input type="text" id="stockSearch" placeholder="🔍 종목 검색 (티커 또는 종목명)" onkeyup="searchStocks()">
+            <div id="searchResults" class="search-results"></div>
         </div>
 
         <div class="summary">
@@ -631,8 +777,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$250.65</span>
-                <span class="change positive">+1.78%</span>
+                <span class="price">$251.17</span>
+                <span class="change positive">+1.99%</span>
             </div>
             
             
@@ -726,6 +872,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">1.74:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Stock market today: Dow, S&P 500, Nasdaq futures rise as Wall Street looks to continue rally</li><li>Earnings live: Palantir stock surges after Q4 beat, NXP and Disney stocks fall</li><li>These Stocks Are Today’s Movers: Palantir, Teradyne, Tesla, AMD, NXP Semiconductors, and More</li>
+            </ul>
+        </div>
+        
     </div>
     
     <div class="stock-card top5-card">
@@ -751,8 +906,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$441.18</span>
-                <span class="change positive">+0.78%</span>
+                <span class="price">$443.08</span>
+                <span class="change positive">+1.22%</span>
             </div>
             
             
@@ -846,6 +1001,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">1.82:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Apple CEO Tim Cook Just Gave Great News to Micron Investors</li><li>Micron Technology (MU) Is Up 6.7% After Launching $24 Billion Singapore NAND Megafab Project</li><li>Is Micron the Next Nvidia?</li>
+            </ul>
+        </div>
+        
     </div>
     
     <div class="stock-card top5-card">
@@ -871,8 +1035,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$332.51</span>
-                <span class="change positive">+0.43%</span>
+                <span class="price">$332.75</span>
+                <span class="change positive">+0.50%</span>
             </div>
             
             
@@ -966,6 +1130,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">1.88:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Broadcom and TSMC to emerge as big winners in the custom AI chip boom</li><li>Nvidia's Biggest Competitive Risk Isn't Broadcom or AMD -- It's Something Far More Near and Dear</li><li>Nvidia and OpenAI Play Down Reports of Rift. Why They Need Each Other.</li>
+            </ul>
+        </div>
+        
     </div>
     
     <div class="stock-card top5-card">
@@ -991,8 +1164,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$948.79</span>
-                <span class="change positive">+0.28%</span>
+                <span class="price">$949.44</span>
+                <span class="change positive">+0.35%</span>
             </div>
             
             
@@ -1086,6 +1259,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">2.05:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Why Analysts See ChargePoint Holdings CHPT Story Shifting After US5 Price Target Reset</li><li>Goldman Sachs Backs Fieldguide As AI Thread In GS Investment Story</li><li>Big Banks Are Loading up on Bitcoin. Should Individual Investors Do the Same?</li>
+            </ul>
+        </div>
+        
     </div>
     
     <div class="stock-card top5-card">
@@ -1111,8 +1293,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$186.29</span>
-                <span class="change positive">+0.37%</span>
+                <span class="price">$186.39</span>
+                <span class="change positive">+0.42%</span>
             </div>
             
             
@@ -1206,6 +1388,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">2.05:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Stock market today: Dow, S&P 500, Nasdaq futures rise as Wall Street looks to continue rally</li><li>Stock market today: Dow, S&P 500, Nasdaq jump to kick off February as gold, silver, bitcoin remain volatile</li><li>Broadcom and TSMC to emerge as big winners in the custom AI chip boom</li>
+            </ul>
+        </div>
+        
     </div>
     
             <button class="show-more-btn" onclick="toggleOtherStocks()">
@@ -1238,8 +1429,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$631.97</span>
-                <span class="change negative">-0.67%</span>
+                <span class="price">$632.37</span>
+                <span class="change negative">-0.61%</span>
             </div>
             
             
@@ -1333,6 +1524,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">1.85:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Salesforce’s Army Cloud Deal And Wildfire Venture Versus Recent Stock Weakness</li><li>Lockheed Martin Corporation (LMT): A Bull Case Theory</li><li>Top Stock Reports for Exxon Mobil, Lockheed Martin & Honeywell</li>
+            </ul>
+        </div>
+        
     </div>
     
     <div class="stock-card ">
@@ -1358,8 +1558,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$200.53</span>
-                <span class="change negative">-0.26%</span>
+                <span class="price">$200.96</span>
+                <span class="change negative">-0.04%</span>
             </div>
             
             
@@ -1453,6 +1653,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">2.12:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Here’s What Analysts Think About RTX Corporation (RTX)</li><li>5 Revealing Analyst Questions From RTX’s Q4 Earnings Call</li><li>RTX Corporation (RTX): A Bull Case Theory</li>
+            </ul>
+        </div>
+        
     </div>
     
             </div>
@@ -1483,8 +1692,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$948.79</span>
-                <span class="change positive">+0.28%</span>
+                <span class="price">$949.44</span>
+                <span class="change positive">+0.35%</span>
             </div>
             
             
@@ -1578,6 +1787,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">2.05:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Why Analysts See ChargePoint Holdings CHPT Story Shifting After US5 Price Target Reset</li><li>Goldman Sachs Backs Fieldguide As AI Thread In GS Investment Story</li><li>Big Banks Are Loading up on Bitcoin. Should Individual Investors Do the Same?</li>
+            </ul>
+        </div>
+        
     </div>
             </div>
         <div id="tab-Industrials" class="tab-content">
@@ -1606,8 +1824,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$631.97</span>
-                <span class="change negative">-0.67%</span>
+                <span class="price">$632.37</span>
+                <span class="change negative">-0.61%</span>
             </div>
             
             
@@ -1701,6 +1919,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">1.85:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Salesforce’s Army Cloud Deal And Wildfire Venture Versus Recent Stock Weakness</li><li>Lockheed Martin Corporation (LMT): A Bull Case Theory</li><li>Top Stock Reports for Exxon Mobil, Lockheed Martin & Honeywell</li>
+            </ul>
+        </div>
+        
     </div>
     
     <div class="stock-card ">
@@ -1726,8 +1953,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$200.53</span>
-                <span class="change negative">-0.26%</span>
+                <span class="price">$200.96</span>
+                <span class="change negative">-0.04%</span>
             </div>
             
             
@@ -1821,6 +2048,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">2.12:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Here’s What Analysts Think About RTX Corporation (RTX)</li><li>5 Revealing Analyst Questions From RTX’s Q4 Earnings Call</li><li>RTX Corporation (RTX): A Bull Case Theory</li>
+            </ul>
+        </div>
+        
     </div>
             </div>
         <div id="tab-Technology" class="tab-content">
@@ -1849,8 +2085,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$250.65</span>
-                <span class="change positive">+1.78%</span>
+                <span class="price">$251.17</span>
+                <span class="change positive">+1.99%</span>
             </div>
             
             
@@ -1944,6 +2180,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">1.74:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Stock market today: Dow, S&P 500, Nasdaq futures rise as Wall Street looks to continue rally</li><li>Earnings live: Palantir stock surges after Q4 beat, NXP and Disney stocks fall</li><li>These Stocks Are Today’s Movers: Palantir, Teradyne, Tesla, AMD, NXP Semiconductors, and More</li>
+            </ul>
+        </div>
+        
     </div>
     
     <div class="stock-card ">
@@ -1969,8 +2214,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$441.18</span>
-                <span class="change positive">+0.78%</span>
+                <span class="price">$443.08</span>
+                <span class="change positive">+1.22%</span>
             </div>
             
             
@@ -2064,6 +2309,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">1.82:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Apple CEO Tim Cook Just Gave Great News to Micron Investors</li><li>Micron Technology (MU) Is Up 6.7% After Launching $24 Billion Singapore NAND Megafab Project</li><li>Is Micron the Next Nvidia?</li>
+            </ul>
+        </div>
+        
     </div>
     
     <div class="stock-card ">
@@ -2089,8 +2343,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$332.51</span>
-                <span class="change positive">+0.43%</span>
+                <span class="price">$332.75</span>
+                <span class="change positive">+0.50%</span>
             </div>
             
             
@@ -2184,6 +2438,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">1.88:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Broadcom and TSMC to emerge as big winners in the custom AI chip boom</li><li>Nvidia's Biggest Competitive Risk Isn't Broadcom or AMD -- It's Something Far More Near and Dear</li><li>Nvidia and OpenAI Play Down Reports of Rift. Why They Need Each Other.</li>
+            </ul>
+        </div>
+        
     </div>
     
     <div class="stock-card ">
@@ -2209,8 +2472,8 @@
             
             <div class="price-row premarket">
                 <span class="price-label">프리마켓:</span>
-                <span class="price">$186.29</span>
-                <span class="change positive">+0.37%</span>
+                <span class="price">$186.39</span>
+                <span class="change positive">+0.42%</span>
             </div>
             
             
@@ -2304,6 +2567,15 @@
             <div>리스크/리워드 비율</div>
             <div class="ratio">2.05:1</div>
         </div>
+
+        
+        <div class="news-section">
+            <div class="news-title">📰 관련 뉴스</div>
+            <ul class="news-list">
+                <li>Stock market today: Dow, S&P 500, Nasdaq futures rise as Wall Street looks to continue rally</li><li>Stock market today: Dow, S&P 500, Nasdaq jump to kick off February as gold, silver, bitcoin remain volatile</li><li>Broadcom and TSMC to emerge as big winners in the custom AI chip boom</li>
+            </ul>
+        </div>
+        
     </div>
             </div>
 
@@ -2318,6 +2590,68 @@
     </div>
 
     <script>
+        // 검색용 전체 종목 데이터
+        const allStocksData = [{"ticker": "AMD", "name": "Advanced Micro Devices, Inc.", "total_score": 60, "current_price": 246.27, "sector": "Technology", "entry": np.float64(232.58), "target_1": np.float64(258.27), "stop_loss": np.float64(213.31)}, {"ticker": "MU", "name": "Micron Technology, Inc.", "total_score": 60, "current_price": 437.8, "sector": "Technology", "entry": np.float64(372.92), "target_1": np.float64(421.73), "stop_loss": np.float64(336.31)}, {"ticker": "AVGO", "name": "Broadcom Inc.", "total_score": 55, "current_price": 331.11, "sector": "Technology", "entry": 321.18, "target_1": np.float64(346.2), "stop_loss": np.float64(302.41)}, {"ticker": "GS", "name": "The Goldman Sachs Group, Inc.", "total_score": 55, "current_price": 946.33, "sector": "Financial Services", "entry": 917.94, "target_1": np.float64(968.97), "stop_loss": np.float64(878.84)}, {"ticker": "NVDA", "name": "NVIDIA Corporation", "total_score": 50, "current_price": 185.61, "sector": "Technology", "entry": 180.04, "target_1": np.float64(190.63), "stop_loss": np.float64(172.1)}, {"ticker": "LMT", "name": "Lockheed Martin Corporation", "total_score": 50, "current_price": 636.0, "sector": "Industrials", "entry": np.float64(572.4), "target_1": np.float64(610.01), "stop_loss": np.float64(544.2)}, {"ticker": "RTX", "name": "RTX Corporation", "total_score": 50, "current_price": 201.09, "sector": "Industrials", "entry": 195.06, "target_1": np.float64(203.2), "stop_loss": np.float64(188.34)}];
+
+        function searchStocks() {
+            const query = document.getElementById('stockSearch').value.toUpperCase().trim();
+            const resultsDiv = document.getElementById('searchResults');
+
+            if (query.length === 0) {
+                resultsDiv.classList.remove('show');
+                return;
+            }
+
+            const matches = allStocksData.filter(s =>
+                s.ticker.toUpperCase().includes(query) ||
+                s.name.toUpperCase().includes(query)
+            );
+
+            if (matches.length === 0) {
+                resultsDiv.innerHTML = '<div class="no-results">검색 결과가 없습니다</div>';
+            } else {
+                let html = '';
+                matches.forEach(s => {
+                    const scoreClass = s.total_score >= 60 ? 'high' : s.total_score >= 50 ? 'medium' : 'low';
+                    const grade = s.total_score >= 70 ? '강력추천' : s.total_score >= 60 ? '추천' : s.total_score >= 50 ? '관망' : '비추천';
+                    html += `
+                        <div class="search-result-item" onclick="showStockDetail('${s.ticker}')">
+                            <span class="search-result-ticker">${s.ticker}</span>
+                            <span class="search-result-name">${s.name}</span>
+                            <span class="search-result-score ${scoreClass}">${s.total_score.toFixed(0)}점 ${grade}</span>
+                            <div style="clear:both; margin-top: 8px; font-size: 0.85em; color: #718096;">
+                                매수가: $${s.entry.toFixed(2)} | 목표가: $${s.target_1.toFixed(2)} | 손절가: $${s.stop_loss.toFixed(2)}
+                            </div>
+                        </div>
+                    `;
+                });
+                resultsDiv.innerHTML = html;
+            }
+            resultsDiv.classList.add('show');
+        }
+
+        function showStockDetail(ticker) {
+            // 해당 종목 카드로 스크롤
+            const cards = document.querySelectorAll('.stock-card');
+            for (const card of cards) {
+                if (card.querySelector('.ticker')?.textContent === ticker) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.style.boxShadow = '0 0 0 3px #667eea';
+                    setTimeout(() => { card.style.boxShadow = ''; }, 2000);
+                    break;
+                }
+            }
+            document.getElementById('searchResults').classList.remove('show');
+            document.getElementById('stockSearch').value = '';
+        }
+
+        // 검색창 외부 클릭 시 결과 숨기기
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-box')) {
+                document.getElementById('searchResults').classList.remove('show');
+            }
+        });
+
         function showTab(tabName) {
             // 모든 탭 컨텐츠 숨기기
             var contents = document.getElementsByClassName('tab-content');

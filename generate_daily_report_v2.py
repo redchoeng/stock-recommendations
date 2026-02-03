@@ -1276,8 +1276,8 @@ def main():
         stocks_data = [s for s in stocks_data if s['total_score'] >= 50]
         filtered_out = before_filter - len(stocks_data)
         if filtered_out > 0:
-            print(f"⚠️ {filtered_out}개 종목 제외 (50점 미만)")
-        print(f"📊 추천 대상: {len(stocks_data)}개 종목")
+            print(f"[제외] {filtered_out}개 종목 제외 (50점 미만)")
+        print(f"[추천 대상] {len(stocks_data)}개 종목")
 
         html_content = generate_html_report(stocks_data)
 
