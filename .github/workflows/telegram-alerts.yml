@@ -1,14 +1,11 @@
 name: Telegram Alerts & Daily Update
 
 on:
-  schedule:
-    # 평일 미국 시장 시간 - 프리마켓 + 정규장 (UTC 09-21시, 1시간마다)
-    # 프리마켓: UTC 09:00-14:30 (ET 04:00-09:30)
-    # 정규장: UTC 14:30-21:00 (ET 09:30-16:00)
-    # 한국 시간: 18:00 - 다음날 06:00
-    - cron: '0 9-21 * * 1-5'
+  # schedule 비활성화 - etf_guide 프로젝트로 이전 (2026-03-05)
+  # schedule:
+  #   - cron: '0 9-21 * * 1-5'
 
-  workflow_dispatch:  # 수동 실행 가능
+  workflow_dispatch:  # 수동 실행만 가능
 
 jobs:
   market-monitor:
